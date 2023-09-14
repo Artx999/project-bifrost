@@ -9,7 +9,18 @@ public class PlayerMovement : MonoBehaviour
     private Animator _animator;
 
     private float _directionX;
-    
+
+    [SerializeField] private float _movementSpeed = 7f;
+    [SerializeField] private float _jumpForce = 14f;
+
+    private enum MovementState
+    {
+        Idle,
+        Running,
+        Jumping,
+        Falling
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,31 +34,47 @@ public class PlayerMovement : MonoBehaviour
     {
         _directionX = Input.GetAxisRaw("Horizontal");
 
-        _rigidBody.velocity = new Vector2(_directionX * 7f, _rigidBody.velocity.y);
-        
+        _rigidBody.velocity = new Vector2(_directionX * _movementSpeed, _rigidBody.velocity.y);
+
         if (Input.GetButtonDown("Jump"))
         {
-            _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, 14f);
+            _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _jumpForce);
         }
-        
+
         UpdateAnimationState();
     }
 
     private void UpdateAnimationState()
     {
+        MovementState movementState;
+        
         if (_directionX > 0f)
         {
-            _animator.SetBool("running", true);
+            movementState = MovementState.Running;
             _spriteRenderer.flipX = false;
         }
         else if (_directionX < 0f)
         {
-            _animator.SetBool("running", true);
+            movementState = MovementState.Running;
             _spriteRenderer.flipX = true;
         }
         else
         {
-            _animator.SetBool("running", false);
+            movementState = MovementState.Idle;
         }
+
+        if (_rigidBody.velocity.y > .1f)
+        {
+            movementState = MovementState.Jumping;
+        }
+        else if (_rigidBody.velocity.y < -.1f)
+        {
+            movementState = MovementState.Falling;
+        }
+        {
+            
+        }
+        
+        _animator.SetInteger("MovementState", (int) movementState);
     }
 }
