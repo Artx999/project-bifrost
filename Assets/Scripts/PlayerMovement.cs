@@ -71,9 +71,6 @@ public class PlayerMovement : MonoBehaviour
         {
             movementState = MovementState.Falling;
         }
-        {
-            
-        }
         
         _animator.SetInteger("MovementState", (int) movementState);
     }
