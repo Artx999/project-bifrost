@@ -24,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
         Falling
     }
 
+    [SerializeField] private AudioSource jumpSoundEffect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && this.IsGrounded())
         {
+            jumpSoundEffect.Play();
             _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _jumpForce);
         }
 
