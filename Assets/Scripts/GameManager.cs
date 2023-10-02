@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public bool axeIsSeperated;
+    public bool axeIsStuck;
     public float maxRopeLength;
     
     // Start is called before the first frame update

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -30,7 +29,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         /* Move to axe */
-        if(_gm.axeIsSeperated && Input.GetMouseButtonDown(1))
+        if(_axeRb.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
         {
             transform.position = axe.transform.position;
             _gm.axeIsSeperated = false;

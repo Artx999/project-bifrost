@@ -30,7 +30,7 @@ public class Axe : MonoBehaviour
 
     private void Update()
     {
-        // If the axe is at the player, the axe should follow the player around
+        // If the axe is on the player, the axe should follow the player around
         // the moment the axe is thrown, the collider is activated
         if (!_gm.axeIsSeperated)
             transform.position = player.transform.position;
@@ -42,7 +42,8 @@ public class Axe : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            Debug.Log("Hit wall!");
+            // Stop the axe, as it is stuck in the surface
+            Debug.Log("Hit surface!");
             _rb.velocity = Vector2.zero;
             _rb.gravityScale = 0f;
         }
