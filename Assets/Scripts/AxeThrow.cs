@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AxeThrow : MonoBehaviour
 {
-    private Rigidbody2D _rb;
-
-    private Vector2 _movementVec;
+    public float maxInitAxeSpeed = 6f;
+    public float minInitAxeSpeed = 1f;
+    public float axeSpeedAmp = 3f;
     
+    private Rigidbody2D _rb;
+    private Vector2 _movementVec;
     
     // Start is called before the first frame update
     void Start()
@@ -24,11 +27,21 @@ public class AxeThrow : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rb.MovePosition(_rb.position + _movementVec * Time.deltaTime);
+        // Throw movement
+        _rb.velocity = _movementVec;
     }
 
     public void GiveAxeSpeed(Vector2 playerDrag)
     {
-        _movementVec = playerDrag;
+        float inputMagnitude = playerDrag.magnitude;
+
+        // To throw or not
+        if (inputMagnitude < minInitAxeSpeed)
+            return;
+        
+        float realSpeed = Math.Min(maxInitAxeSpeed, inputMagnitude);
+        Debug.Log("Current axe speed:" + realSpeed);
+        
+        _movementVec = playerDrag.normalized * (realSpeed * axeSpeedAmp);
     }
 }
