@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -15,6 +16,8 @@ public class Player : MonoBehaviour
     private Axe _axeThrow;
     private Rigidbody2D _axeRb;
     private bool _mouseHeldDown;
+
+    public float test;
     
     private void Start()
     {
@@ -70,6 +73,14 @@ public class Player : MonoBehaviour
             
             // Reference the axe and apply the speed based on the aim vector
             _axeThrow.ApplyAxeSpeed(GetThrowVector(transform.position, newMousePos));
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Surface"))
+        {
+            _rb.AddForce(Vector2.up * test, ForceMode2D.Force);
         }
     }
 

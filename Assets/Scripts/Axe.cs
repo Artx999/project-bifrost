@@ -37,8 +37,8 @@ public class Axe : MonoBehaviour
         else
             GetComponent<BoxCollider2D>().enabled = true;
     }
-
-    private void OnCollisionEnter2D(Collision2D other)
+    
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Surface"))
         {
