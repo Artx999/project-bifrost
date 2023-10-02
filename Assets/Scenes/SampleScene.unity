@@ -731,7 +731,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1181463493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,7 +748,7 @@ MonoBehaviour:
   player: {fileID: 944019663}
   maxVecMagnitude: 3
   minVecMagnitude: 1
-  axeSpeedAmp: 5
+  axeSpeedAmp: 4
 --- !u!212 &1181463494
 SpriteRenderer:
   m_ObjectHideFlags: 0

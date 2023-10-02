@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
         _axeThrow = axe.GetComponent<Axe>();
         _axeRb = axe.GetComponent<Rigidbody2D>();
         _initialAxePos = transform.position;
-        _mouseHeldDown = _gm.axeThrown = false;
+        _mouseHeldDown = _gm.axeIsSeperated = false;
     }
 
     private void Update()
@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
         /* Axe throw */
         
         // If the axe is thrown, we dont want to repeat the throw mechanic below
-        if (_gm.axeThrown)
+        if (_gm.axeIsSeperated)
             return;
         
         // If the left button is pressed start the throw mechanic here
@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
         else if(_mouseHeldDown)
         {
             _mouseHeldDown = false;
-            _gm.axeThrown = true;
+            _gm.axeIsSeperated = true;
 
             Vector2 newMousePos = GetMousePosition();
             

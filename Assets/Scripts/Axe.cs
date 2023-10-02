@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class Axe : MonoBehaviour
     public float axeSpeedAmp;
     
     private Rigidbody2D _rb;
+    private GameManager _gm;
     private Vector2 _movementVec;
     
     // Start is called before the first frame update
@@ -20,7 +22,18 @@ public class Axe : MonoBehaviour
     {
         // Initialize variables
         _rb = GetComponent<Rigidbody2D>();
+        _gm = gameManager.GetComponent<GameManager>();
+        
         _rb.gravityScale = 0f;
+        GetComponent<BoxCollider2D>().enabled = false;
+    }
+
+    private void Update()
+    {
+        if (!_gm.axeIsSeperated)
+            transform.position = player.transform.position;
+        else
+            GetComponent<BoxCollider2D>().enabled = true;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
