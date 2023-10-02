@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class AxeThrow : MonoBehaviour
 {
-    public float maxInitAxeSpeed = 6f;
-    public float minInitAxeSpeed = 1f;
+    public float maxVecMagnitude;
+    public float minVecMagnitude;
     public float axeSpeedAmp;
     
     private Rigidbody2D _rb;
@@ -16,6 +16,7 @@ public class AxeThrow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Initialize variables
         _rb = GetComponent<Rigidbody2D>();
         _rb.gravityScale = 0f;
     }
@@ -31,23 +32,22 @@ public class AxeThrow : MonoBehaviour
         
     }
 
-    public void GiveAxeSpeed(Vector2 playerDrag)
+    public void ApplyAxeSpeed(Vector2 inputVec)
     {
-        var inputMagnitude = playerDrag.magnitude;
+        var inputMagnitude = inputVec.magnitude;
 
         // If the throw vector is too short, we cancel the throw
-        if (inputMagnitude < minInitAxeSpeed)
+        if (inputMagnitude < minVecMagnitude)
             return;
         
         // If a successful throw, apply gravity
         _rb.gravityScale = 1f;
         
-        float realSpeed = Math.Min(maxInitAxeSpeed, inputMagnitude);
-        Debug.Log("Current axe speed:" + realSpeed);
+        // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
+        float realSpeed = Math.Min(maxVecMagnitude, inputMagnitude);
+        _movementVec = inputVec.normalized * (realSpeed * axeSpeedAmp);
         
-        _movementVec = playerDrag.normalized * (realSpeed * axeSpeedAmp);
-        
-        // Since projectile, we add a force and let gravity do its thing
+        // Lastly, we add a force and let gravity do its thing
         _rb.AddForce(_movementVec, ForceMode2D.Impulse);
     }
 }
