@@ -21,15 +21,14 @@ public class AxeThrow : MonoBehaviour
         _rb.gravityScale = 0f;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        
-    }
-
-    private void FixedUpdate()
-    {
-        
+        if (other.gameObject.CompareTag("Surface"))
+        {
+            Debug.Log("Hit wall!");
+            _rb.velocity = Vector2.zero;
+            _rb.gravityScale = 0f;
+        }
     }
 
     public void ApplyAxeSpeed(Vector2 inputVec)
