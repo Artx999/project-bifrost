@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Axe : MonoBehaviour
 {
+    public GameObject gameManager;
+    public Player player;
     public float maxVecMagnitude;
     public float minVecMagnitude;
     public float axeSpeedAmp;
@@ -13,10 +15,8 @@ public class Axe : MonoBehaviour
     private Rigidbody2D _rb;
     private Vector2 _movementVec;
     
-    
-    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Initialize variables
         _rb = GetComponent<Rigidbody2D>();

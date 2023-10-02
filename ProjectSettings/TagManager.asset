@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Axe
+  - Surface
   layers:
   - Default
   - TransparentFX

@@ -7,31 +7,33 @@ public class Player : MonoBehaviour
 {
     // We can reference the axe like this, because of Singleton
     // Singleton = One class can have only one instance
+    public GameManager gameManager;
     public GameObject axe;
-    
+
+    private GameManager _gm;
+    private Rigidbody2D _rb;
     private Axe _axeThrow;
+    private Rigidbody2D _axeRb;
     private Vector2 _initialAxePos;
     private bool _mouseHeldDown;
-    private bool _isAxeThrown;
     
-    void Start()
+    private void Start()
     {
         // Initialize variables
-        _mouseHeldDown = _isAxeThrown = false;
+        _gm = gameManager.GetComponent<GameManager>();
+        _rb = GetComponent<Rigidbody2D>();
         _axeThrow = axe.GetComponent<Axe>();
+        _axeRb = axe.GetComponent<Rigidbody2D>();
         _initialAxePos = transform.position;
+        _mouseHeldDown = _gm.axeThrown = false;
     }
 
-    void Update()
+    private void Update()
     {
-        /* Reload scene (should be in a Game Manager, this for test) */
-        if (Input.GetKeyDown(KeyCode.R))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        
         /* Axe throw */
         
         // If the axe is thrown, we dont want to repeat the throw mechanic below
-        if (_isAxeThrown)
+        if (_gm.axeThrown)
             return;
         
         // If the left button is pressed start the throw mechanic here
@@ -58,7 +60,7 @@ public class Player : MonoBehaviour
         else if(_mouseHeldDown)
         {
             _mouseHeldDown = false;
-            _isAxeThrown = true;
+            _gm.axeThrown = true;
 
             Vector2 newMousePos = GetMousePosition();
             
