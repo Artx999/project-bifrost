@@ -30,6 +30,8 @@ public class Axe : MonoBehaviour
 
     private void Update()
     {
+        // If the axe is at the player, the axe should follow the player around
+        // the moment the axe is thrown, the collider is activated
         if (!_gm.axeIsSeperated)
             transform.position = player.transform.position;
         else

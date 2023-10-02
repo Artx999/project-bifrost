@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,6 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rb;
     private Axe _axeThrow;
     private Rigidbody2D _axeRb;
-    private Vector2 _initialAxePos;
     private bool _mouseHeldDown;
     
     private void Start()
@@ -24,14 +24,19 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _axeRb = axe.GetComponent<Rigidbody2D>();
-        _initialAxePos = transform.position;
         _mouseHeldDown = _gm.axeIsSeperated = false;
     }
 
     private void Update()
     {
-        /* Axe throw */
+        /* Move to axe */
+        if(_gm.axeIsSeperated && Input.GetMouseButtonDown(1))
+        {
+            transform.position = axe.transform.position;
+            _gm.axeIsSeperated = false;
+        }
         
+        /* Axe throw */
         // If the axe is thrown, we dont want to repeat the throw mechanic below
         if (_gm.axeIsSeperated)
             return;
@@ -65,7 +70,7 @@ public class Player : MonoBehaviour
             Vector2 newMousePos = GetMousePosition();
             
             // Reference the axe and apply the speed based on the aim vector
-            _axeThrow.ApplyAxeSpeed(GetThrowVector(_initialAxePos, newMousePos));
+            _axeThrow.ApplyAxeSpeed(GetThrowVector(transform.position, newMousePos));
         }
     }
 
@@ -82,7 +87,7 @@ public class Player : MonoBehaviour
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
         Vector2 aimVec = endPos - startPos;
-        Debug.DrawLine(_initialAxePos, endPos, Color.green, 5f);
+        Debug.DrawLine(transform.position, endPos, Color.green, 5f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
         return -aimVec;
