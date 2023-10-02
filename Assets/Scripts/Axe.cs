@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class AxeThrow : MonoBehaviour
+public class Axe : MonoBehaviour
 {
     public float maxVecMagnitude;
     public float minVecMagnitude;
@@ -12,6 +12,8 @@ public class AxeThrow : MonoBehaviour
     
     private Rigidbody2D _rb;
     private Vector2 _movementVec;
+    
+    
     
     // Start is called before the first frame update
     void Start()
@@ -29,7 +31,7 @@ public class AxeThrow : MonoBehaviour
             _rb.velocity = Vector2.zero;
             _rb.gravityScale = 0f;
         }
-    }
+    } 
 
     public void ApplyAxeSpeed(Vector2 inputVec)
     {

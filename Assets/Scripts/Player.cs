@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     // Singleton = One class can have only one instance
     public GameObject axe;
     
-    private AxeThrow _axeThrow;
+    private Axe _axeThrow;
     private Vector2 _initialAxePos;
     private bool _mouseHeldDown;
     private bool _isAxeThrown;
@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     {
         // Initialize variables
         _mouseHeldDown = _isAxeThrown = false;
-        _axeThrow = axe.GetComponent<AxeThrow>();
+        _axeThrow = axe.GetComponent<Axe>();
         _initialAxePos = transform.position;
     }
 
