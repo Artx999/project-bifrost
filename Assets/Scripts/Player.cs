@@ -10,20 +10,21 @@ public class Player : MonoBehaviour
     // Singleton = One class can have only one instance
     public GameManager gameManager;
     public GameObject axe;
+    public float friction;
 
     private GameManager _gm;
     private Rigidbody2D _rb;
+    private CircleCollider2D _cc;
     private Axe _axeThrow;
     private Rigidbody2D _axeRb;
     private bool _mouseHeldDown;
-
-    public float test;
     
     private void Start()
     {
         // Initialize variables
         _gm = gameManager.GetComponent<GameManager>();
         _rb = GetComponent<Rigidbody2D>();
+        _cc = GetComponent<CircleCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _axeRb = axe.GetComponent<Rigidbody2D>();
         _mouseHeldDown = _gm.axeIsSeperated = false;
@@ -31,6 +32,13 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        /* Walk */
+        if (!_gm.axeIsSeperated && IsGrounded())
+        {
+            float xMovement = Input.GetAxisRaw("Horizontal");
+            _rb.velocity = new Vector2(xMovement, 0) * 5f; 
+        }
+        
         /* Move to axe */
         if(_axeRb.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
         {
@@ -80,7 +88,7 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            _rb.AddForce(Vector2.up * test, ForceMode2D.Force);
+            _rb.AddForce(Vector2.up * friction, ForceMode2D.Force);
         }
     }
 
@@ -101,5 +109,12 @@ public class Player : MonoBehaviour
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
         return -aimVec;
+    }
+    
+    private bool IsGrounded()
+    {
+        LayerMask mask = LayerMask.GetMask("Surface");
+        
+        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, mask);
     }
 }
