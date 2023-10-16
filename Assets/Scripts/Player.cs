@@ -6,13 +6,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // We can reference the axe like this, because of Singleton
+    // We can reference like this, because of Singleton
     // Singleton = One class can have only one instance
     public GameManager gameManager;
     public GameObject axe;
     public GameObject sight;
-    public float friction;
-    public float walkSpeed;
 
     private GameManager _gm;
     private Rigidbody2D _rb;
@@ -39,7 +37,7 @@ public class Player : MonoBehaviour
         if (!_gm.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
         {
             float xMovement = Input.GetAxisRaw("Horizontal");
-            _rb.velocity = new Vector2(xMovement, 0) * walkSpeed;
+            _rb.velocity = new Vector2(xMovement, 0) * _gm.playerWalkSpeed;
         }
         
         /* Move to axe */
@@ -99,7 +97,7 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            _rb.AddForce(Vector2.up * friction, ForceMode2D.Force);
+            _rb.AddForce(Vector2.up * _gm.playerWallFriction, ForceMode2D.Force);
         }
     }
 
@@ -124,9 +122,9 @@ public class Player : MonoBehaviour
     
     private bool IsGrounded()
     {
-        LayerMask wantedMask = LayerMask.GetMask("Surface");
+        LayerMask desiredMask = LayerMask.GetMask("Surface");
         
-        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, wantedMask);
+        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, desiredMask);
     }
 
     private bool IsAiming()
@@ -166,7 +164,7 @@ public class Player : MonoBehaviour
         
         // Calculate the position with player position and throw vector and activate the sight
         // I am unsure why we multiply bu 0.1f^2, but it works
-        sight.transform.position = playerPos + inputVec + Physics2D.gravity * (float)Math.Pow(0.1f, 2);
+        sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
         sight.SetActive(true);
     }
 

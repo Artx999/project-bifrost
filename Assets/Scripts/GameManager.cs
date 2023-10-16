@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Player")]
+    public float playerWallFriction;
+    public float playerWalkSpeed;
+    [Header("Axe")]
     public float maxAxeThrowMag;
     public float minAxeThrowMag;
     public float axeSpeedAmp;

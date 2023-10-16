@@ -10,7 +10,6 @@ public class Axe : MonoBehaviour
     public GameObject gameManager;
     public Player player;
     
-    
     private Rigidbody2D _rb;
     private GameManager _gm;
     private Vector2 _movementVec;
@@ -63,7 +62,7 @@ public class Axe : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            // Stop the axe, as it is stuck in the surface
+            // Stop the axe and its gravity, as it is stuck in the surface
             Debug.Log("Hit surface!");
             _rb.velocity = Vector2.zero;
             _rb.gravityScale = 0f;
