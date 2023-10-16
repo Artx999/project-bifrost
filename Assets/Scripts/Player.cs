@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
         Vector2 aimVec = endPos - startPos;
-        Debug.DrawLine(transform.position, endPos, Color.green, 5f);
+        Debug.DrawLine(transform.position, endPos, Color.green, 3f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
         return -aimVec;
@@ -149,22 +149,24 @@ public class Player : MonoBehaviour
     private void ShowSight(Vector2 inputVec)
     {
         // If the aim vector is too short for a throw, dont show the dot
-        var vecMagnitude = inputVec.magnitude;
+        var inputVecMag = inputVec.magnitude;
 
-        if (vecMagnitude < _gm.minAxeThrowMag)
+        if (inputVecMag < _gm.minAxeThrowMag)
         {
             sight.SetActive(false);
             return;
         }
         
-        // Shorten the throw vector, with a scale
-        float sightLengthScale = 3f;
-        inputVec = inputVec.normalized * sightLengthScale;
+        // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
+        // the vector magnitude based on the defined max magnitude from GM
+        var newMag = Math.Min(_gm.maxAxeThrowMag, inputVecMag);
+        inputVec = inputVec.normalized * newMag;
         
         Vector2 playerPos = transform.position;
         
         // Calculate the position with player position and throw vector and activate the sight
-        sight.transform.position = playerPos + inputVec;
+        // I am unsure why we multiply bu 0.1f^2, but it works
+        sight.transform.position = playerPos + inputVec + Physics2D.gravity * (float)Math.Pow(0.1f, 2);
         sight.SetActive(true);
     }
 

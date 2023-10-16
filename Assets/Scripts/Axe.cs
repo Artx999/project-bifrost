@@ -39,9 +39,9 @@ public class Axe : MonoBehaviour
     public void ApplyAxeSpeed(Vector2 inputVec)
     {
         // If the throw vector is too short, we cancel the throw
-        var inputMagnitude = inputVec.magnitude;
+        var inputVecMag = inputVec.magnitude;
 
-        if (inputMagnitude < _gm.minAxeThrowMag)
+        if (inputVecMag < _gm.minAxeThrowMag)
         {
             player.CancelThrow();
             
@@ -52,7 +52,7 @@ public class Axe : MonoBehaviour
         _rb.gravityScale = 1f;
         
         // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
-        float realSpeed = Math.Min(_gm.maxAxeThrowMag, inputMagnitude);
+        float realSpeed = Math.Min(_gm.maxAxeThrowMag, inputVecMag);
         _movementVec = inputVec.normalized * (realSpeed * _gm.axeSpeedAmp);
         
         // Lastly, we add a force and let gravity do its thing
