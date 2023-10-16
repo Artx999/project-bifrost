@@ -2271,6 +2271,7 @@ MonoBehaviour:
   gameManager: {fileID: 1237017558}
   axe: {fileID: 1181463491}
   friction: 0
+  walkSpeed: 5
 --- !u!212 &944019664
 SpriteRenderer:
   m_ObjectHideFlags: 0

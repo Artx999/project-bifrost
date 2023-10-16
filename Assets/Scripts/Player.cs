@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public GameManager gameManager;
     public GameObject axe;
     public float friction;
+    public float walkSpeed;
 
     private GameManager _gm;
     private Rigidbody2D _rb;
@@ -33,10 +34,10 @@ public class Player : MonoBehaviour
     private void Update()
     {
         /* Walk */
-        if (!_gm.axeIsSeperated && IsGrounded())
+        if (!_gm.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
         {
             float xMovement = Input.GetAxisRaw("Horizontal");
-            _rb.velocity = new Vector2(xMovement, 0) * 5f; 
+            _rb.velocity = new Vector2(xMovement, 0) * walkSpeed;
         }
         
         /* Move to axe */
@@ -52,21 +53,14 @@ public class Player : MonoBehaviour
             return;
         
         // If the left button is pressed start the throw mechanic here
-        if (Input.GetMouseButton(0) && !_mouseHeldDown)
+        if (IsAiming() && !_mouseHeldDown)
         {
-            // Detect if mouse is hitting 
-            RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
-            
-            if (!hit.collider || !hit.collider.CompareTag("Player"))
-            {
-                //Debug.Log("ERROR: Player not registered.");
-                return;
-            } 
-            //Debug.Log("Success: Player hit.");
-
             _mouseHeldDown = true;
+            
+            // Stop the players movement completely while aiming
+            _rb.velocity = Vector2.zero;
         }
-        
+
         // Does nothing, as we want nothing to happen while the button is being held down
         else if (Input.GetMouseButton(0)) {}
         
@@ -116,5 +110,21 @@ public class Player : MonoBehaviour
         LayerMask mask = LayerMask.GetMask("Surface");
         
         return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, mask);
+    }
+
+    private bool IsAiming()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            // Detect if mouse is hitting 
+            RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+
+            if (!hit.collider)
+                return false;
+
+            if (hit.collider.CompareTag("Player"))
+                return true;
+        }
+        return false;
     }
 }
