@@ -37,17 +37,6 @@ public class Axe : MonoBehaviour
         else
             GetComponent<BoxCollider2D>().enabled = true;
     }
-    
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Surface"))
-        {
-            // Stop the axe, as it is stuck in the surface
-            Debug.Log("Hit surface!");
-            _rb.velocity = Vector2.zero;
-            _rb.gravityScale = 0f;
-        }
-    } 
 
     public void ApplyAxeSpeed(Vector2 inputVec)
     {
@@ -55,7 +44,11 @@ public class Axe : MonoBehaviour
 
         // If the throw vector is too short, we cancel the throw
         if (inputMagnitude < minVecMagnitude)
+        {
+            player.CancelThrow();
+            
             return;
+        }
         
         // If a successful throw, apply gravity
         _rb.gravityScale = 1f;
@@ -66,5 +59,16 @@ public class Axe : MonoBehaviour
         
         // Lastly, we add a force and let gravity do its thing
         _rb.AddForce(_movementVec, ForceMode2D.Impulse);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Surface"))
+        {
+            // Stop the axe, as it is stuck in the surface
+            Debug.Log("Hit surface!");
+            _rb.velocity = Vector2.zero;
+            _rb.gravityScale = 0f;
+        }
     }
 }

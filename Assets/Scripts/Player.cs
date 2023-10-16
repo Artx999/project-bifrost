@@ -158,4 +158,9 @@ public class Player : MonoBehaviour
         sight.transform.position = playerPos + throwVec;
         sight.SetActive(true);
     }
+
+    public void CancelThrow()
+    {
+        _gm.axeIsSeperated = false;
+    }
 }
