@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     // Singleton = One class can have only one instance
     public GameManager gameManager;
     public GameObject axe;
+    public GameObject sight;
     public float friction;
     public float walkSpeed;
 
@@ -29,6 +30,7 @@ public class Player : MonoBehaviour
         _axeThrow = axe.GetComponent<Axe>();
         _axeRb = axe.GetComponent<Rigidbody2D>();
         _mouseHeldDown = _gm.axeIsSeperated = false;
+        sight.SetActive(false);
     }
 
     private void Update()
@@ -41,9 +43,11 @@ public class Player : MonoBehaviour
         }
         
         /* Move to axe */
+        // Temporary: Right click to move there, in future this will be a rope mechanic
         if(_axeRb.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
         {
             transform.position = axe.transform.position;
+            _rb.velocity = Vector2.zero;
             _gm.axeIsSeperated = false;
         }
         
@@ -61,8 +65,18 @@ public class Player : MonoBehaviour
             _rb.velocity = Vector2.zero;
         }
 
-        // Does nothing, as we want nothing to happen while the button is being held down
-        else if (Input.GetMouseButton(0)) {}
+        // While the player is holding down the mouse button (ie. aiming), we show a simple sight in form
+        // of a white dot
+        else if (Input.GetMouseButton(0) && _mouseHeldDown)
+        {
+            // Gets the player position, mouse position and calculates the throw vector with these two points
+            // This new vector is sent to the show sight method
+            Vector2 playerPos = transform.position;
+            Vector2 currentMousePos = GetMousePosition();
+            Vector2 currentThrowVec = GetThrowVector(playerPos, currentMousePos);
+            
+            ShowSight(currentThrowVec);
+        }
         
         // If the code has been through the above two blocks (ie. left button has been pressed and held down)
         // and been released we start the actual axe throw
@@ -70,11 +84,14 @@ public class Player : MonoBehaviour
         {
             _mouseHeldDown = false;
             _gm.axeIsSeperated = true;
+            sight.SetActive(false);
 
+            Vector2 playerPos = transform.position;
             Vector2 newMousePos = GetMousePosition();
+            Vector2 throwVec = GetThrowVector(playerPos, newMousePos);
             
             // Reference the axe and apply the speed based on the aim vector
-            _axeThrow.ApplyAxeSpeed(GetThrowVector(transform.position, newMousePos));
+            _axeThrow.ApplyAxeSpeed(throwVec);
         }
     }
 
@@ -107,9 +124,9 @@ public class Player : MonoBehaviour
     
     private bool IsGrounded()
     {
-        LayerMask mask = LayerMask.GetMask("Surface");
+        LayerMask wantedMask = LayerMask.GetMask("Surface");
         
-        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, mask);
+        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, wantedMask);
     }
 
     private bool IsAiming()
@@ -122,9 +139,23 @@ public class Player : MonoBehaviour
             if (!hit.collider)
                 return false;
 
+            // Method will only return true if left mouse is clicking on the player, else everything is false
             if (hit.collider.CompareTag("Player"))
                 return true;
         }
         return false;
+    }
+
+    private void ShowSight(Vector2 throwVec)
+    {
+        // Shorten the throw vector, with a scale
+        float sightLengthScale = 3f;
+        throwVec = throwVec.normalized * sightLengthScale;
+        
+        Vector2 playerPos = transform.position;
+        
+        // Calculate the position with player position and throw vector and activate the sight
+        sight.transform.position = playerPos + throwVec;
+        sight.SetActive(true);
     }
 }
