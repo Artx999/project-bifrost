@@ -2271,8 +2271,6 @@ MonoBehaviour:
   gameManager: {fileID: 1237017558}
   axe: {fileID: 1181463491}
   sight: {fileID: 980983156}
-  friction: 4
-  walkSpeed: 5
 --- !u!212 &944019664
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3370,6 +3368,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e472f1329c9fb9f4ba07abd185bcc7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerWallFriction: 4
+  playerWalkSpeed: 4
   maxAxeThrowMag: 4
   minAxeThrowMag: 1
   axeSpeedAmp: 4
