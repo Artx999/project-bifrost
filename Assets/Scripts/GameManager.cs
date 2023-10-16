@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public float maxAxeThrowMag;
+    public float minAxeThrowMag;
+    public float axeSpeedAmp;
     public bool axeIsSeperated;
     
     // Start is called before the first frame update

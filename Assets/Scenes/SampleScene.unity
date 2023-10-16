@@ -3099,9 +3099,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1237017557}
   player: {fileID: 944019663}
-  maxVecMagnitude: 3
-  minVecMagnitude: 0.5
-  axeSpeedAmp: 5
 --- !u!212 &1181463494
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3355,7 +3352,7 @@ GameObject:
   - component: {fileID: 1237017559}
   - component: {fileID: 1237017558}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: Game Manager
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3373,6 +3370,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e472f1329c9fb9f4ba07abd185bcc7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxAxeThrowMag: 3
+  minAxeThrowMag: 1
+  axeSpeedAmp: 4
   axeIsSeperated: 0
 --- !u!4 &1237017559
 Transform:

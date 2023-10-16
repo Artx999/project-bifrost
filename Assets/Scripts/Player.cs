@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
             return;
         
         // If the left button is pressed start the throw mechanic here
-        if (IsAiming() && !_mouseHeldDown)
+        if (IsAiming() && IsGrounded() && !_mouseHeldDown)
         {
             _mouseHeldDown = true;
             
@@ -146,16 +146,25 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    private void ShowSight(Vector2 throwVec)
+    private void ShowSight(Vector2 inputVec)
     {
+        // If the aim vector is too short for a throw, dont show the dot
+        var vecMagnitude = inputVec.magnitude;
+
+        if (vecMagnitude < _gm.minAxeThrowMag)
+        {
+            sight.SetActive(false);
+            return;
+        }
+        
         // Shorten the throw vector, with a scale
         float sightLengthScale = 3f;
-        throwVec = throwVec.normalized * sightLengthScale;
+        inputVec = inputVec.normalized * sightLengthScale;
         
         Vector2 playerPos = transform.position;
         
         // Calculate the position with player position and throw vector and activate the sight
-        sight.transform.position = playerPos + throwVec;
+        sight.transform.position = playerPos + inputVec;
         sight.SetActive(true);
     }
 
