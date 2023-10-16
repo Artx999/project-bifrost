@@ -123,8 +123,12 @@ public class Player : MonoBehaviour
     private bool IsGrounded()
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
+
+        Vector2 playerPos = transform.position;
         
-        return Physics2D.Raycast(transform.position, Vector2.down, _cc.radius, desiredMask);
+        Debug.DrawLine(playerPos, playerPos + Vector2.down * _cc.radius, Color.red);
+        
+        return Physics2D.Raycast(playerPos, Vector2.down, _cc.radius, desiredMask);
     }
 
     private bool IsAiming()
