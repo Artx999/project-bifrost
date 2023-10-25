@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         /* Walk */
+        Debug.Log(IsGrounded());
         if (!_gm.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
         {
             float xMovement = Input.GetAxisRaw("Horizontal");
