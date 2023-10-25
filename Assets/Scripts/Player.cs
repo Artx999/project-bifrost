@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 
     private GameManager _gm;
     private Rigidbody2D _rb;
-    private CircleCollider2D _cc;
+    private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
     private Rigidbody2D _axeRb;
     private bool _mouseHeldDown;
@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
         // Initialize variables
         _gm = gameManager.GetComponent<GameManager>();
         _rb = GetComponent<Rigidbody2D>();
-        _cc = GetComponent<CircleCollider2D>();
+        _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _axeRb = axe.GetComponent<Rigidbody2D>();
         _mouseHeldDown = _gm.axeIsSeperated = false;
@@ -124,12 +124,7 @@ public class Player : MonoBehaviour
     private bool IsGrounded()
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
-
-        Vector2 playerPos = transform.position;
-        
-        Debug.DrawLine(playerPos, playerPos + Vector2.down * _cc.radius, Color.red);
-        
-        return Physics2D.Raycast(playerPos, Vector2.down, _cc.radius, desiredMask);
+        return Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0f, Vector2.down, .1f, desiredMask);
     }
 
     private bool IsAiming()

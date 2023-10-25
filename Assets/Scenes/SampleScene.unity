@@ -10000,7 +10000,7 @@ GameObject:
   - component: {fileID: 1107668412}
   - component: {fileID: 1107668411}
   - component: {fileID: 1107668410}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Terrain
   m_TagString: Surface
   m_Icon: {fileID: 0}
