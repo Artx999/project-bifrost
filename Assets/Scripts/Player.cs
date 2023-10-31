@@ -12,47 +12,44 @@ public class Player : MonoBehaviour
     public GameObject axe;
     public GameObject sight;
 
-    private GameManager _gm;
-    private Rigidbody2D _rb;
+    private GameManager _gameManager;
+    private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
-    private Rigidbody2D _axeRb;
+    private Rigidbody2D _axeRigidbody;
     private bool _mouseHeldDown;
+    
+    private float _directionX;
+    public float movementSpeed = 1f;
     
     private void Start()
     {
         // Initialize variables
-        _gm = gameManager.GetComponent<GameManager>();
-        _rb = GetComponent<Rigidbody2D>();
+        _gameManager = gameManager.GetComponent<GameManager>();
+        _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
-        _axeRb = axe.GetComponent<Rigidbody2D>();
-        _mouseHeldDown = _gm.axeIsSeperated = false;
+        _axeRigidbody = axe.GetComponent<Rigidbody2D>();
+        _mouseHeldDown = _gameManager.axeIsSeperated = false;
         sight.SetActive(false);
     }
 
     private void Update()
     {
-        /* Walk */
-        Debug.Log(IsGrounded());
-        if (!_gm.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
-        {
-            float xMovement = Input.GetAxisRaw("Horizontal");
-            _rb.velocity = new Vector2(xMovement, 0) * _gm.playerWalkSpeed;
-        }
+        Walk();
         
         /* Move to axe */
         // Temporary: Right click to move there, in future this will be a rope mechanic
-        if(_axeRb.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
+        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
         {
             transform.position = axe.transform.position;
-            _rb.velocity = Vector2.zero;
-            _gm.axeIsSeperated = false;
+            _rigidbody.velocity = Vector2.zero;
+            _gameManager.axeIsSeperated = false;
         }
         
         /* Axe throw */
         // If the axe is thrown, we dont want to repeat the throw mechanic below
-        if (_gm.axeIsSeperated)
+        if (_gameManager.axeIsSeperated)
             return;
         
         // If the left button is pressed start the throw mechanic here
@@ -61,7 +58,7 @@ public class Player : MonoBehaviour
             _mouseHeldDown = true;
             
             // Stop the players movement completely while aiming
-            _rb.velocity = Vector2.zero;
+            _rigidbody.velocity = Vector2.zero;
         }
 
         // While the player is holding down the mouse button (ie. aiming), we show a simple sight in form
@@ -82,7 +79,7 @@ public class Player : MonoBehaviour
         else if(_mouseHeldDown)
         {
             _mouseHeldDown = false;
-            _gm.axeIsSeperated = true;
+            _gameManager.axeIsSeperated = true;
             sight.SetActive(false);
 
             Vector2 playerPos = transform.position;
@@ -94,11 +91,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void Walk()
+    {
+        /* Walk */
+        if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
+        {
+            _directionX = Input.GetAxisRaw("Horizontal");
+            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
+        }
+    }
+
     private void OnCollisionStay2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            _rb.AddForce(Vector2.up * _gm.playerWallFriction, ForceMode2D.Force);
+            _rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
         }
     }
 
@@ -149,7 +156,7 @@ public class Player : MonoBehaviour
         // If the aim vector is too short for a throw, dont show the dot
         var inputVecMag = inputVec.magnitude;
 
-        if (inputVecMag < _gm.minAxeThrowMag)
+        if (inputVecMag < _gameManager.minAxeThrowMag)
         {
             sight.SetActive(false);
             return;
@@ -157,7 +164,7 @@ public class Player : MonoBehaviour
         
         // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
         // the vector magnitude based on the defined max magnitude from GM
-        var newMag = Math.Min(_gm.maxAxeThrowMag, inputVecMag);
+        var newMag = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
         inputVec = inputVec.normalized * newMag;
         
         Vector2 playerPos = transform.position;
@@ -170,6 +177,6 @@ public class Player : MonoBehaviour
 
     public void CancelThrow()
     {
-        _gm.axeIsSeperated = false;
+        _gameManager.axeIsSeperated = false;
     }
 }
