@@ -10,18 +10,18 @@ public class Axe : MonoBehaviour
     public GameObject gameManager;
     public Player player;
     
-    private Rigidbody2D _rb;
-    private GameManager _gm;
-    private Vector2 _movementVec;
+    private Rigidbody2D _rigidbody;
+    private GameManager _gameManager;
+    private Vector2 _movementVector;
     
     // Start is called before the first frame update
     private void Start()
     {
         // Initialize variables
-        _rb = GetComponent<Rigidbody2D>();
-        _gm = gameManager.GetComponent<GameManager>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _gameManager = gameManager.GetComponent<GameManager>();
         
-        _rb.gravityScale = 0f;
+        _rigidbody.gravityScale = 0f;
         GetComponent<BoxCollider2D>().enabled = false;
     }
 
@@ -29,7 +29,7 @@ public class Axe : MonoBehaviour
     {
         // If the axe is on the player, the axe should follow the player around
         // the moment the axe is thrown, the collider is activated
-        if (!_gm.axeIsSeperated)
+        if (!_gameManager.axeIsSeperated)
             transform.position = player.transform.position;
         else
             GetComponent<BoxCollider2D>().enabled = true;
@@ -40,7 +40,7 @@ public class Axe : MonoBehaviour
         // If the throw vector is too short, we cancel the throw
         var inputVecMag = inputVec.magnitude;
 
-        if (inputVecMag < _gm.minAxeThrowMag)
+        if (inputVecMag < _gameManager.minAxeThrowMag)
         {
             player.CancelThrow();
             
@@ -48,14 +48,14 @@ public class Axe : MonoBehaviour
         }
         
         // If a successful throw, apply gravity
-        _rb.gravityScale = 1f;
+        _rigidbody.gravityScale = 1f;
         
         // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
-        float realSpeed = Math.Min(_gm.maxAxeThrowMag, inputVecMag);
-        _movementVec = inputVec.normalized * (realSpeed * _gm.axeSpeedAmp);
+        float realSpeed = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
+        _movementVector = inputVec.normalized * (realSpeed * _gameManager.axeSpeedAmp);
         
         // Lastly, we add a force and let gravity do its thing
-        _rb.AddForce(_movementVec, ForceMode2D.Impulse);
+        _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -64,8 +64,8 @@ public class Axe : MonoBehaviour
         {
             // Stop the axe and its gravity, as it is stuck in the surface
             Debug.Log("Hit surface!");
-            _rb.velocity = Vector2.zero;
-            _rb.gravityScale = 0f;
+            _rigidbody.velocity = Vector2.zero;
+            _rigidbody.gravityScale = 0f;
         }
     }
 }
