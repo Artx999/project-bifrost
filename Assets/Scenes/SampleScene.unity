@@ -40263,7 +40263,6 @@ GameObject:
   - component: {fileID: 800802506}
   - component: {fileID: 800802509}
   - component: {fileID: 800802505}
-  - component: {fileID: 800802510}
   - component: {fileID: 800802504}
   - component: {fileID: 800802508}
   m_Layer: 0
@@ -40442,41 +40441,7 @@ MonoBehaviour:
   axe: {fileID: 257493857}
   sight: {fileID: 1657688182}
   movementSpeed: 5
---- !u!58 &800802510
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 800802503}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.008802891, y: -0.034122944}
-  serializedVersion: 2
-  m_Radius: 1.0626438
+  ropeSpeed: 0.2
 --- !u!1 &1107668405
 GameObject:
   m_ObjectHideFlags: 0
