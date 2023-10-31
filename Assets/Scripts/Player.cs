@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     
     private float _directionX;
     public float movementSpeed = 1f;
+    public float ropeSpeed = 1f;
     
     private void Start()
     {
@@ -98,29 +99,14 @@ public class Player : MonoBehaviour
     {
         /* Move to axe */
         // Temporary: Right click to move there, in future this will be a rope mechanic
-        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
+        if(Input.GetMouseButton(1))
         {
-            var oldVal = transform.position;
+            var position = transform.position;
+            var axePosition = axe.transform.position;
             
-            var axeDiff = axe.transform.position - transform.position;
-            if (axeDiff.x > 0f)
-            {
-                transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-            }
-            else if (axeDiff.x < 0f)
-            {
-                transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-            }
-
-            if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-            {
-                transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-            }
-            
-            Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-            
-            _rigidbody.velocity = Vector2.zero;
-            _gameManager.axeIsSeperated = false;
+            Debug.DrawLine(position, axePosition, Color.black, 3f);
+            _rigidbody.AddForce((axePosition - position) * ropeSpeed);
+            //transform.position = Vector2.MoveTowards(position, axePosition, Time.deltaTime * ropeSpeed);
         }
     }
 
