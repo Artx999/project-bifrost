@@ -7,7 +7,7 @@ public class Rope : MonoBehaviour
 
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
-    private float ropeSegLen = 0.25f;
+    private float _ropeSegLen = 0.25f;
     private int _segmentLength = 35;
     private float _lineWidth = 0.1f;
 
@@ -20,7 +20,7 @@ public class Rope : MonoBehaviour
         for (int i = 0; i < _segmentLength; i++)
         {
             this._ropeSegments.Add(new RopeSegment(ropeStartPoint));
-            ropeStartPoint.y -= ropeSegLen;
+            ropeStartPoint.y -= _ropeSegLen;
         }
     }
 
@@ -70,7 +70,7 @@ public class Rope : MonoBehaviour
             RopeSegment secondSeg = this._ropeSegments[i + 1];
 
             float dist = (firstSeg.posNow - secondSeg.posNow).magnitude;
-            float error = dist - this.ropeSegLen;
+            float error = dist - this._ropeSegLen;
             Vector2 changeDir = (firstSeg.posNow - secondSeg.posNow).normalized;
             
             Vector2 changeAmount = changeDir * error;
