@@ -70,17 +70,9 @@ public class Rope : MonoBehaviour
             RopeSegment secondSeg = this._ropeSegments[i + 1];
 
             float dist = (firstSeg.posNow - secondSeg.posNow).magnitude;
-            float error = Mathf.Abs(dist - this.ropeSegLen);
-            Vector2 changeDir = Vector2.zero;
-
-            if (dist > ropeSegLen)
-            {
-                changeDir = (firstSeg.posNow - secondSeg.posNow).normalized;
-            } else if (dist < ropeSegLen)
-            {
-                changeDir = (secondSeg.posNow - firstSeg.posNow).normalized;
-            }
-
+            float error = dist - this.ropeSegLen;
+            Vector2 changeDir = (firstSeg.posNow - secondSeg.posNow).normalized;
+            
             Vector2 changeAmount = changeDir * error;
             if (i != 0)
             {
