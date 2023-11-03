@@ -40441,7 +40441,8 @@ MonoBehaviour:
   axe: {fileID: 257493857}
   sight: {fileID: 1657688182}
   movementSpeed: 5
-  ropeSpeed: 0.2
+  ropeSpeed: 5
+  ropeMaxLength: 4
 --- !u!1 &1107668405
 GameObject:
   m_ObjectHideFlags: 0

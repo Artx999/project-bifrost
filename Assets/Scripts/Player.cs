@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     private float _directionX;
     public float movementSpeed = 1f;
     public float ropeSpeed = 1f;
+    public float ropeMaxLength = 1f;
+    private float ropeLength = 0f;
     
     private void Start()
     {
@@ -97,17 +99,27 @@ public class Player : MonoBehaviour
 
     private void TeleportToAxe()
     {
-        /* Move to axe */
-        // Temporary: Right click to move there, in future this will be a rope mechanic
+        var position = transform.position;
+        var axePosition = axe.transform.position;
+        var axeDiff = axePosition - position;
+        
+        // Allow player to pull towards axe
         if(Input.GetMouseButton(1))
         {
-            var position = transform.position;
-            var axePosition = axe.transform.position;
-            
             Debug.DrawLine(position, axePosition, Color.black, 3f);
-            _rigidbody.AddForce((axePosition - position) * ropeSpeed);
+            _rigidbody.AddForce(axeDiff.normalized * ropeSpeed);
+            
             //transform.position = Vector2.MoveTowards(position, axePosition, Time.deltaTime * ropeSpeed);
         }
+        
+        // Pull towards axe when rope is tight
+        if (ropeLength > ropeMaxLength)
+        {
+            _rigidbody.AddForce(axeDiff.normalized * ropeSpeed);
+        }
+        
+        ropeLength = axeDiff.magnitude;
+        Debug.Log(ropeLength);
     }
 
     private void OnCollisionStay2D(Collision2D other)
