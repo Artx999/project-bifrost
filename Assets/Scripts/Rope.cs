@@ -73,17 +73,17 @@ public class Rope : MonoBehaviour
 
             if (distance > _ropeSegmentLength)
             {
-                changeDirection = (firstSegment.CurrentPosition - secondRopeSegment.CurrentPosition).normalized;
+                changeDirection = (firstRopeSegment.CurrentPosition - secondRopeSegment.CurrentPosition).normalized;
             } else if (distance < _ropeSegmentLength)
             {
-                changeDirection = (secondRopeSegment.CurrentPosition - firstSegment.CurrentPosition).normalized;
+                changeDirection = (secondRopeSegment.CurrentPosition - firstRopeSegment.CurrentPosition).normalized;
             }
 
             Vector2 changeAmount = changeDirection * error;
             if (i != 0)
             {
-                firstSegment.CurrentPosition -= changeAmount * .5f;
-                this._ropeSegments[i] = firstSegment;
+                firstRopeSegment.CurrentPosition -= changeAmount * .5f;
+                this._ropeSegments[i] = firstRopeSegment;
                 secondRopeSegment.CurrentPosition += changeAmount * .5f;
                 this._ropeSegments[i + 1] = secondRopeSegment;
             }
