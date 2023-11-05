@@ -7,8 +7,11 @@ public class Rope : MonoBehaviour
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
     private float _ropeSegmentLength = .25f;
-    private int _segmentLength = 35;
+    private int _segmentLength = 25;
     private float _lineWidth = .1f;
+    
+    private EdgeCollider2D _edgeCollider;
+
     
     // Start is called before the first frame update
     void Start()
@@ -21,12 +24,15 @@ public class Rope : MonoBehaviour
             this._ropeSegments.Add(new RopeSegment(startPoint));
             startPoint.y -= _ropeSegmentLength;
         }
+        
+        _edgeCollider = this.GetComponent<EdgeCollider2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
         this.DrawRope();
+        this.SetEdgeCollider(_lineRenderer);
     }
 
     private void FixedUpdate()
@@ -121,5 +127,18 @@ public class Rope : MonoBehaviour
             this.CurrentPosition = position;
             this.OldPosition = position;
         }
+    }
+    
+    void SetEdgeCollider(LineRenderer lineRenderer)
+    {
+        List<Vector2> edges = new List<Vector2>();
+
+        for(int point = 0; point<lineRenderer.positionCount; point++)
+        {
+            Vector3 lineRendererPoint = lineRenderer.GetPosition(point);
+            edges.Add(new Vector2(lineRendererPoint.x -2.65f, lineRendererPoint.y -2.2f));
+        }
+
+        _edgeCollider.SetPoints(edges);
     }
 }
