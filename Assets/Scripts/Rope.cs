@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class Rope : MonoBehaviour
 {
-    public GameObject axe;
     public GameObject gameManager;
+    public GameObject player;
+    public GameObject axe;
 
     private GameManager _gameManager;
     private LineRenderer _lineRenderer;
@@ -16,21 +17,18 @@ public class Rope : MonoBehaviour
     private float _ropeWidth = 0.1f;
 
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         _gameManager = gameManager.GetComponent<GameManager>();
         _lineRenderer = GetComponent<LineRenderer>();
         
-        InitRopeSegments(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        InitRopeSegments(player.transform.position);
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if (_gameManager.axeIsSeperated)
-        {
-            DrawRope();
-        }
+        DrawRope();
     }
 
     private void FixedUpdate()
@@ -38,6 +36,10 @@ public class Rope : MonoBehaviour
         if (_gameManager.axeIsSeperated)
         {
             SimulateRope();
+        }
+        else
+        {
+            SimulateHiddenRope(player.transform.position);
         }
     }
 
@@ -65,7 +67,6 @@ public class Rope : MonoBehaviour
                 2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * optimizedGravity;
             currentSegment.posOld = tempVec;
             _ropeSegments[i] = currentSegment;
-            
         }
 
         //CONSTRAINTS
@@ -133,7 +134,16 @@ public class Rope : MonoBehaviour
         for (var i = 0; i < _segmentsCount; i++)
         {
             _ropeSegments.Add(new RopeSegment(currentSegment));
-            currentSegment.y -= _segmentLength;
+        }
+    }
+
+    private void SimulateHiddenRope(Vector2 hookPosition)
+    {
+        var ropeSegment = new RopeSegment(hookPosition);
+        
+        for(var i = 0; i < _segmentsCount; i++)
+        {
+            _ropeSegments[i] = ropeSegment;
         }
     }
 

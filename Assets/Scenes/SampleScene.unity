@@ -40508,8 +40508,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c629d1c12dbccd41a1fb1a3da5a3693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axe: {fileID: 257493857}
+  gameManager: {fileID: 1589176991}
   player: {fileID: 800802503}
+  axe: {fileID: 257493857}
 --- !u!120 &980413341
 LineRenderer:
   serializedVersion: 2
@@ -43777,9 +43778,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
+  - {fileID: 1546394830}
   - {fileID: 1589176993}
   - {fileID: 800802507}
   - {fileID: 257493862}
   - {fileID: 1354612693}
-  - {fileID: 1546394830}
   - {fileID: 980413342}
