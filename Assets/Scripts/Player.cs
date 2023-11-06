@@ -11,12 +11,14 @@ public class Player : MonoBehaviour
     public GameManager gameManager;
     public GameObject axe;
     public GameObject sight;
+    public GameObject rope;
 
     private GameManager _gameManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
     private Rigidbody2D _axeRigidbody;
+    private Rope _rope;
     private bool _mouseHeldDown;
     
     private float _directionX;
@@ -30,6 +32,7 @@ public class Player : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _axeRigidbody = axe.GetComponent<Rigidbody2D>();
+        _rope = rope.GetComponent<Rope>();
         _mouseHeldDown = _gameManager.axeIsSeperated = false;
         sight.SetActive(false);
     }
@@ -43,7 +46,16 @@ public class Player : MonoBehaviour
         /* Axe throw */
         // If the axe is thrown, we dont want to repeat the throw mechanic below
         if (_gameManager.axeIsSeperated)
+        {
+            _rigidbody.gravityScale = 0f;
+            
+            var followPosition = _rope.GetRopeEndPosition();
+            transform.position = followPosition;
+            
             return;
+        }
+
+        _rigidbody.gravityScale = 1f;
         
         // If the left button is pressed start the throw mechanic here
         if (IsAiming() && IsGrounded() && !_mouseHeldDown)
@@ -98,11 +110,12 @@ public class Player : MonoBehaviour
     {
         /* Move to axe */
         // Temporary: Right click to move there, in future this will be a rope mechanic
+        
         if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
         {
             var oldVal = transform.position;
             
-            var axeDiff = axe.transform.position - transform.position;
+            var axeDiff = axe.transform.position - oldVal;
             if (axeDiff.x > 0f)
             {
                 transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
