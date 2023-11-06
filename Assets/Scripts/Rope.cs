@@ -136,7 +136,7 @@ public class Rope : MonoBehaviour
         for(int point = 0; point<lineRenderer.positionCount; point++)
         {
             Vector3 lineRendererPoint = lineRenderer.GetPosition(point);
-            edges.Add(new Vector2(lineRendererPoint.x -2.65f, lineRendererPoint.y -2.2f));
+            edges.Add(new Vector2(lineRendererPoint.x, lineRendererPoint.y));
         }
 
         _edgeCollider.SetPoints(edges);
