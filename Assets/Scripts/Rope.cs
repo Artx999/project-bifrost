@@ -28,16 +28,18 @@ public class Rope : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        // TODO: Find alternate way to draw the rope when axe is not seperated
         DrawRope();
     }
 
     private void FixedUpdate()
     {
+        // Whenever the axe is seperated, the rope should show to connect the axe and the player
         if (_gameManager.axeIsSeperated)
         {
             SimulateRope();
         }
-        else
+        else // Whenever the axe is NOT seperated, the rope should not show
         {
             SimulateHiddenRope(player.transform.position);
         }
@@ -71,6 +73,7 @@ public class Rope : MonoBehaviour
         }
 
         //CONSTRAINTS
+        // Times the constraint method should execute. The larger, the better rope, but more expensive
         var constraintDepth = 100;
         var inputVec1 = axe.transform.position;
         
@@ -113,6 +116,7 @@ public class Rope : MonoBehaviour
         }
     }
 
+    // Draws rope based on the current positions of the segments, from the list
     private void DrawRope()
     {
         _lineRenderer.startWidth = _ropeWidth;
@@ -128,6 +132,7 @@ public class Rope : MonoBehaviour
         _lineRenderer.SetPositions(ropePositions);
     }
 
+    // Initializes the rope segment list
     private void InitRopeSegments(Vector2 hookPosition)
     {
         var currentSegment = hookPosition;
@@ -138,6 +143,8 @@ public class Rope : MonoBehaviour
         }
     }
 
+    // Less expensive simulation for when the rope is not visible
+    // It makes sure the rope is tucked inside player, hiding it
     private void SimulateHiddenRope(Vector2 hookPosition)
     {
         var ropeSegment = new RopeSegment(hookPosition);
@@ -148,11 +155,13 @@ public class Rope : MonoBehaviour
         }
     }
 
+    // Public method that returns the last segment
     public Vector2 GetRopeEndPosition()
     {
         return _ropeSegments.Count <= 0 ? Vector2.zero : _ropeSegments[_segmentsCount - 1].posNow;
     }
     
+    // Struct that stores the old and current position for Verlet Integration
     private struct RopeSegment
     {
         public Vector2 posNow;
