@@ -62,9 +62,10 @@ public class Rope : MonoBehaviour
             // Actual Verlet Integration, but the acceleration for both of these methods is very different
             var currentSegment = _ropeSegments[i];
             var tempVec = currentSegment.posNow;
-            var optimizedGravity = Physics2D.gravity * 1f;
+            var totalAcceleration = Physics2D.gravity;
+            
             currentSegment.posNow =
-                2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * optimizedGravity;
+                2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * totalAcceleration;
             currentSegment.posOld = tempVec;
             _ropeSegments[i] = currentSegment;
         }
