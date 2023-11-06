@@ -1,119 +1,142 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Rope : MonoBehaviour
 {
-
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
-    private float _ropeSegLen = 0.25f;
-    private int _segmentLength = 35;
-    private float _lineWidth = 0.1f;
+    private float _segmentLength = 0.25f;
+    private int _segmentsCount = 35;
+    private float _ropeWidth = 0.1f;
+
+    // private Vector2 _ropeGravity = new Vector2(0f, -10f);
 
     // Use this for initialization
     void Start()
     {
-        this._lineRenderer = this.GetComponent<LineRenderer>();
-        Vector3 ropeStartPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        for (int i = 0; i < _segmentLength; i++)
-        {
-            this._ropeSegments.Add(new RopeSegment(ropeStartPoint));
-            ropeStartPoint.y -= _ropeSegLen;
-        }
+        _lineRenderer = GetComponent<LineRenderer>();
+        InitRopeSegments(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     // Update is called once per frame
     void Update()
     {
-        this.DrawRope();
+        DrawRope();
     }
 
     private void FixedUpdate()
     {
-        this.Simulate();
+        SimulateRope();
     }
 
-    private void Simulate()
+    private void SimulateRope()
     {
         // SIMULATION
-        Vector2 forceGravity = new Vector2(0f, -1.5f);
-
-        for (int i = 1; i < this._segmentLength; i++)
+        for (var i = 0; i < _segmentsCount; i++)
         {
-            RopeSegment firstSegment = this._ropeSegments[i];
-            Vector2 velocity = firstSegment.posNow - firstSegment.posOld;
-            firstSegment.posOld = firstSegment.posNow;
-            firstSegment.posNow += velocity;
-            firstSegment.posNow += forceGravity * Time.fixedDeltaTime;
-            this._ropeSegments[i] = firstSegment;
+            /*
+            RopeSegment currentSegment = _ropeSegments[i];
+             
+            Vector2 velocity = currentSegment.posNow - currentSegment.posOld;
+            currentSegment.posOld = currentSegment.posNow;
+            currentSegment.posNow += velocity;
+            currentSegment.posNow += _ropeGravity * Time.fixedDeltaTime;
+            
+            _ropeSegments[i] = currentSegment;
+            */
+            
+            // Actual Verlet Integration, but the acceleration for both of these methods is very different
+            var currentSegment = _ropeSegments[i];
+            var tempVec = currentSegment.posNow;
+            var optimizedGravity = Physics2D.gravity * 5f;
+            currentSegment.posNow =
+                2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * optimizedGravity;
+            currentSegment.posOld = tempVec;
+            _ropeSegments[i] = currentSegment;
+            
         }
 
         //CONSTRAINTS
-        for (int i = 0; i < 50; i++)
+        var constraintDepth = 100;
+        var inputVec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        
+        for (var i = 0; i < constraintDepth; i++)
         {
-            this.ApplyConstraint();
+            ApplyConstraint(inputVec);
         }
     }
 
-    private void ApplyConstraint()
+    private void ApplyConstraint(Vector2 hookPosition)
     {
-        //Constrant to Mouse
-        RopeSegment firstSegment = this._ropeSegments[0];
-        firstSegment.posNow = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        this._ropeSegments[0] = firstSegment;
+        //Constraint to hookPosition
+        var firstSegment = _ropeSegments[0];
+        firstSegment.posNow = hookPosition;
+        _ropeSegments[0] = firstSegment;
 
-        for (int i = 0; i < this._segmentLength - 1; i++)
+        // Keep length between points in rope constant to avoid stretching
+        for (var i = 0; i < _segmentsCount - 1; i++)
         {
-            RopeSegment firstSeg = this._ropeSegments[i];
-            RopeSegment secondSeg = this._ropeSegments[i + 1];
+            var currentSegment = _ropeSegments[i];
+            var nextSegment = _ropeSegments[i + 1];
 
-            float dist = (firstSeg.posNow - secondSeg.posNow).magnitude;
-            float error = dist - this._ropeSegLen;
-            Vector2 changeDir = (firstSeg.posNow - secondSeg.posNow).normalized;
+            var distance = (currentSegment.posNow - nextSegment.posNow).magnitude;
+            var error = distance - _segmentLength;
+            var changeDirection = (currentSegment.posNow - nextSegment.posNow).normalized;
+            var changeAmount = changeDirection * (error * 0.5f);
+
+            if (i == 0)
+            {
+                nextSegment.posNow += 2 * changeAmount;
+                _ropeSegments[i + 1] = nextSegment;
+                
+                continue;
+            }
             
-            Vector2 changeAmount = changeDir * error;
-            if (i != 0)
-            {
-                firstSeg.posNow -= changeAmount * 0.5f;
-                this._ropeSegments[i] = firstSeg;
-                secondSeg.posNow += changeAmount * 0.5f;
-                this._ropeSegments[i + 1] = secondSeg;
-            }
-            else
-            {
-                secondSeg.posNow += changeAmount;
-                this._ropeSegments[i + 1] = secondSeg;
-            }
+            currentSegment.posNow -= changeAmount;
+            _ropeSegments[i] = currentSegment;
+            nextSegment.posNow += changeAmount;
+            _ropeSegments[i + 1] = nextSegment;
+        
         }
     }
 
     private void DrawRope()
     {
-        float _lineWidth = this._lineWidth;
-        _lineRenderer.startWidth = _lineWidth;
-        _lineRenderer.endWidth = _lineWidth;
+        _lineRenderer.startWidth = _ropeWidth;
+        _lineRenderer.endWidth = _ropeWidth;
 
-        Vector3[] ropePositions = new Vector3[this._segmentLength];
-        for (int i = 0; i < this._segmentLength; i++)
+        var ropePositions = new Vector3[_segmentsCount];
+        for (var i = 0; i < _segmentsCount; i++)
         {
-            ropePositions[i] = this._ropeSegments[i].posNow;
+            ropePositions[i] = _ropeSegments[i].posNow;
         }
 
         _lineRenderer.positionCount = ropePositions.Length;
         _lineRenderer.SetPositions(ropePositions);
     }
 
-    public struct RopeSegment
+    private void InitRopeSegments(Vector2 hookPosition)
+    {
+        var currentSegment = hookPosition;
+
+        for (var i = 0; i < _segmentsCount; i++)
+        {
+            _ropeSegments.Add(new RopeSegment(currentSegment));
+            currentSegment.y -= _segmentLength;
+        }
+    }
+    
+    private struct RopeSegment
     {
         public Vector2 posNow;
         public Vector2 posOld;
 
         public RopeSegment(Vector2 pos)
         {
-            this.posNow = pos;
-            this.posOld = pos;
+            posNow = pos;
+            posOld = pos;
         }
     }
 }
