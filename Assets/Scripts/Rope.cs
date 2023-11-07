@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Rope : MonoBehaviour
 {
+    // PUBLIC
     public GameObject gameManager;
     public GameObject player;
     public GameObject axe;
@@ -13,21 +15,25 @@ public class Rope : MonoBehaviour
     public int segmentsCount = 35;
     public float ropeWidth = 0.1f;
     
+    // PRIVATE
     private GameManager _gameManager;
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments;
-
-    // Use this for initialization
+    
+    public TilemapCollider2D test;
+    
     private void Start()
     {
+        // Initialization
         _gameManager = gameManager.GetComponent<GameManager>();
         _lineRenderer = GetComponent<LineRenderer>();
         _ropeSegments = new List<RopeSegment>();
         
         InitRopeSegments(player.transform.position);
+        
+        
     }
 
-    // Update is called once per frame
     private void Update()
     {
         // TODO: Find alternate way to draw the rope when axe is not seperated
@@ -71,6 +77,22 @@ public class Rope : MonoBehaviour
             currentSegment.posNow =
                 2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * totalAcceleration;
             currentSegment.posOld = tempVec;
+            
+            // Check for collision for that point
+            LayerMask mask = LayerMask.GetMask("Surface");
+            var vec = currentSegment.posNow - currentSegment.posOld;
+            var rayDirection = vec.normalized;
+            var rayDistance = vec.magnitude;
+            var ray = Physics2D.Raycast(currentSegment.posNow, rayDirection, rayDistance, mask);
+
+            if (ray.collider != null)
+            {
+                var hit = ray.point;
+                var newPos = (currentSegment.posNow - hit).normalized * _lineRenderer.startWidth;
+                currentSegment.posOld = currentSegment.posNow;
+                currentSegment.posNow = newPos;   
+            }
+            
             _ropeSegments[i] = currentSegment;
         }
 
