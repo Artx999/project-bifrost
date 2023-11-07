@@ -9,18 +9,20 @@ public class Rope : MonoBehaviour
     public GameObject player;
     public GameObject axe;
 
+    public float segmentLength = 0.25f;
+    public int segmentsCount = 35;
+    public float ropeWidth = 0.1f;
+    
     private GameManager _gameManager;
     private LineRenderer _lineRenderer;
-    private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
-    private float _segmentLength = 0.25f;
-    private int _segmentsCount = 35;
-    private float _ropeWidth = 0.1f;
+    private List<RopeSegment> _ropeSegments;
 
     // Use this for initialization
     private void Start()
     {
         _gameManager = gameManager.GetComponent<GameManager>();
         _lineRenderer = GetComponent<LineRenderer>();
+        _ropeSegments = new List<RopeSegment>();
         
         InitRopeSegments(player.transform.position);
     }
@@ -48,7 +50,7 @@ public class Rope : MonoBehaviour
     private void SimulateRope()
     {
         // SIMULATION
-        for (var i = 0; i < _segmentsCount; i++)
+        for (var i = 0; i < segmentsCount; i++)
         {
             /*
             RopeSegment currentSegment = _ropeSegments[i];
@@ -91,13 +93,13 @@ public class Rope : MonoBehaviour
         _ropeSegments[0] = firstSegment;
 
         // Keep length between points in rope constant to avoid stretching
-        for (var i = 0; i < _segmentsCount - 1; i++)
+        for (var i = 0; i < segmentsCount - 1; i++)
         {
             var currentSegment = _ropeSegments[i];
             var nextSegment = _ropeSegments[i + 1];
 
             var distance = (currentSegment.posNow - nextSegment.posNow).magnitude;
-            var error = distance - _segmentLength;
+            var error = distance - segmentLength;
             var changeDirection = (currentSegment.posNow - nextSegment.posNow).normalized;
             var changeAmount = changeDirection * (error * 0.5f);
 
@@ -119,11 +121,11 @@ public class Rope : MonoBehaviour
     // Draws rope based on the current positions of the segments, from the list
     private void DrawRope()
     {
-        _lineRenderer.startWidth = _ropeWidth;
-        _lineRenderer.endWidth = _ropeWidth;
+        _lineRenderer.startWidth = ropeWidth;
+        _lineRenderer.endWidth = ropeWidth;
 
-        var ropePositions = new Vector3[_segmentsCount];
-        for (var i = 0; i < _segmentsCount; i++)
+        var ropePositions = new Vector3[segmentsCount];
+        for (var i = 0; i < segmentsCount; i++)
         {
             ropePositions[i] = _ropeSegments[i].posNow;
         }
@@ -137,7 +139,7 @@ public class Rope : MonoBehaviour
     {
         var currentSegment = hookPosition;
 
-        for (var i = 0; i < _segmentsCount; i++)
+        for (var i = 0; i < segmentsCount; i++)
         {
             _ropeSegments.Add(new RopeSegment(currentSegment));
         }
@@ -149,7 +151,7 @@ public class Rope : MonoBehaviour
     {
         var ropeSegment = new RopeSegment(hookPosition);
         
-        for(var i = 0; i < _segmentsCount; i++)
+        for(var i = 0; i < segmentsCount; i++)
         {
             _ropeSegments[i] = ropeSegment;
         }
@@ -158,7 +160,7 @@ public class Rope : MonoBehaviour
     // Public method that returns the last segment
     public Vector2 GetRopeEndPosition()
     {
-        return _ropeSegments.Count <= 0 ? Vector2.zero : _ropeSegments[_segmentsCount - 1].posNow;
+        return _ropeSegments.Count <= 0 ? Vector2.zero : _ropeSegments[segmentsCount - 1].posNow;
     }
     
     // Struct that stores the old and current position for Verlet Integration
