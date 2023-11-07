@@ -30,8 +30,6 @@ public class Rope : MonoBehaviour
         _ropeSegments = new List<RopeSegment>();
         
         InitRopeSegments(player.transform.position);
-        
-        
     }
 
     private void Update()
@@ -43,7 +41,7 @@ public class Rope : MonoBehaviour
     private void FixedUpdate()
     {
         // Whenever the axe is seperated, the rope should show to connect the axe and the player
-        if (_gameManager.axeIsSeperated)
+        if (HideRopeCondition(_gameManager.axeIsSeperated))
         {
             SimulateRope();
         }
@@ -80,17 +78,30 @@ public class Rope : MonoBehaviour
             
             // Check for collision for that point
             LayerMask mask = LayerMask.GetMask("Surface");
-            var vec = currentSegment.posNow - currentSegment.posOld;
-            var rayDirection = vec.normalized;
-            var rayDistance = vec.magnitude;
-            var ray = Physics2D.Raycast(currentSegment.posNow, rayDirection, rayDistance, mask);
+            var velocity = currentSegment.posNow - currentSegment.posOld;
+            var velocityDirection = velocity.normalized;
+            var velocityDistance = velocity.magnitude;
+            var ray = 
+                Physics2D.Raycast(currentSegment.posOld, velocityDirection, velocityDistance, mask);
 
-            if (ray.collider != null)
+            if (ray.collider != null && i > 0)
             {
+                Debug.Log("Hey");
+                
                 var hit = ray.point;
-                var newPos = (currentSegment.posNow - hit).normalized * _lineRenderer.startWidth;
-                currentSegment.posOld = currentSegment.posNow;
-                currentSegment.posNow = newPos;   
+                var hitNormal = ray.normal;
+                
+                currentSegment.posNow = hit + hitNormal * ropeWidth;
+                var oldToHitVec = hit - currentSegment.posOld;
+                
+                var newOldPos =
+                    new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x, 
+                        currentSegment.posOld.y + 2 * oldToHitVec.y * -hitNormal.y);
+
+                var temp = (newOldPos - hit).normalized * velocityDistance;
+                newOldPos = hit + temp;
+                
+                currentSegment.posOld = newOldPos + hitNormal * ropeWidth;
             }
             
             _ropeSegments[i] = currentSegment;
@@ -177,6 +188,12 @@ public class Rope : MonoBehaviour
         {
             _ropeSegments[i] = ropeSegment;
         }
+    }
+    
+    // Mostly for debugging: If we want to drag rope, we should not hide the rope
+    private bool HideRopeCondition(bool shouldHideRope)
+    {
+        return shouldHideRope;
     }
 
     // Public method that returns the last segment
