@@ -86,19 +86,19 @@ public class Rope : MonoBehaviour
 
             if (ray.collider != null)
             {
-                var hit = ray.point;
+                var hitPos = ray.point;
                 var hitNormal = ray.normal;
 
-                var oldToHitVec = hit - currentSegment.posOld;
+                var oldToHitVec = hitPos - currentSegment.posOld;
                 var segmentWidthMove = (-oldToHitVec).normalized * ropeWidth;
-                currentSegment.posNow = hit + segmentWidthMove;
+                currentSegment.posNow = hitPos + segmentWidthMove;
 
                 var newOldPos =
                     new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x,
                         currentSegment.posOld.y + 2 * oldToHitVec.y * -hitNormal.y);
 
-                var temp = (newOldPos - hit).normalized * velocityDistance;
-                newOldPos = hit + temp;
+                var temp = (newOldPos - hitPos).normalized * velocityDistance;
+                newOldPos = hitPos + temp;
 
                 currentSegment.posOld = newOldPos + hitNormal * ropeWidth + segmentWidthMove;
             }
