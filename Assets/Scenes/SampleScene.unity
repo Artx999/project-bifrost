@@ -40511,6 +40511,10 @@ MonoBehaviour:
   gameManager: {fileID: 1589176991}
   player: {fileID: 800802503}
   axe: {fileID: 257493857}
+  segmentLength: 0.25
+  segmentsCount: 35
+  ropeWidth: 0.1
+  test: {fileID: 1107668412}
 --- !u!120 &980413341
 LineRenderer:
   serializedVersion: 2

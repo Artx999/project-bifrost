@@ -81,29 +81,28 @@ public class Rope : MonoBehaviour
             var velocity = currentSegment.posNow - currentSegment.posOld;
             var velocityDirection = velocity.normalized;
             var velocityDistance = velocity.magnitude;
-            var ray = 
+            var ray =
                 Physics2D.Raycast(currentSegment.posOld, velocityDirection, velocityDistance, mask);
 
-            if (ray.collider != null && i > 0)
+            if (ray.collider != null)
             {
-                Debug.Log("Hey");
-                
                 var hit = ray.point;
                 var hitNormal = ray.normal;
-                
-                currentSegment.posNow = hit + hitNormal * ropeWidth;
+
                 var oldToHitVec = hit - currentSegment.posOld;
-                
+                var segmentWidthMove = (-oldToHitVec).normalized * ropeWidth;
+                currentSegment.posNow = hit + segmentWidthMove;
+
                 var newOldPos =
-                    new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x, 
+                    new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x,
                         currentSegment.posOld.y + 2 * oldToHitVec.y * -hitNormal.y);
 
                 var temp = (newOldPos - hit).normalized * velocityDistance;
                 newOldPos = hit + temp;
-                
-                currentSegment.posOld = newOldPos + hitNormal * ropeWidth;
+
+                currentSegment.posOld = newOldPos + hitNormal * ropeWidth + segmentWidthMove;
             }
-            
+
             _ropeSegments[i] = currentSegment;
         }
 
@@ -115,6 +114,8 @@ public class Rope : MonoBehaviour
         for (var i = 0; i < constraintDepth; i++)
         {
             ApplyConstraint(inputVec1);
+            if(i % 2 == 0)
+                AdjustCollisions();
         }
     }
 
@@ -148,6 +149,43 @@ public class Rope : MonoBehaviour
             _ropeSegments[i] = currentSegment;
             nextSegment.posNow += changeAmount;
             _ropeSegments[i + 1] = nextSegment;
+        }
+    }
+
+    private void AdjustCollisions()
+    {
+        // Check for collision for that point
+        for (var i = 0; i < segmentsCount; i++)
+        {
+            var currentSegment = _ropeSegments[i];
+            LayerMask mask = LayerMask.GetMask("Surface");
+            var velocity = currentSegment.posNow - currentSegment.posOld;
+            var velocityDirection = velocity.normalized;
+            var velocityDistance = velocity.magnitude;
+            var ray =
+                Physics2D.Raycast(currentSegment.posOld, velocityDirection, velocityDistance, mask);
+
+            if (ray.collider != null)
+            {
+                var hit = ray.point;
+                var hitNormal = ray.normal;
+
+                var oldToHitVec = hit - currentSegment.posOld;
+                var segmentWidthMove = (-oldToHitVec).normalized * ropeWidth;
+                currentSegment.posNow = hit + segmentWidthMove;
+                currentSegment.posOld += segmentWidthMove;
+
+                var newOldPos =
+                    new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x,
+                        currentSegment.posOld.y + 2 * oldToHitVec.y * -hitNormal.y);
+
+                var temp = (newOldPos - hit).normalized * velocityDistance;
+                newOldPos = hit + temp;
+
+                currentSegment.posOld = newOldPos + hitNormal * ropeWidth + segmentWidthMove;
+            }
+
+            _ropeSegments[i] = currentSegment;
         }
     }
 
