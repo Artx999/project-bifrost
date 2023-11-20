@@ -29,10 +29,9 @@ public class RopeHingeJoint : MonoBehaviour
         _ropeSegments = new List<GameObject>();
         _anchor = Instantiate(anchorPrefab, _transform);
         
+        // Add rope segments equal to the desired rope length
         for (int i = 0; i < ropeLength; i++)
-        { 
             AddRopeSegment();
-        }
     }
 
     // Update is called once per frame
@@ -44,15 +43,16 @@ public class RopeHingeJoint : MonoBehaviour
 
     void AddRopeSegment()
     {
+        // Get the last rope segment. If rope is "empty", it will take the anchor instead
         GameObject lastSegment = _ropeSegments.Any() ? _ropeSegments.Last() : _anchor;
         
         GameObject currentSegment = Instantiate(ropeSegmentPrefab, _transform);
         _ropeSegments.Add(currentSegment);
         currentSegment.transform.localScale = new Vector3(segmentLength, segmentLength, segmentLength);
         currentSegment.GetComponent<Rigidbody2D>().mass = ropeMass;
-
-        Rigidbody2D lastSegmentRigidbody2D = lastSegment.GetComponent<Rigidbody2D>();
         
+        // Connect the hinge joints of the current segment to the last segment of the rope
+        Rigidbody2D lastSegmentRigidbody2D = lastSegment.GetComponent<Rigidbody2D>();
         HingeJoint2D hingeJoint2D = currentSegment.GetComponent<HingeJoint2D>();
         DistanceJoint2D distanceJoint2D = currentSegment.GetComponent<DistanceJoint2D>();
         hingeJoint2D.connectedBody = lastSegmentRigidbody2D;
