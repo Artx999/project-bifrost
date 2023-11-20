@@ -45,8 +45,11 @@ public class RopeHingeJoint : MonoBehaviour
     {
         // Get the last rope segment. If rope is "empty", it will take the anchor instead
         GameObject lastSegment = _ropeSegments.Any() ? _ropeSegments.Last() : _anchor;
+
+        var lastSegmentPosition = lastSegment.transform.position;
+        var lastSegmentRotation = lastSegment.transform.rotation;
         
-        GameObject currentSegment = Instantiate(ropeSegmentPrefab, _transform);
+        GameObject currentSegment = Instantiate(ropeSegmentPrefab, lastSegmentPosition, lastSegmentRotation, _transform);
         _ropeSegments.Add(currentSegment);
         currentSegment.transform.localScale = new Vector3(segmentLength, segmentLength, segmentLength);
         currentSegment.GetComponent<Rigidbody2D>().mass = ropeMass;
