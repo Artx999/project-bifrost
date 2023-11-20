@@ -28,10 +28,8 @@ public class RopeHingeJoint : MonoBehaviour
         _transform = this.transform;
         _ropeSegments = new List<GameObject>();
         _anchor = Instantiate(anchorPrefab, _transform);
-        
-        // Add rope segments equal to the desired rope length
-        for (int i = 0; i < ropeLength; i++)
-            AddRopeSegment();
+
+        CreateRope();
     }
 
     // Update is called once per frame
@@ -39,6 +37,9 @@ public class RopeHingeJoint : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
             AddRopeSegment();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            DeleteAllRopeSegments();
     }
 
     void AddRopeSegment()
@@ -70,5 +71,21 @@ public class RopeHingeJoint : MonoBehaviour
         }
 
         Debug.Log("Current rope length" + _ropeSegments.Count);
+    }
+
+    public void CreateRope()
+    {
+        // Add rope segments equal to the desired rope length
+        for (int i = 0; i < ropeLength; i++)
+            AddRopeSegment();
+    }
+    
+    public void DeleteAllRopeSegments()
+    {
+        // Remove all segments
+        for (int i = 0; i < ropeLength; i++)
+        {
+            Destroy(_ropeSegments[i]);
+        }
     }
 }
