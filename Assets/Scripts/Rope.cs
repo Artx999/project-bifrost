@@ -114,8 +114,7 @@ public class Rope : MonoBehaviour
         for (var i = 0; i < constraintDepth; i++)
         {
             ApplyConstraint(inputVec1);
-            if(i % 2 == 0)
-                AdjustCollisions();
+            AdjustCollisions();
         }
     }
 
@@ -155,38 +154,7 @@ public class Rope : MonoBehaviour
     private void AdjustCollisions()
     {
         // Check for collision for that point
-        for (var i = 0; i < segmentsCount; i++)
-        {
-            var currentSegment = _ropeSegments[i];
-            LayerMask mask = LayerMask.GetMask("Surface");
-            var velocity = currentSegment.posNow - currentSegment.posOld;
-            var velocityDirection = velocity.normalized;
-            var velocityDistance = velocity.magnitude;
-            var ray =
-                Physics2D.Raycast(currentSegment.posOld, velocityDirection, velocityDistance, mask);
-
-            if (ray.collider != null)
-            {
-                var hit = ray.point;
-                var hitNormal = ray.normal;
-
-                var oldToHitVec = hit - currentSegment.posOld;
-                var segmentWidthMove = (-oldToHitVec).normalized * ropeWidth;
-                currentSegment.posNow = hit + segmentWidthMove;
-                currentSegment.posOld += segmentWidthMove;
-
-                var newOldPos =
-                    new Vector2(currentSegment.posOld.x + 2 * oldToHitVec.x * -hitNormal.x,
-                        currentSegment.posOld.y + 2 * oldToHitVec.y * -hitNormal.y);
-
-                var temp = (newOldPos - hit).normalized * velocityDistance;
-                newOldPos = hit + temp;
-
-                currentSegment.posOld = newOldPos + hitNormal * ropeWidth + segmentWidthMove;
-            }
-
-            _ropeSegments[i] = currentSegment;
-        }
+        
     }
 
     // Draws rope based on the current positions of the segments, from the list
