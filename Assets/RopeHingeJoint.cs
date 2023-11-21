@@ -117,4 +117,9 @@ public class RopeHingeJoint : MonoBehaviour
         _ropeSegments.Clear();
         _ropeIsCreated = false;
     }
+
+    public GameObject GetLastRopeSegment()
+    {
+        return _ropeSegments.Last();
+    }
 }

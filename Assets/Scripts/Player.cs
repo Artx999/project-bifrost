@@ -11,12 +11,14 @@ public class Player : MonoBehaviour
     public GameManager gameManager;
     public GameObject axe;
     public GameObject sight;
+    public GameObject rope;
 
     private GameManager _gameManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
     private Rigidbody2D _axeRigidbody;
+    private RopeHingeJoint _ropeHingeJoint;
     private bool _mouseHeldDown;
     
     private float _directionX;
@@ -30,20 +32,36 @@ public class Player : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _axeRigidbody = axe.GetComponent<Rigidbody2D>();
+        _ropeHingeJoint = rope.GetComponent<RopeHingeJoint>();
         _mouseHeldDown = _gameManager.axeIsSeperated = false;
         sight.SetActive(false);
     }
 
     private void Update()
     {
-        Walk();
+        //Walk();
         
-        TeleportToAxe();
+        /* Move to axe */
+        // Temporary: Right click to move there, in future this will be a rope mechanic
+        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
+            TeleportToAxe();
         
         /* Axe throw */
         // If the axe is thrown, we dont want to repeat the throw mechanic below
         if (_gameManager.axeIsSeperated)
+        {
+            // Start following the rope
+            var lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+            this._boxCollider.enabled = false;
+            this._rigidbody.gravityScale = 0f;
+            this._rigidbody.MovePosition(lastRopeSegment.transform.position);
+            
             return;
+        }
+
+        this._boxCollider.enabled = true;
+        this._rigidbody.gravityScale = 1f;
+        
         
         // If the left button is pressed start the throw mechanic here
         if (IsAiming() && IsGrounded() && !_mouseHeldDown)
@@ -75,12 +93,21 @@ public class Player : MonoBehaviour
             _gameManager.axeIsSeperated = true;
             sight.SetActive(false);
 
-            Vector2 playerPos = transform.position;
-            Vector2 newMousePos = GetMousePosition();
-            Vector2 throwVec = GetThrowVector(playerPos, newMousePos);
+            Vector2 playerPosition = transform.position;
+            Vector2 newMousePosition = GetMousePosition();
+            Vector2 throwVec = GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
             _axeThrow.ApplyAxeSpeed(throwVec);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
+        {
+            _directionX = Input.GetAxisRaw("Horizontal");
+            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
         }
     }
 
@@ -96,32 +123,27 @@ public class Player : MonoBehaviour
 
     private void TeleportToAxe()
     {
-        /* Move to axe */
-        // Temporary: Right click to move there, in future this will be a rope mechanic
-        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
-        {
-            var oldVal = transform.position;
-            
-            var axeDiff = axe.transform.position - transform.position;
-            if (axeDiff.x > 0f)
-            {
-                transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-            }
-            else if (axeDiff.x < 0f)
-            {
-                transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-            }
+        var oldVal = transform.position;
 
-            if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-            {
-                transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-            }
-            
-            Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-            
-            _rigidbody.velocity = Vector2.zero;
-            _gameManager.axeIsSeperated = false;
+        var axeDiff = axe.transform.position - oldVal;
+        if (axeDiff.x > 0f)
+        {
+            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
         }
+        else if (axeDiff.x < 0f)
+        {
+            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
+        }
+
+        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
+        {
+            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
+        }
+
+        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
+
+        _rigidbody.velocity = Vector2.zero;
+        _gameManager.axeIsSeperated = false;
     }
 
     private void OnCollisionStay2D(Collision2D other)
