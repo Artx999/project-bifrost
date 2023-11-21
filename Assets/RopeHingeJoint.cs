@@ -22,24 +22,42 @@ public class RopeHingeJoint : MonoBehaviour
 
     private List<GameObject> _ropeSegments;
     
+    public GameManager gameManager;
+    public GameObject axe;
+    private bool _ropeIsCreated;
+    
     // Start is called before the first frame update
     void Start()
     {
         _transform = this.transform;
         _ropeSegments = new List<GameObject>();
-        _anchor = Instantiate(anchorPrefab, _transform);
 
-        CreateRope();
+        _ropeIsCreated = false;
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {/*
         if (Input.GetMouseButtonDown(1))
             AddRopeSegment();
 
         if (Input.GetKeyDown(KeyCode.Space))
-            DeleteAllRopeSegments();
+            DeleteAllRopeSegments(); */
+
+        if(!_ropeIsCreated)
+            this.transform.position = axe.transform.position;
+        
+        if (gameManager.axeIsSeperated)
+        {
+            if (!_ropeIsCreated)
+            {
+                _anchor = Instantiate(anchorPrefab, _transform);
+                CreateRope();
+                _ropeIsCreated = true;
+                _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
+            }
+            _anchorRigidbody.MovePosition(axe.transform.position);
+        }
     }
 
     void AddRopeSegment()
