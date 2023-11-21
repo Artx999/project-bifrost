@@ -40144,6 +40144,8 @@ MonoBehaviour:
   ropeMass: 5
   anchorPrefab: {fileID: 276442981167661313, guid: b63ad62385d3d3141b65cffe80d2ab24, type: 3}
   ropeSegmentPrefab: {fileID: 1159149993262735539, guid: a0f654f49c569104c9d01f33f73ff073, type: 3}
+  gameManager: {fileID: 1589176992}
+  axe: {fileID: 257493857}
 --- !u!4 &471744427
 Transform:
   m_ObjectHideFlags: 0

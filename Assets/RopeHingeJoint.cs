@@ -31,6 +31,9 @@ public class RopeHingeJoint : MonoBehaviour
     {
         _transform = this.transform;
         _ropeSegments = new List<GameObject>();
+        _anchor = Instantiate(anchorPrefab, _transform);
+        _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
+        _anchorRigidbody.gravityScale = 0f;
 
         _ropeIsCreated = false;
     }
@@ -51,10 +54,17 @@ public class RopeHingeJoint : MonoBehaviour
         {
             if (!_ropeIsCreated)
             {
-                _anchor = Instantiate(anchorPrefab, _transform);
                 CreateRope();
-                _ropeIsCreated = true;
-                _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
+                _anchorRigidbody.gravityScale = 1f;
+            }
+            _anchorRigidbody.MovePosition(axe.transform.position);
+        }
+        else
+        {
+            if (_ropeIsCreated)
+            {
+                DestroyRope();
+                _anchorRigidbody.gravityScale = 0f;
             }
             _anchorRigidbody.MovePosition(axe.transform.position);
         }
@@ -96,14 +106,15 @@ public class RopeHingeJoint : MonoBehaviour
         // Add rope segments equal to the desired rope length
         for (int i = 0; i < ropeLength; i++)
             AddRopeSegment();
+        _ropeIsCreated = true;
     }
     
-    public void DeleteAllRopeSegments()
+    public void DestroyRope()
     {
         // Remove all segments
         for (int i = 0; i < ropeLength; i++)
-        {
             Destroy(_ropeSegments[i]);
-        }
+        _ropeSegments.Clear();
+        _ropeIsCreated = false;
     }
 }
