@@ -91,37 +91,12 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        switch (this.currentState)
+        if (this.currentState == PlayerState.Grounded)
         {
-           case PlayerState.Grounded:
-                _directionX = Input.GetAxisRaw("Horizontal");
-                _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
-                break;
-            
-            case PlayerState.Fall:
-                break;
-            
-            case PlayerState.GroundedAim:
-                break;
-            
-            case PlayerState.AxeThrow:
-                break;
-            
-            case PlayerState.AxeStuck:
-                break;
-            
-            case PlayerState.RopeClimb:
-                break;
-            
-            case PlayerState.WallSlide:
-                break;
-            
-            case PlayerState.WallAim:
-                break;
-            
-            default:
-                throw new ArgumentOutOfRangeException();
+            _directionX = Input.GetAxisRaw("Horizontal");
+            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
         }
+            
     }
 
     private void OnCollisionStay2D(Collision2D other)
@@ -147,6 +122,7 @@ public class Player : MonoBehaviour
         // Step off ledge
         if (!IsGrounded())
         {
+            this._rigidbody.velocity = Vector2.zero;
             this.currentState = PlayerState.Fall;
         }
     }
@@ -178,7 +154,6 @@ public class Player : MonoBehaviour
         // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
         else
         {
-            _gameManager.axeIsSeperated = true;
             sight.SetActive(false);
 
             Vector2 playerPosition = transform.position;
@@ -188,7 +163,6 @@ public class Player : MonoBehaviour
             // Reference the axe and apply the speed based on the aim vector
             if (throwVector.magnitude < _gameManager.minAxeThrowMag)
             {
-                _gameManager.axeIsSeperated = false;
                 this.currentState = PlayerState.Grounded;
             
                 return;
@@ -335,7 +309,6 @@ public class Player : MonoBehaviour
         Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
 
         _rigidbody.velocity = Vector2.zero;
-        _gameManager.axeIsSeperated = false;
     }
     
     private Vector2 GetMousePosition()

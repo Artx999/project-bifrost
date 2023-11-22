@@ -40147,6 +40147,7 @@ MonoBehaviour:
   ropeSegmentPrefab: {fileID: 1159149993262735539, guid: a0f654f49c569104c9d01f33f73ff073, type: 3}
   gameManager: {fileID: 1589176992}
   axe: {fileID: 257493857}
+  player: {fileID: 800802503}
 --- !u!4 &471744427
 Transform:
   m_ObjectHideFlags: 0
@@ -43570,7 +43571,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   axeIsSeperated: 0
-  mouseHeldDown: 0
   playerWallFriction: 4
   playerWalkSpeed: 4
   maxAxeThrowMag: 4

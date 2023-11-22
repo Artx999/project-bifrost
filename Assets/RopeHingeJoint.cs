@@ -24,7 +24,8 @@ public class RopeHingeJoint : MonoBehaviour
     
     public GameManager gameManager;
     public GameObject axe;
-    private bool _ropeIsCreated;
+    public Player player;
+    private bool _ropeExists;
     
     // Start is called before the first frame update
     private void Start()
@@ -35,39 +36,55 @@ public class RopeHingeJoint : MonoBehaviour
         _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
         _anchorRigidbody.gravityScale = 0f;
 
-        _ropeIsCreated = false;
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        _ropeExists = false;
     }
 
     // Update is called once per frame
     private void Update()
-    {/*
-        if (Input.GetMouseButtonDown(1))
-            AddRopeSegment();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            DeleteAllRopeSegments(); */
-
-        if(!_ropeIsCreated)
-            this.transform.position = axe.transform.position;
-        
-        if (gameManager.axeIsSeperated)
+    {
+        switch (player.currentState)
         {
-            if (!_ropeIsCreated)
-            {
-                CreateRope();
-                _anchorRigidbody.gravityScale = 1f;
-            }
-            _anchorRigidbody.MovePosition(axe.transform.position);
-        }
-        else
-        {
-            if (_ropeIsCreated)
-            {
+            case Player.PlayerState.Grounded:
                 DestroyRope();
                 _anchorRigidbody.gravityScale = 0f;
-            }
-            _anchorRigidbody.MovePosition(axe.transform.position);
+                break;
+            
+            case Player.PlayerState.Fall:
+                DestroyRope();
+                _anchorRigidbody.gravityScale = 0f;
+                break;
+            
+            case Player.PlayerState.GroundedAim:
+                break;
+            
+            case Player.PlayerState.AxeThrow:
+                CreateRope();
+                _anchorRigidbody.gravityScale = 1f;
+                break;
+            
+            case Player.PlayerState.AxeStuck:
+                break;
+            
+            case Player.PlayerState.RopeClimb:
+                break;
+            
+            case Player.PlayerState.WallSlide:
+                DestroyRope();
+                _anchorRigidbody.gravityScale = 0f;
+                break;
+            
+            case Player.PlayerState.WallAim:
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        _anchorRigidbody.MovePosition(axe.transform.position);
     }
 
     private void AddRopeSegment()
@@ -98,28 +115,41 @@ public class RopeHingeJoint : MonoBehaviour
             distanceJoint2D.connectedAnchor = new Vector2(0, -1);
         }
 
-        Debug.Log("Current rope length" + _ropeSegments.Count);
+        Debug.Log("Current rope length: " + _ropeSegments.Count);
     }
 
     public void CreateRope()
     {
+        if (_ropeExists)
+            return;
+        
         // Add rope segments equal to the desired rope length
         for (int i = 0; i < ropeLength; i++)
             AddRopeSegment();
-        _ropeIsCreated = true;
+        
+        _ropeExists = true;
     }
     
     public void DestroyRope()
     {
+        if (!_ropeExists)
+            return;
+        
         // Remove all segments
         for (int i = 0; i < ropeLength; i++)
             Destroy(_ropeSegments[i]);
         _ropeSegments.Clear();
-        _ropeIsCreated = false;
+        
+        _ropeExists = false;
     }
 
     public GameObject GetLastRopeSegment()
     {
         return _ropeSegments.Last();
+    }
+
+    public void FollowPlayer()
+    {
+        _transform.position = player.transform.position;
     }
 }

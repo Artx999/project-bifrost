@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("General Variable States")]
-    public bool axeIsSeperated;
     [Header("Player")]
     public float playerWallFriction;
     public float playerWalkSpeed;
@@ -18,7 +16,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        this.axeIsSeperated = false;
+        
     }
 
     // Update is called once per frame

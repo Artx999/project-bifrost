@@ -36,25 +36,42 @@ public class Axe : MonoBehaviour
 
     private void Update()
     {
-        // If the axe is on the player, the axe should follow the player around
-        // the moment the axe is thrown, the collider is activated
-        if (!_gameManager.axeIsSeperated)
-            transform.position = player.transform.position;
+        switch (player.currentState)
+        {
+            case Player.PlayerState.Grounded:
+                FollowPlayer();
+                break;
+            
+            case Player.PlayerState.Fall:
+                FollowPlayer();
+                break;
+            
+            case Player.PlayerState.GroundedAim:
+                FollowPlayer();
+                break;
+            
+            case Player.PlayerState.AxeThrow:
+                break;
+            
+            case Player.PlayerState.AxeStuck:
+                break;
+            
+            case Player.PlayerState.RopeClimb:
+                break;
+            
+            case Player.PlayerState.WallSlide:
+                FollowPlayer();
+                break;
+            
+            case Player.PlayerState.WallAim:
+                FollowPlayer();
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
-
-    public void ApplyAxeSpeed(Vector2 inputVector)
-    {
-        var inputVecMag = inputVector.magnitude;
-        _rigidbody.gravityScale = 1f;
-        
-        // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
-        var realSpeed = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
-        _movementVector = inputVector.normalized * (realSpeed * _gameManager.axeSpeedAmp);
-        
-        // Lastly, we add a force and let gravity do its thing
-        _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
-    }
-
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         // Detect collision and see what type of surface was hit, based on the enum
@@ -71,5 +88,23 @@ public class Axe : MonoBehaviour
         Debug.Log("Hit surface!");
         this._rigidbody.velocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
+    }
+
+    public void ApplyAxeSpeed(Vector2 inputVector)
+    {
+        var inputVecMag = inputVector.magnitude;
+        _rigidbody.gravityScale = 1f;
+        
+        // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
+        var realSpeed = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
+        _movementVector = inputVector.normalized * (realSpeed * _gameManager.axeSpeedAmp);
+        
+        // Lastly, we add a force and let gravity do its thing
+        _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
+    }
+
+    public void FollowPlayer()
+    {
+        this.transform.position = player.transform.position;
     }
 }
