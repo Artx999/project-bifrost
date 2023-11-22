@@ -39,13 +39,6 @@ public class Axe : MonoBehaviour
     {
         // If the throw vector is too short, we cancel the throw
         var inputVecMag = inputVec.magnitude;
-
-        if (inputVecMag < _gameManager.minAxeThrowMag)
-        {
-            player.CancelThrow();
-            
-            return;
-        }
         
         // If a successful throw, apply gravity
         _rigidbody.gravityScale = 1f;

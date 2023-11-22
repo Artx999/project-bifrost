@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
     {
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
-        Vector2 aimVec = endPos - startPos;
+        var aimVec = endPos - startPos;
         Debug.DrawLine(transform.position, endPos, Color.green, 3f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
@@ -207,18 +207,18 @@ public class Player : MonoBehaviour
 
     private bool IsAiming()
     {
-        if (Input.GetMouseButton(0))
-        {
-            // Detect if mouse is hitting 
-            RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+        if (!Input.GetMouseButton(0)) return false;
+        
+        // Detect if mouse is hitting 
+        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
 
-            if (!hit.collider)
-                return false;
+        if (!hit.collider)
+            return false;
 
-            // Method will only return true if left mouse is clicking on the player, else everything is false
-            if (hit.collider.CompareTag("Player"))
-                return true;
-        }
+        // Method will only return true if left mouse is clicking on the player, else everything is false
+        if (hit.collider.CompareTag("Player"))
+            return true;
+        
         return false;
     }
 
@@ -250,11 +250,6 @@ public class Player : MonoBehaviour
         {
             //this._currentState = PlayerState.Walking;
         }*/
-    
-    public void CancelThrow()
-    {
-        _gameManager.axeIsSeperated = false;
-    }
 
     private void OnGrounded()
     {
@@ -275,8 +270,6 @@ public class Player : MonoBehaviour
 
     private void OnFall()
     {
-        // Disable all movement
-        
         // Land
         if (IsGrounded())
         {
@@ -286,12 +279,11 @@ public class Player : MonoBehaviour
 
     private void OnGroundAim()
     {
-        // Track mouse and show sight
-        // If the left button is pressed start the throw mechanic here
-        if (IsAiming() && IsGrounded() && !_mouseHeldDown)
+        // AIMING
+        if (!_mouseHeldDown)
         {
             _mouseHeldDown = true;
-            
+
             // Stop the players movement completely while aiming
             _rigidbody.velocity = Vector2.zero;
         }
@@ -302,11 +294,11 @@ public class Player : MonoBehaviour
         {
             // Gets the player position, mouse position and calculates the throw vector with these two points
             // This new vector is sent to the show sight method
-            Vector2 playerPos = transform.position;
-            Vector2 currentMousePos = GetMousePosition();
-            Vector2 currentThrowVec = GetThrowVector(playerPos, currentMousePos);
+            Vector2 playerPosition = transform.position;
+            Vector2 currentMousePosition = GetMousePosition();
+            Vector2 currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
             
-            ShowSight(currentThrowVec);
+            ShowSight(currentThrowVector);
         }
         
         // If the code has been through the above two blocks (ie. left button has been pressed and held down)
@@ -324,14 +316,17 @@ public class Player : MonoBehaviour
             Vector2 throwVec = GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
+            if (throwVec.magnitude < _gameManager.minAxeThrowMag)
+            {
+                _gameManager.axeIsSeperated = false;
+                this._currentState = PlayerState.Grounded;
+            
+                return;
+            }
+
+            this._currentState = PlayerState.AxeThrow;
             _axeThrow.ApplyAxeSpeed(throwVec);
         }
-        
-        // Throw
-        //this._currentState = PlayerState.AxeThrow;
-        
-        // Cancel
-        //this._currentState = PlayerState.Grounded;
     }
 
     private void OnAxeThrow()
