@@ -230,6 +230,7 @@ public class Player : MonoBehaviour
         // Aim
         if (IsAiming())
         {
+            _rigidbody.velocity = Vector2.zero;
             this.currentState = PlayerState.GroundedAim;
         }
         
@@ -252,17 +253,8 @@ public class Player : MonoBehaviour
     private void OnGroundAim()
     {
         // AIMING
-        if (!_gameManager.mouseHeldDown)
-        {
-            _gameManager.mouseHeldDown = true;
-
-            // Stop the players movement completely while aiming
-            _rigidbody.velocity = Vector2.zero;
-        }
-
-        // While the player is holding down the mouse button (ie. aiming), we show a simple sight in form
-        // of a white dot
-        else if (Input.GetMouseButton(0) && _gameManager.mouseHeldDown)
+        // While the player is holding down the mouse button (ie. aiming), we show a simple sight
+        if (Input.GetMouseButton(0))
         {
             // Gets the player position, mouse position and calculates the throw vector with these two points
             // This new vector is sent to the show sight method
@@ -273,13 +265,9 @@ public class Player : MonoBehaviour
             ShowSight(currentThrowVector);
         }
         
-        // If the code has been through the above two blocks (ie. left button has been pressed and held down)
-        // and been released we start the actual axe throw
-        else if(_gameManager.mouseHeldDown)
+        // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
+        else
         {
-            this.currentState = PlayerState.AxeThrow;
-            
-            _gameManager.mouseHeldDown = false;
             _gameManager.axeIsSeperated = true;
             sight.SetActive(false);
 

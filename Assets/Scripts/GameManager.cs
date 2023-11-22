@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
     [Header("General Variable States")]
     public bool axeIsSeperated;
-    public bool mouseHeldDown;
     [Header("Player")]
     public float playerWallFriction;
     public float playerWalkSpeed;
@@ -20,7 +19,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         this.axeIsSeperated = false;
-        this.mouseHeldDown = false;
     }
 
     // Update is called once per frame
