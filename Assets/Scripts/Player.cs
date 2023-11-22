@@ -103,10 +103,10 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Surface"))
         {
-            _rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
+            //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
         }
     }
-    
+
     /* STATE METHODS */
     private void OnGrounded()
     {
@@ -234,8 +234,8 @@ public class Player : MonoBehaviour
             case Axe.AxePosition.Roof:
                 this._boxCollider.enabled = true;
                 this._rigidbody.gravityScale = 1f;
-                this.currentState = PlayerState.Fall;
                 
+                this.currentState = PlayerState.Fall;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 break;
             
@@ -243,8 +243,8 @@ public class Player : MonoBehaviour
             case Axe.AxePosition.Wall:
                 this._boxCollider.enabled = true;
                 this._rigidbody.gravityScale = 1f;
-                this.currentState = PlayerState.WallSlide;
                 
+                this.currentState = PlayerState.WallSlide;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 break;
             
@@ -252,6 +252,7 @@ public class Player : MonoBehaviour
             case Axe.AxePosition.Floor:
                 this._boxCollider.enabled = true;
                 this._rigidbody.gravityScale = 1f;
+                
                 this.currentState = PlayerState.Grounded;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 break;
@@ -264,10 +265,13 @@ public class Player : MonoBehaviour
     private void OnWallSlide()
     {
         // Slide player down the wall
+        //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
+
+        // Slide to ground
         
         // Slide off wall
         this.currentState = PlayerState.Fall;
-        
+
         // Aim
         //this.currentState = PlayerState.WallAim;
     }
