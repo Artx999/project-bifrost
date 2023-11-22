@@ -6,6 +6,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private enum PlayerState
+    {
+        Grounded,
+        Fall,
+        GroundedAim,
+        AxeThrow,
+        AxeStuck,
+        RopeClimb,
+        WallSlide,
+        WallAim
+    }
+
+    private PlayerState _currentState;
+    
     // We can reference like this, because of Singleton
     // Singleton = One class can have only one instance
     public GameManager gameManager;
@@ -26,6 +40,8 @@ public class Player : MonoBehaviour
     
     private void Start()
     {
+        this._currentState = PlayerState.Grounded;
+        
         // Initialize variables
         _gameManager = gameManager.GetComponent<GameManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -39,6 +55,38 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        switch (this._currentState)
+        {
+            case PlayerState.Grounded:
+                OnGrounded();
+                break;
+            
+            case PlayerState.Fall:
+                OnFall();
+                break;
+            
+            case PlayerState.GroundedAim:
+                break;
+            
+            case PlayerState.AxeThrow:
+                break;
+            
+            case PlayerState.AxeStuck:
+                break;
+            
+            case PlayerState.RopeClimb:
+                break;
+            
+            case PlayerState.WallSlide:
+                break;
+            
+            case PlayerState.WallAim:
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
         //Walk();
         
         /* Move to axe */
@@ -104,20 +152,36 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
+        switch (this._currentState)
         {
-            _directionX = Input.GetAxisRaw("Horizontal");
-            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
-        }
-    }
-
-    private void Walk()
-    {
-        /* Walk */
-        if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
-        {
-            _directionX = Input.GetAxisRaw("Horizontal");
-            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
+           case PlayerState.Grounded:
+                _directionX = Input.GetAxisRaw("Horizontal");
+                _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
+                break;
+            
+            case PlayerState.Fall:
+                break;
+            
+            case PlayerState.GroundedAim:
+                break;
+            
+            case PlayerState.AxeThrow:
+                break;
+            
+            case PlayerState.AxeStuck:
+                break;
+            
+            case PlayerState.RopeClimb:
+                break;
+            
+            case PlayerState.WallSlide:
+                break;
+            
+            case PlayerState.WallAim:
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -220,8 +284,116 @@ public class Player : MonoBehaviour
         sight.SetActive(true);
     }
 
+    /*if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
+        {
+            //this._currentState = PlayerState.Walking;
+        }*/
+    
     public void CancelThrow()
     {
         _gameManager.axeIsSeperated = false;
+    }
+
+    private void OnGrounded()
+    {
+        // Movement done in FixedUpdate()
+        
+        // Aim
+        if (IsAiming())
+        {
+            this._currentState = PlayerState.GroundedAim;
+        }
+        
+        // Step off ledge
+        if (!IsGrounded())
+        {
+            this._currentState = PlayerState.Fall;
+        }
+    }
+
+    private void OnFall()
+    {
+        // Disable all movement
+        
+        // Land
+        if (IsGrounded())
+        {
+            this._currentState = PlayerState.Grounded;
+        }
+    }
+
+    private void OnGroundAim()
+    {
+        // Track mouse and show sight
+        
+        // Throw
+        this._currentState = PlayerState.AxeThrow;
+        
+        // Cancel
+        this._currentState = PlayerState.Grounded;
+    }
+
+    private void OnAxeThrow()
+    {
+        // Generate rope and hook rope to axe and player to rope
+        
+        // Axe collide
+        this._currentState = PlayerState.AxeStuck;
+    }
+
+    private void OnAxeStuck()
+    {
+        // Enable player movement
+        
+        // Climb rope
+        this._currentState = PlayerState.RopeClimb;
+        
+        // Release rope
+        this._currentState = PlayerState.Fall;
+    }
+
+    private void OnRopeClimb()
+    {
+        // Climb up rope
+        
+        // Stop climb
+        this._currentState = PlayerState.AxeStuck;
+        
+        // Release
+        this._currentState = PlayerState.Fall;
+        
+        // Climb to axe (wall)
+        this._currentState = PlayerState.GroundedAim;
+        
+        // Climb to axe (roof)
+        this._currentState = PlayerState.Fall;
+        
+        // Climb to axe (floor)
+        this._currentState = PlayerState.Grounded;
+    }
+
+    private void OnWallSlide()
+    {
+        // Slide player down the wall and enable throwing
+        
+        // Slide off wall
+        this._currentState = PlayerState.Fall;
+        
+        // Aim
+        this._currentState = PlayerState.WallAim;
+    }
+
+    private void OnWallAim()
+    {
+        // Slide player, show sight and track mouse
+        
+        // Cancel throw
+        this._currentState = PlayerState.WallSlide;
+        
+        // Throw
+        this._currentState = PlayerState.AxeThrow;
+        
+        // Slide off wall
+        this._currentState = PlayerState.Fall;
     }
 }
