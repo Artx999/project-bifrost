@@ -7,8 +7,17 @@ using UnityEngine;
 
 public class Axe : MonoBehaviour
 {
+    public enum AxePosition
+    {
+        Null,
+        Floor,
+        Wall,
+        Roof
+    }
+    
     public GameObject gameManager;
     public Player player;
+    public AxePosition currentAxePosition;
     
     private Rigidbody2D _rigidbody;
     private GameManager _gameManager;
@@ -20,6 +29,7 @@ public class Axe : MonoBehaviour
         // Initialize variables
         _rigidbody = GetComponent<Rigidbody2D>();
         _gameManager = gameManager.GetComponent<GameManager>();
+        currentAxePosition = AxePosition.Null;
         
         _rigidbody.gravityScale = 0f;
         GetComponent<BoxCollider2D>().enabled = false;
@@ -51,14 +61,19 @@ public class Axe : MonoBehaviour
         _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Surface"))
-        {
-            // Stop the axe and its gravity, as it is stuck in the surface
-            Debug.Log("Hit surface!");
-            _rigidbody.velocity = Vector2.zero;
-            _rigidbody.gravityScale = 0f;
-        }
+        var collisionHitNormal = other.GetContact(0).normal;
+        
+        if (collisionHitNormal == Vector2.right || collisionHitNormal == Vector2.left)
+            this.currentAxePosition = AxePosition.Wall;
+        else if (collisionHitNormal == Vector2.up)
+            this.currentAxePosition = AxePosition.Floor;
+        else if (collisionHitNormal == Vector2.down)
+            this.currentAxePosition = AxePosition.Roof;
+        
+        Debug.Log("Hit surface!");
+        this._rigidbody.velocity = Vector2.zero;
+        this._rigidbody.gravityScale = 0f;
     }
 }

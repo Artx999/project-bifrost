@@ -70,30 +70,28 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.AxeThrow:
+                OnAxeThrow();
                 break;
             
             case PlayerState.AxeStuck:
+                OnAxeStuck();
                 break;
             
             case PlayerState.RopeClimb:
+                OnRopeClimb();
                 break;
             
             case PlayerState.WallSlide:
+                OnWallSlide();
                 break;
             
             case PlayerState.WallAim:
+                OnWallAim();
                 break;
             
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
-        //Walk();
-        
-        /* Move to axe */
-        // Temporary: Right click to move there, in future this will be a rope mechanic
-        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
-            TeleportToAxe();
         
         /* Axe throw */
         // If the axe is thrown, we dont want to repeat the throw mechanic below
@@ -295,8 +293,8 @@ public class Player : MonoBehaviour
             // Gets the player position, mouse position and calculates the throw vector with these two points
             // This new vector is sent to the show sight method
             Vector2 playerPosition = transform.position;
-            Vector2 currentMousePosition = GetMousePosition();
-            Vector2 currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            var currentMousePosition = GetMousePosition();
+            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
             
             ShowSight(currentThrowVector);
         }
@@ -312,11 +310,11 @@ public class Player : MonoBehaviour
             sight.SetActive(false);
 
             Vector2 playerPosition = transform.position;
-            Vector2 newMousePosition = GetMousePosition();
-            Vector2 throwVec = GetThrowVector(playerPosition, newMousePosition);
+            var newMousePosition = GetMousePosition();
+            var throwVector = GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVec.magnitude < _gameManager.minAxeThrowMag)
+            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
             {
                 _gameManager.axeIsSeperated = false;
                 this._currentState = PlayerState.Grounded;
@@ -325,7 +323,7 @@ public class Player : MonoBehaviour
             }
 
             this._currentState = PlayerState.AxeThrow;
-            _axeThrow.ApplyAxeSpeed(throwVec);
+            _axeThrow.ApplyAxeSpeed(throwVector);
         }
     }
 
@@ -334,18 +332,28 @@ public class Player : MonoBehaviour
         // Generate rope and hook rope to axe and player to rope
         
         // Axe collide
-        this._currentState = PlayerState.AxeStuck;
+        if(_axeThrow.currentAxePosition != Axe.AxePosition.Null)
+            this._currentState = PlayerState.AxeStuck;
     }
 
     private void OnAxeStuck()
     {
-        // Enable player movement
-        
         // Climb rope
-        this._currentState = PlayerState.RopeClimb;
+        // Temporary: Climb with right click
+        if (Input.GetMouseButtonDown(1))
+        {
+            TeleportToAxe();
+            this._currentState = PlayerState.RopeClimb;
+        }
         
-        // Release rope
-        this._currentState = PlayerState.Fall;
+        // Release rope (to fall)
+        //this._currentState = PlayerState.Fall;
+        
+        // Release rope (to slide)
+        //this._currentState = PlayerState.WallSlide;
+        
+        // Release rope (to ground)
+        //this._currentState = PlayerState.Grounded;
     }
 
     private void OnRopeClimb()
@@ -353,30 +361,48 @@ public class Player : MonoBehaviour
         // Climb up rope
         
         // Stop climb
-        this._currentState = PlayerState.AxeStuck;
+        //this._currentState = PlayerState.AxeStuck;
         
-        // Release
-        this._currentState = PlayerState.Fall;
+        // Release rope (to fall)
+        //this._currentState = PlayerState.Fall;
         
-        // Climb to axe (wall)
-        this._currentState = PlayerState.GroundedAim;
+        // Release rope (to slide)
+        //this._currentState = PlayerState.WallSlide;
         
-        // Climb to axe (roof)
-        this._currentState = PlayerState.Fall;
-        
-        // Climb to axe (floor)
-        this._currentState = PlayerState.Grounded;
+        // Release rope (to ground)
+        //this._currentState = PlayerState.Grounded;
+
+        // Climb to axe
+        switch (_axeThrow.currentAxePosition)
+        {
+            // Climb to axe (roof)
+            case Axe.AxePosition.Roof:
+                this._currentState = PlayerState.Fall;
+                break;
+            
+            // Climb to axe (wall)
+            case Axe.AxePosition.Wall:
+                this._currentState = PlayerState.WallSlide;
+                break;
+            
+            // Climb to axe (floor)
+            case Axe.AxePosition.Floor:
+                this._currentState = PlayerState.Grounded;
+                break;
+        }
+
+        _axeThrow.currentAxePosition = Axe.AxePosition.Null;
     }
 
     private void OnWallSlide()
     {
-        // Slide player down the wall and enable throwing
+        // Slide player down the wall
         
         // Slide off wall
         this._currentState = PlayerState.Fall;
         
         // Aim
-        this._currentState = PlayerState.WallAim;
+        //this._currentState = PlayerState.WallAim;
     }
 
     private void OnWallAim()
@@ -384,12 +410,12 @@ public class Player : MonoBehaviour
         // Slide player, show sight and track mouse
         
         // Cancel throw
-        this._currentState = PlayerState.WallSlide;
+        //this._currentState = PlayerState.WallSlide;
         
         // Throw
-        this._currentState = PlayerState.AxeThrow;
+        //this._currentState = PlayerState.AxeThrow;
         
         // Slide off wall
-        this._currentState = PlayerState.Fall;
+        //this._currentState = PlayerState.Fall;
     }
 }
