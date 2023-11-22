@@ -40492,6 +40492,7 @@ MonoBehaviour:
   gameManager: {fileID: 1589176992}
   axe: {fileID: 257493857}
   sight: {fileID: 1657688182}
+  rope: {fileID: 471744425}
   movementSpeed: 5
 --- !u!58 &800802510
 CircleCollider2D:
