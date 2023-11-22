@@ -27,7 +27,7 @@ public class RopeHingeJoint : MonoBehaviour
     private bool _ropeIsCreated;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _transform = this.transform;
         _ropeSegments = new List<GameObject>();
@@ -39,7 +39,7 @@ public class RopeHingeJoint : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {/*
         if (Input.GetMouseButtonDown(1))
             AddRopeSegment();
@@ -70,7 +70,7 @@ public class RopeHingeJoint : MonoBehaviour
         }
     }
 
-    void AddRopeSegment()
+    private void AddRopeSegment()
     {
         // Get the last rope segment. If rope is "empty", it will take the anchor instead
         GameObject lastSegment = _ropeSegments.Any() ? _ropeSegments.Last() : _anchor;

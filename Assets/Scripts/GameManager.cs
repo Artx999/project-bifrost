@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("General Variable States")]
+    public bool axeIsSeperated;
+    public bool mouseHeldDown;
     [Header("Player")]
     public float playerWallFriction;
     public float playerWalkSpeed;
@@ -12,16 +15,16 @@ public class GameManager : MonoBehaviour
     public float maxAxeThrowMag;
     public float minAxeThrowMag;
     public float axeSpeedAmp;
-    public bool axeIsSeperated;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        this.axeIsSeperated = false;
+        this.mouseHeldDown = false;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         /* Reload scene */
         if (Input.GetKeyDown(KeyCode.R))
