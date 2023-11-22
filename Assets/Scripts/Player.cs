@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
-    private Rigidbody2D _axeRigidbody;
+    private Camera _camera;
     private RopeHingeJoint _ropeHingeJoint;
     private GameObject _lastRopeSegment;
     
@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
-        _axeRigidbody = axe.GetComponent<Rigidbody2D>();
+        _camera = Camera.main;
         _ropeHingeJoint = rope.GetComponent<RopeHingeJoint>();
         sight.SetActive(false);
     }
@@ -161,8 +161,8 @@ public class Player : MonoBehaviour
 
     private Vector2 GetMousePosition()
     {
-        if(Camera.main != null)
-            return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if(_camera != null)
+            return _camera.ScreenToWorldPoint(Input.mousePosition);
         
         return Vector2.zero;
     }
@@ -181,7 +181,11 @@ public class Player : MonoBehaviour
     private bool IsGrounded()
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
-        return Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0f, Vector2.down, .1f, desiredMask);
+        var boxColliderBounds = _boxCollider.bounds;
+        
+        return Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.down, .1f, desiredMask);
     }
 
     private bool IsAiming()
@@ -190,15 +194,9 @@ public class Player : MonoBehaviour
         
         // Detect if mouse is hitting 
         var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
-
-        if (!hit.collider)
-            return false;
-
+    
         // Method will only return true if left mouse is clicking on the player, else everything is false
-        if (hit.collider.CompareTag("Player"))
-            return true;
-        
-        return false;
+        return hit.collider && hit.collider.CompareTag("Player");
     }
 
     private void ShowSight(Vector2 inputVec)
@@ -224,11 +222,6 @@ public class Player : MonoBehaviour
         sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
         sight.SetActive(true);
     }
-
-    /*if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
-        {
-            //this.currentState = PlayerState.Walking;
-        }*/
 
     private void OnGrounded()
     {
