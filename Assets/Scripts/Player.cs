@@ -132,97 +132,7 @@ public class Player : MonoBehaviour
         }
     }
     
-    private void TeleportToAxe()
-    {
-        var oldVal = transform.position;
-
-        var axeDiff = axe.transform.position - oldVal;
-        if (axeDiff.x > 0f)
-        {
-            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-        }
-        else if (axeDiff.x < 0f)
-        {
-            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-        }
-
-        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-        {
-            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-        }
-
-        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-
-        _rigidbody.velocity = Vector2.zero;
-        _gameManager.axeIsSeperated = false;
-    }
-
-    
-
-    private Vector2 GetMousePosition()
-    {
-        if(_camera != null)
-            return _camera.ScreenToWorldPoint(Input.mousePosition);
-        
-        return Vector2.zero;
-    }
-
-    private Vector2 GetThrowVector(Vector2 startPos, Vector2 endPos)
-    {
-        // Since vectors are lines from origin to a specified point, we need to move
-        // the "wrong " vector (from player to mouse position) to have origin in "origin"
-        var aimVec = endPos - startPos;
-        Debug.DrawLine(transform.position, endPos, Color.green, 3f);
-
-        // We are aiming in the opposite direction of the throw, so we flip the result vector
-        return -aimVec;
-    }
-    
-    private bool IsGrounded()
-    {
-        LayerMask desiredMask = LayerMask.GetMask("Surface");
-        var boxColliderBounds = _boxCollider.bounds;
-        
-        return Physics2D.BoxCast(
-            boxColliderBounds.center, boxColliderBounds.size, 
-            0f, Vector2.down, .1f, desiredMask);
-    }
-
-    private bool IsAiming()
-    {
-        if (!Input.GetMouseButton(0)) return false;
-        
-        // Detect if mouse is hitting 
-        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
-    
-        // Method will only return true if left mouse is clicking on the player, else everything is false
-        return hit.collider && hit.collider.CompareTag("Player");
-    }
-
-    private void ShowSight(Vector2 inputVec)
-    {
-        // If the aim vector is too short for a throw, dont show the dot
-        var inputVecMag = inputVec.magnitude;
-
-        if (inputVecMag < _gameManager.minAxeThrowMag)
-        {
-            sight.SetActive(false);
-            return;
-        }
-        
-        // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
-        // the vector magnitude based on the defined max magnitude from GM
-        var newMag = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
-        inputVec = inputVec.normalized * newMag;
-        
-        Vector2 playerPos = transform.position;
-        
-        // Calculate the position with player position and throw vector and activate the sight
-        // I am unsure why we multiply bu 0.1f^2, but it works
-        sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
-        sight.SetActive(true);
-    }
-
+    /* STATE METHODS */
     private void OnGrounded()
     {
         // Movement done in FixedUpdate()
@@ -400,5 +310,95 @@ public class Player : MonoBehaviour
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
+    }
+    
+    /* PRIVATE METHODS */
+    private void TeleportToAxe()
+    {
+        var oldVal = transform.position;
+
+        var axeDiff = axe.transform.position - oldVal;
+        if (axeDiff.x > 0f)
+        {
+            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
+        }
+        else if (axeDiff.x < 0f)
+        {
+            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
+        }
+
+        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
+        {
+            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
+        }
+
+        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
+
+        _rigidbody.velocity = Vector2.zero;
+        _gameManager.axeIsSeperated = false;
+    }
+    
+    private Vector2 GetMousePosition()
+    {
+        if(_camera != null)
+            return _camera.ScreenToWorldPoint(Input.mousePosition);
+        
+        return Vector2.zero;
+    }
+
+    private Vector2 GetThrowVector(Vector2 startPos, Vector2 endPos)
+    {
+        // Since vectors are lines from origin to a specified point, we need to move
+        // the "wrong " vector (from player to mouse position) to have origin in "origin"
+        var aimVec = endPos - startPos;
+        Debug.DrawLine(transform.position, endPos, Color.green, 3f);
+
+        // We are aiming in the opposite direction of the throw, so we flip the result vector
+        return -aimVec;
+    }
+    
+    private bool IsGrounded()
+    {
+        LayerMask desiredMask = LayerMask.GetMask("Surface");
+        var boxColliderBounds = _boxCollider.bounds;
+        
+        return Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.down, .1f, desiredMask);
+    }
+
+    private bool IsAiming()
+    {
+        if (!Input.GetMouseButton(0)) return false;
+        
+        // Detect if mouse is hitting 
+        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+    
+        // Method will only return true if left mouse is clicking on the player, else everything is false
+        return hit.collider && hit.collider.CompareTag("Player");
+    }
+
+    private void ShowSight(Vector2 inputVec)
+    {
+        // If the aim vector is too short for a throw, dont show the dot
+        var inputVecMag = inputVec.magnitude;
+
+        if (inputVecMag < _gameManager.minAxeThrowMag)
+        {
+            sight.SetActive(false);
+            return;
+        }
+        
+        // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
+        // the vector magnitude based on the defined max magnitude from GM
+        var newMag = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
+        inputVec = inputVec.normalized * newMag;
+        
+        Vector2 playerPos = transform.position;
+        
+        // Calculate the position with player position and throw vector and activate the sight
+        // I am unsure why we multiply bu 0.1f^2, but it works
+        sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
+        sight.SetActive(true);
     }
 }
