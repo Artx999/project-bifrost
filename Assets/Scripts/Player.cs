@@ -13,7 +13,6 @@ public class Player : MonoBehaviour
         GroundedAim,
         AxeThrow,
         AxeStuck,
-        RopeClimb,
         WallSlide,
         WallAim
     }
@@ -70,10 +69,6 @@ public class Player : MonoBehaviour
             
             case PlayerState.AxeStuck:
                 OnAxeStuck();
-                break;
-            
-            case PlayerState.RopeClimb:
-                OnRopeClimb();
                 break;
             
             case PlayerState.WallSlide:
@@ -187,44 +182,35 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
-        _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
-        this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
-        
-        // Climb rope
-        // Temporary: Climb with right click
-        if (Input.GetMouseButtonDown(1))
+        if(_ropeHingeJoint.ropeExists)
         {
-            TeleportToAxe();
-            this.currentState = PlayerState.RopeClimb;
+            // While the rope still exists we can climb the rope
+            _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+            this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+            
+            // Climb rope
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                _ropeHingeJoint.RemoveLastRopeSegment();
+                return;
+            }
+            
+            // Release rope
+            if (Input.GetMouseButtonDown(1))
+            {
+                this._boxCollider.enabled = true;
+                this._rigidbody.gravityScale = 1f;
+                this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
+                
+                this.currentState = PlayerState.Fall;
+                // this.currentState = PlayerState.Grounded;
+                // this.currentState = PlayerState.WallSlide;
+            }
+            
+            return;
         }
         
-        // Release rope (to fall)
-        //this.currentState = PlayerState.Fall;
-        
-        // Release rope (to slide)
-        //this.currentState = PlayerState.WallSlide;
-        
-        // Release rope (to ground)
-        //this.currentState = PlayerState.Grounded;
-    }
-
-    private void OnRopeClimb()
-    {
-        // Climb up rope
-        
-        // Stop climb
-        //this.currentState = PlayerState.AxeStuck;
-        
-        // Release rope (to fall)
-        //this.currentState = PlayerState.Fall;
-        
-        // Release rope (to slide)
-        //this.currentState = PlayerState.WallSlide;
-        
-        // Release rope (to ground)
-        //this.currentState = PlayerState.Grounded;
-
-        // Climb to axe
+        // Reached axe
         switch (_axeThrow.currentAxePosition)
         {
             case Axe.AxePosition.Null:

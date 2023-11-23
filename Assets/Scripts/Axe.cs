@@ -56,9 +56,6 @@ public class Axe : MonoBehaviour
             case Player.PlayerState.AxeStuck:
                 break;
             
-            case Player.PlayerState.RopeClimb:
-                break;
-            
             case Player.PlayerState.WallSlide:
                 FollowPlayer();
                 break;
@@ -103,7 +100,7 @@ public class Axe : MonoBehaviour
         _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
     }
 
-    public void FollowPlayer()
+    private void FollowPlayer()
     {
         this.transform.position = player.transform.position;
     }

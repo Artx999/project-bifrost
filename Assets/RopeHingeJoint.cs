@@ -25,7 +25,7 @@ public class RopeHingeJoint : MonoBehaviour
     public GameManager gameManager;
     public GameObject axe;
     public Player player;
-    private bool _ropeExists;
+    public bool ropeExists;
     
     // Start is called before the first frame update
     private void Start()
@@ -37,12 +37,14 @@ public class RopeHingeJoint : MonoBehaviour
         _anchorRigidbody.gravityScale = 0f;
 
         player = GameObject.FindWithTag("Player").GetComponent<Player>();
-        _ropeExists = false;
+        ropeExists = false;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        ropeExists = _ropeSegments.Any();
+        
         switch (player.currentState)
         {
             case Player.PlayerState.Grounded:
@@ -64,9 +66,6 @@ public class RopeHingeJoint : MonoBehaviour
                 break;
             
             case Player.PlayerState.AxeStuck:
-                break;
-            
-            case Player.PlayerState.RopeClimb:
                 break;
             
             case Player.PlayerState.WallSlide:
@@ -118,34 +117,48 @@ public class RopeHingeJoint : MonoBehaviour
         Debug.Log("Current rope length: " + _ropeSegments.Count);
     }
 
+    public void RemoveLastRopeSegment()
+    {
+        if (!ropeExists)
+            return;
+        
+        var lastSegment = _ropeSegments.Last();
+        var lastSegmentIndex = _ropeSegments.Count - 1;
+        
+        Destroy(lastSegment);
+        _ropeSegments.RemoveAt(lastSegmentIndex);
+    }
+
     public void CreateRope()
     {
-        if (_ropeExists)
+        if (ropeExists)
             return;
         
         // Add rope segments equal to the desired rope length
         for (int i = 0; i < ropeLength; i++)
             AddRopeSegment();
         
-        _ropeExists = true;
+        ropeExists = true;
     }
     
     public void DestroyRope()
     {
-        if (!_ropeExists)
+        if (!ropeExists)
             return;
+
+        var ropeSegmentCount = _ropeSegments.Count;
         
         // Remove all segments
-        for (int i = 0; i < ropeLength; i++)
+        for (var i = 0; i < ropeSegmentCount; i++)
             Destroy(_ropeSegments[i]);
         _ropeSegments.Clear();
         
-        _ropeExists = false;
+        ropeExists = false;
     }
 
     public GameObject GetLastRopeSegment()
     {
-        return _ropeSegments.Last();
+        return !ropeExists ? null : _ropeSegments.Last();
     }
 
     public void FollowPlayer()
