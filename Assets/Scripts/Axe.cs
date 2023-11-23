@@ -86,9 +86,6 @@ public class Axe : MonoBehaviour
             this.currentAxePosition = AxePosition.Floor;
         else if ((collisionHitNormal - Vector2.down).magnitude < 0.1f)
             this.currentAxePosition = AxePosition.Roof;
-
-        var test = collisionHitNormal - Vector2.left;
-        var testMag = test.magnitude;
         
         // We hit a surface successfully and can stop the axe movement
         this._rigidbody.velocity = Vector2.zero;

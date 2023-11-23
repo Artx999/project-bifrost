@@ -91,15 +91,6 @@ public class Player : MonoBehaviour
             _directionX = Input.GetAxisRaw("Horizontal");
             _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
         }
-            
-    }
-
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Surface"))
-        {
-            //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
-        }
     }
 
     /* STATE METHODS */
@@ -128,6 +119,10 @@ public class Player : MonoBehaviour
         if (IsGrounded())
         {
             this.currentState = PlayerState.Grounded;
+        }
+        else if (IsWalled())
+        {
+            this.currentState = PlayerState.WallSlide;
         }
     }
 
@@ -207,8 +202,6 @@ public class Player : MonoBehaviour
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 this.currentState = PlayerState.Fall;
-                // this.currentState = PlayerState.Grounded;
-                // this.currentState = PlayerState.WallSlide;
             }
             
             return;
@@ -251,9 +244,18 @@ public class Player : MonoBehaviour
         //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
 
         // Slide to ground
-        
+        if (IsGrounded())
+        {
+            this.currentState = PlayerState.Grounded;
+            return;
+        }
+
         // Slide off wall
-        this.currentState = PlayerState.Fall;
+        if (!IsWalled())
+        {
+            this.currentState = PlayerState.Fall;
+            return;
+        }
 
         // Aim
         //this.currentState = PlayerState.WallAim;
@@ -339,6 +341,25 @@ public class Player : MonoBehaviour
         return Physics2D.BoxCast(
             boxColliderBounds.center, boxColliderBounds.size, 
             0f, Vector2.down, .1f, desiredMask);
+    }
+
+    private bool IsWalled()
+    {
+        if (IsGrounded())
+            return false;
+        
+        LayerMask desiredMask = LayerMask.GetMask("Surface");
+        var boxColliderBounds = _boxCollider.bounds;
+        
+        var leftBoxCast = Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.left, .1f, desiredMask);
+        
+        var rightBoxCast = Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.right, .1f, desiredMask);
+        
+        return leftBoxCast || rightBoxCast;
     }
 
     private bool IsAiming()
