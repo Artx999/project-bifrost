@@ -40140,7 +40140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5290348e97c7be40b07ea1f172678c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ropeLength: 15
+  initialRopeLength: 15
   segmentLength: 0.2
   ropeMass: 5
   anchorPrefab: {fileID: 276442981167661313, guid: b63ad62385d3d3141b65cffe80d2ab24, type: 3}

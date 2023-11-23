@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 public class RopeHingeJoint : MonoBehaviour
 {
-    public int ropeLength;
+    public int initialRopeLength;
     public float segmentLength;
     public float ropeMass;
 
@@ -44,41 +44,6 @@ public class RopeHingeJoint : MonoBehaviour
     private void Update()
     {
         ropeExists = _ropeSegments.Any();
-        
-        switch (player.currentState)
-        {
-            case Player.PlayerState.Grounded:
-                DestroyRope();
-                _anchorRigidbody.gravityScale = 0f;
-                break;
-            
-            case Player.PlayerState.Fall:
-                DestroyRope();
-                _anchorRigidbody.gravityScale = 0f;
-                break;
-            
-            case Player.PlayerState.GroundedAim:
-                break;
-            
-            case Player.PlayerState.AxeThrow:
-                CreateRope();
-                _anchorRigidbody.gravityScale = 1f;
-                break;
-            
-            case Player.PlayerState.AxeStuck:
-                break;
-            
-            case Player.PlayerState.WallSlide:
-                DestroyRope();
-                _anchorRigidbody.gravityScale = 0f;
-                break;
-            
-            case Player.PlayerState.WallAim:
-                break;
-            
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
     }
 
     private void FixedUpdate()
@@ -135,34 +100,28 @@ public class RopeHingeJoint : MonoBehaviour
             return;
         
         // Add rope segments equal to the desired rope length
-        for (int i = 0; i < ropeLength; i++)
+        for (int i = 0; i < initialRopeLength; i++)
             AddRopeSegment();
         
-        ropeExists = true;
+        _anchorRigidbody.gravityScale = 1f;
     }
     
     public void DestroyRope()
     {
         if (!ropeExists)
             return;
-
-        var ropeSegmentCount = _ropeSegments.Count;
         
+        var ropeSegmentCount = _ropeSegments.Count;
         // Remove all segments
         for (var i = 0; i < ropeSegmentCount; i++)
             Destroy(_ropeSegments[i]);
         _ropeSegments.Clear();
         
-        ropeExists = false;
+        _anchorRigidbody.gravityScale = 0f;
     }
 
     public GameObject GetLastRopeSegment()
     {
-        return !ropeExists ? null : _ropeSegments.Last();
-    }
-
-    public void FollowPlayer()
-    {
-        _transform.position = player.transform.position;
+        return _ropeSegments.Last();
     }
 }

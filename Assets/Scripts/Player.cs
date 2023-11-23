@@ -170,9 +170,12 @@ public class Player : MonoBehaviour
 
     private void OnAxeThrow()
     {
+        // Initialize rope
+        _ropeHingeJoint.CreateRope();
+        _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+        
         this._boxCollider.enabled = false;
         this._rigidbody.gravityScale = 0f;
-        _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
         
         // Axe collide
@@ -198,6 +201,7 @@ public class Player : MonoBehaviour
             // Release rope
             if (Input.GetMouseButtonDown(1))
             {
+                _ropeHingeJoint.DestroyRope();
                 this._boxCollider.enabled = true;
                 this._rigidbody.gravityScale = 1f;
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
