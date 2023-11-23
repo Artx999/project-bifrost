@@ -91,9 +91,6 @@ public class Axe : MonoBehaviour
         var testMag = test.magnitude;
         
         // We hit a surface successfully and can stop the axe movement
-        Debug.Log("Vector left: " + Vector2.left);
-        Debug.Log("Hit normal: " + collisionHitNormal);
-        Debug.Log("Total: " + testMag);
         this._rigidbody.velocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
     }
