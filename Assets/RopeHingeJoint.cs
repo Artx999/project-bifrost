@@ -79,7 +79,7 @@ public class RopeHingeJoint : MonoBehaviour
             distanceJoint2D.connectedAnchor = new Vector2(0, -1);
         }
 
-        Debug.Log("Current rope length: " + _ropeSegments.Count);
+        //Debug.Log("Current rope length: " + _ropeSegments.Count);
     }
 
     public void RemoveLastRopeSegment()

@@ -174,8 +174,7 @@ public class Player : MonoBehaviour
         _ropeHingeJoint.CreateRope();
         _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
         
-        this._boxCollider.enabled = false;
-        this._rigidbody.gravityScale = 0f;
+        EnablePlayerPhysics(false);
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
         
         // Axe collide
@@ -192,6 +191,7 @@ public class Player : MonoBehaviour
             this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
             
             // Climb rope
+            // TODO: Better climbing mechanic
             if (Input.GetKeyDown(KeyCode.W))
             {
                 _ropeHingeJoint.RemoveLastRopeSegment();
@@ -202,8 +202,8 @@ public class Player : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 _ropeHingeJoint.DestroyRope();
-                this._boxCollider.enabled = true;
-                this._rigidbody.gravityScale = 1f;
+                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 this.currentState = PlayerState.Fall;
@@ -215,6 +215,7 @@ public class Player : MonoBehaviour
         }
         
         // Reached axe
+        this.EnablePlayerPhysics(true);
         switch (_axeThrow.currentAxePosition)
         {
             case Axe.AxePosition.Null:
@@ -222,29 +223,20 @@ public class Player : MonoBehaviour
             
             // Climb to axe (roof)
             case Axe.AxePosition.Roof:
-                this._boxCollider.enabled = true;
-                this._rigidbody.gravityScale = 1f;
-                
-                this.currentState = PlayerState.Fall;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.Fall;
                 break;
             
             // Climb to axe (wall)
             case Axe.AxePosition.Wall:
-                this._boxCollider.enabled = true;
-                this._rigidbody.gravityScale = 1f;
-                
-                this.currentState = PlayerState.WallSlide;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.WallSlide;
                 break;
             
             // Climb to axe (floor)
             case Axe.AxePosition.Floor:
-                this._boxCollider.enabled = true;
-                this._rigidbody.gravityScale = 1f;
-                
-                this.currentState = PlayerState.Grounded;
                 _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.Grounded;
                 break;
                 
             default:
@@ -254,6 +246,7 @@ public class Player : MonoBehaviour
 
     private void OnWallSlide()
     {
+        // TODO: Check for collision against wall
         // Slide player down the wall
         //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
 
@@ -268,6 +261,7 @@ public class Player : MonoBehaviour
 
     private void OnWallAim()
     {
+        // TODO: Make aiming possible while sliding down wall
         // Slide player, show sight and track mouse
         
         // Cancel throw
@@ -281,6 +275,19 @@ public class Player : MonoBehaviour
     }
     
     /* PRIVATE METHODS */
+    private void EnablePlayerPhysics(bool activate)
+    {
+        if (activate)
+        {
+            this._boxCollider.enabled = true;
+            this._rigidbody.gravityScale = 1f;
+
+            return;
+        }
+
+        this._boxCollider.enabled = false;
+        this._rigidbody.gravityScale = 0f;
+    }
     private void TeleportToAxe()
     {
         var oldVal = transform.position;
@@ -313,15 +320,15 @@ public class Player : MonoBehaviour
         return Vector2.zero;
     }
 
-    private Vector2 GetThrowVector(Vector2 startPos, Vector2 endPos)
+    private Vector2 GetThrowVector(Vector2 startPosition, Vector2 endPosition)
     {
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
-        var aimVec = endPos - startPos;
-        Debug.DrawLine(transform.position, endPos, Color.green, 3f);
+        var aimVector = endPosition - startPosition;
+        Debug.DrawLine(transform.position, endPosition, Color.green, 3f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
-        return -aimVec;
+        return -aimVector;
     }
     
     private bool IsGrounded()

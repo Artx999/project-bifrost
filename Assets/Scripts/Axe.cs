@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -71,18 +72,28 @@ public class Axe : MonoBehaviour
     
     private void OnCollisionEnter2D(Collision2D other)
     {
+        if (!other.collider.CompareTag("Surface"))
+            return;
+        
         // Detect collision and see what type of surface was hit, based on the enum
         var collisionHitNormal = other.GetContact(0).normal;
         
-        if (collisionHitNormal == Vector2.right || collisionHitNormal == Vector2.left)
+        if ((collisionHitNormal - Vector2.right).magnitude < 0.1f)
             this.currentAxePosition = AxePosition.Wall;
-        else if (collisionHitNormal == Vector2.up)
+        else if ((collisionHitNormal - Vector2.left).magnitude < 0.1f)
+            this.currentAxePosition = AxePosition.Wall;
+        else if ((collisionHitNormal - Vector2.up).magnitude < 0.1f)
             this.currentAxePosition = AxePosition.Floor;
-        else if (collisionHitNormal == Vector2.down)
+        else if ((collisionHitNormal - Vector2.down).magnitude < 0.1f)
             this.currentAxePosition = AxePosition.Roof;
+
+        var test = collisionHitNormal - Vector2.left;
+        var testMag = test.magnitude;
         
         // We hit a surface successfully and can stop the axe movement
-        Debug.Log("Hit surface!");
+        Debug.Log("Vector left: " + Vector2.left);
+        Debug.Log("Hit normal: " + collisionHitNormal);
+        Debug.Log("Total: " + testMag);
         this._rigidbody.velocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
     }
