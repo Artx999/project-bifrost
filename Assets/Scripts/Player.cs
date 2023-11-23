@@ -154,7 +154,6 @@ public class Player : MonoBehaviour
             if (throwVector.magnitude < _gameManager.minAxeThrowMag)
             {
                 this.currentState = PlayerState.Grounded;
-            
                 return;
             }
 
@@ -239,38 +238,86 @@ public class Player : MonoBehaviour
 
     private void OnWallSlide()
     {
-        // TODO: Check for collision against wall
-        // Slide player down the wall
-        //_rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
+        // Wall sliding check is done in OnCollisionStay2D()
 
         // Slide to ground
         if (IsGrounded())
         {
             this.currentState = PlayerState.Grounded;
+        }
+
+        // Slide off wall
+        else if (!IsWalled())
+        {
+            this.currentState = PlayerState.Fall;
+        }
+
+        // Slide and aim
+        else if (IsAiming())
+        {
+            this.currentState = PlayerState.WallAim;
+        }
+    }
+
+    private void OnWallAim()
+    {
+        // If we slide to the ground/off the wall while aiming, we change state
+        if (IsGrounded())
+        {
+            if (Input.GetMouseButton(0))
+            {
+                this.currentState = PlayerState.GroundedAim;
+            }
+            else
+            {
+                sight.SetActive(false);
+                this.currentState = PlayerState.Grounded;
+            }
+            
             return;
         }
 
         // Slide off wall
         if (!IsWalled())
         {
+            sight.SetActive(false);
             this.currentState = PlayerState.Fall;
             return;
         }
-
-        // Aim
-        //this.currentState = PlayerState.WallAim;
-    }
-
-    private void OnWallAim()
-    {
+        
         // TODO: Make aiming possible while sliding down wall
-        // Slide player, show sight and track mouse
+        // AIMING
+        // While the player is holding down the mouse button (ie. aiming), we show a simple sight
+        if (Input.GetMouseButton(0))
+        {
+            // Gets the player position, mouse position and calculates the throw vector with these two points
+            // This new vector is sent to the show sight method
+            Vector2 playerPosition = transform.position;
+            var currentMousePosition = GetMousePosition();
+            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            
+            ShowSight(currentThrowVector);
+        }
         
-        // Cancel throw
-        //this.currentState = PlayerState.WallSlide;
-        
-        // Throw
-        //this.currentState = PlayerState.AxeThrow;
+        // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
+        else
+        {
+            sight.SetActive(false);
+
+            Vector2 playerPosition = transform.position;
+            var newMousePosition = GetMousePosition();
+            var throwVector = GetThrowVector(playerPosition, newMousePosition);
+            
+            // Reference the axe and apply the speed based on the aim vector
+            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
+            {
+                this.currentState = PlayerState.WallSlide;
+                return;
+            }
+
+            this.currentState = PlayerState.AxeThrow;
+            _axeThrow.ApplyAxeSpeed(throwVector);
+        }
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
