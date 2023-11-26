@@ -23,7 +23,7 @@ public class Rope : MonoBehaviour
     private List<GameObject> _ropeSegments;
     
     public GameObject axe;
-    public bool ropeExists;
+    public bool RopeExists { get; private set; }
     
     // Start is called before the first frame update
     private void Start()
@@ -34,13 +34,13 @@ public class Rope : MonoBehaviour
         _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
         _anchorRigidbody.gravityScale = 0f;
 
-        ropeExists = false;
+        RopeExists = false;
     }
 
     // Update is called once per frame
     private void Update()
     {
-        ropeExists = _ropeSegments.Any();
+        RopeExists = _ropeSegments.Any();
     }
 
     private void FixedUpdate()
@@ -81,7 +81,7 @@ public class Rope : MonoBehaviour
 
     public void RemoveLastRopeSegment()
     {
-        if (!ropeExists)
+        if (!RopeExists)
             return;
         
         var lastSegment = _ropeSegments.Last();
@@ -93,7 +93,7 @@ public class Rope : MonoBehaviour
 
     public void CreateRope()
     {
-        if (ropeExists)
+        if (RopeExists)
             return;
         
         // Add rope segments equal to the desired rope length
@@ -105,7 +105,7 @@ public class Rope : MonoBehaviour
     
     public void DestroyRope()
     {
-        if (!ropeExists)
+        if (!RopeExists)
             return;
         
         var ropeSegmentCount = _ropeSegments.Count;

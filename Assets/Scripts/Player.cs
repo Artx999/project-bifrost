@@ -178,7 +178,7 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
-        if(_rope.ropeExists)
+        if(_rope.RopeExists)
         {
             // While the rope still exists we can climb the rope
             _lastRopeSegment = _rope.GetLastRopeSegment();
