@@ -12,19 +12,17 @@ public class RopeHingeJoint : MonoBehaviour
     public int initialRopeLength;
     public float segmentLength;
     public float ropeMass;
-
+    
     private Transform _transform;
     
     public GameObject anchorPrefab;
     private GameObject _anchor;
     private Rigidbody2D _anchorRigidbody;
     public GameObject ropeSegmentPrefab;
-
+    
     private List<GameObject> _ropeSegments;
     
-    public GameManager gameManager;
     public GameObject axe;
-    public Player player;
     public bool ropeExists;
     
     // Start is called before the first frame update
@@ -36,7 +34,6 @@ public class RopeHingeJoint : MonoBehaviour
         _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
         _anchorRigidbody.gravityScale = 0f;
 
-        player = GameObject.FindWithTag("Player").GetComponent<Player>();
         ropeExists = false;
     }
 
