@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
     private Camera _camera;
-    private RopeHingeJoint _ropeHingeJoint;
+    private Rope _rope;
     private GameObject _lastRopeSegment;
     
     private float _directionX;
@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _camera = Camera.main;
-        _ropeHingeJoint = rope.GetComponent<RopeHingeJoint>();
+        _rope = rope.GetComponent<Rope>();
         sight.SetActive(false);
     }
 
@@ -165,8 +165,8 @@ public class Player : MonoBehaviour
     private void OnAxeThrow()
     {
         // Initialize rope
-        _ropeHingeJoint.CreateRope();
-        _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+        _rope.CreateRope();
+        _lastRopeSegment = _rope.GetLastRopeSegment();
         
         EnablePlayerPhysics(false);
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
@@ -178,24 +178,24 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
-        if(_ropeHingeJoint.ropeExists)
+        if(_rope.ropeExists)
         {
             // While the rope still exists we can climb the rope
-            _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+            _lastRopeSegment = _rope.GetLastRopeSegment();
             this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
             
             // Climb rope
             // TODO: Better climbing mechanic
             if (Input.GetKeyDown(KeyCode.W))
             {
-                _ropeHingeJoint.RemoveLastRopeSegment();
+                _rope.RemoveLastRopeSegment();
                 return;
             }
             
             // Release rope
             if (Input.GetMouseButtonDown(1))
             {
-                _ropeHingeJoint.DestroyRope();
+                _rope.DestroyRope();
                 this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;

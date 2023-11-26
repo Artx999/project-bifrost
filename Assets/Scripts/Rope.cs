@@ -1,144 +1,124 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 public class Rope : MonoBehaviour
 {
-    private LineRenderer _lineRenderer;
-    private List<RopeSegment> _ropeSegments = new List<RopeSegment>();
-    private float _ropeSegmentLength = .25f;
-    private int _segmentLength = 25;
-    private float _lineWidth = .1f;
+    public int initialRopeLength;
+    public float segmentLength;
+    public float ropeMass;
     
-    private EdgeCollider2D _edgeCollider;
-
+    private Transform _transform;
+    
+    public GameObject anchorPrefab;
+    private GameObject _anchor;
+    private Rigidbody2D _anchorRigidbody;
+    public GameObject ropeSegmentPrefab;
+    
+    private List<GameObject> _ropeSegments;
+    
+    public GameObject axe;
+    public bool ropeExists;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        this._lineRenderer = this.GetComponent<LineRenderer>();
-        Vector3 startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        _transform = this.transform;
+        _ropeSegments = new List<GameObject>();
+        _anchor = Instantiate(anchorPrefab, _transform);
+        _anchorRigidbody = _anchor.GetComponent<Rigidbody2D>();
+        _anchorRigidbody.gravityScale = 0f;
 
-        for (int i = 0; i < _segmentLength; i++)
-        {
-            this._ropeSegments.Add(new RopeSegment(startPoint));
-            startPoint.y -= _ropeSegmentLength;
-        }
-        
-        _edgeCollider = this.GetComponent<EdgeCollider2D>();
+        ropeExists = false;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        this.DrawRope();
-        this.SetEdgeCollider(_lineRenderer);
+        ropeExists = _ropeSegments.Any();
     }
 
     private void FixedUpdate()
     {
-        this.Simulate();
+        _anchorRigidbody.MovePosition(axe.transform.position);
     }
 
-    private void Simulate()
+    private void AddRopeSegment()
     {
-        // Simulation
-        Vector2 forceGravity = new Vector2(0f, -1.5f);
+        // Get the last rope segment. If rope is "empty", it will take the anchor instead
+        GameObject lastSegment = _ropeSegments.Any() ? _ropeSegments.Last() : _anchor;
+
+        var lastSegmentPosition = lastSegment.transform.position;
+        var lastSegmentRotation = lastSegment.transform.rotation;
         
-        for (int i = 1; i < this._segmentLength; i++)
-        {
-            RopeSegment firstSegment = this._ropeSegments[i];
-            Vector2 velocity = firstSegment.CurrentPosition - firstSegment.OldPosition;
-            firstSegment.OldPosition = firstSegment.CurrentPosition;
-            firstSegment.CurrentPosition += velocity;
-            firstSegment.CurrentPosition += forceGravity * Time.fixedDeltaTime;
-            this._ropeSegments[i] = firstSegment;
-        }
+        GameObject currentSegment = Instantiate(ropeSegmentPrefab, lastSegmentPosition, lastSegmentRotation, _transform);
+        _ropeSegments.Add(currentSegment);
+        currentSegment.transform.localScale = new Vector3(segmentLength, segmentLength, segmentLength);
+        currentSegment.GetComponent<Rigidbody2D>().mass = ropeMass;
         
-        // Constraints
-        for (int i = 0; i < 50; i++)
+        // Connect the hinge joints of the current segment to the last segment of the rope
+        Rigidbody2D lastSegmentRigidbody2D = lastSegment.GetComponent<Rigidbody2D>();
+        HingeJoint2D hingeJoint2D = currentSegment.GetComponent<HingeJoint2D>();
+        DistanceJoint2D distanceJoint2D = currentSegment.GetComponent<DistanceJoint2D>();
+        hingeJoint2D.connectedBody = lastSegmentRigidbody2D;
+        distanceJoint2D.connectedBody = lastSegmentRigidbody2D;
+        
+        // First segment needs to be attached in the center of the anchor
+        // All other segments need to be connected further down from the last
+        if (currentSegment != _ropeSegments.First())
         {
-            this.ApplyConstraint();
+            hingeJoint2D.connectedAnchor = new Vector2(0, -1);
+            distanceJoint2D.connectedAnchor = new Vector2(0, -1);
         }
+
+        //Debug.Log("Current rope length: " + _ropeSegments.Count);
     }
 
-    private void ApplyConstraint()
+    public void RemoveLastRopeSegment()
     {
-        RopeSegment firstSegment = this._ropeSegments[0];
-        firstSegment.CurrentPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        this._ropeSegments[0] = firstSegment;
-
-        for (int i = 0; i < this._segmentLength - 1; i++)
-        {
-            RopeSegment firstRopeSegment = this._ropeSegments[i];
-            RopeSegment secondRopeSegment = this._ropeSegments[i + 1];
-
-            float distance = (firstRopeSegment.CurrentPosition - secondRopeSegment.CurrentPosition).magnitude;
-            float error = Mathf.Abs(distance - this._ropeSegmentLength);
-            Vector2 changeDirection = Vector2.zero;
-
-            if (distance > _ropeSegmentLength)
-            {
-                changeDirection = (firstRopeSegment.CurrentPosition - secondRopeSegment.CurrentPosition).normalized;
-            } else if (distance < _ropeSegmentLength)
-            {
-                changeDirection = (secondRopeSegment.CurrentPosition - firstRopeSegment.CurrentPosition).normalized;
-            }
-
-            Vector2 changeAmount = changeDirection * error;
-            if (i != 0)
-            {
-                firstRopeSegment.CurrentPosition -= changeAmount * .5f;
-                this._ropeSegments[i] = firstRopeSegment;
-                secondRopeSegment.CurrentPosition += changeAmount * .5f;
-                this._ropeSegments[i + 1] = secondRopeSegment;
-            }
-            else
-            {
-                secondRopeSegment.CurrentPosition += changeAmount;
-                this._ropeSegments[i + 1] = secondRopeSegment;
-            }
-        }
+        if (!ropeExists)
+            return;
+        
+        var lastSegment = _ropeSegments.Last();
+        var lastSegmentIndex = _ropeSegments.Count - 1;
+        
+        Destroy(lastSegment);
+        _ropeSegments.RemoveAt(lastSegmentIndex);
     }
 
-    private void DrawRope()
+    public void CreateRope()
     {
-        float lineWidth = this._lineWidth;
-        _lineRenderer.startWidth = lineWidth;
-        _lineRenderer.endWidth = lineWidth;
-
-        Vector3[] ropePositions = new Vector3[this._segmentLength];
-        for (int i = 0; i < this._segmentLength; i++)
-        {
-            ropePositions[i] = this._ropeSegments[i].CurrentPosition;
-        }
-
-        _lineRenderer.positionCount = ropePositions.Length;
-        _lineRenderer.SetPositions(ropePositions);
+        if (ropeExists)
+            return;
+        
+        // Add rope segments equal to the desired rope length
+        for (int i = 0; i < initialRopeLength; i++)
+            AddRopeSegment();
+        
+        _anchorRigidbody.gravityScale = 1f;
     }
     
-    public struct RopeSegment
+    public void DestroyRope()
     {
-        public Vector2 CurrentPosition;
-        public Vector2 OldPosition;
-
-        public RopeSegment(Vector2 position)
-        {
-            this.CurrentPosition = position;
-            this.OldPosition = position;
-        }
+        if (!ropeExists)
+            return;
+        
+        var ropeSegmentCount = _ropeSegments.Count;
+        // Remove all segments
+        for (var i = 0; i < ropeSegmentCount; i++)
+            Destroy(_ropeSegments[i]);
+        _ropeSegments.Clear();
+        
+        _anchorRigidbody.gravityScale = 0f;
     }
-    
-    void SetEdgeCollider(LineRenderer lineRenderer)
+
+    public GameObject GetLastRopeSegment()
     {
-        List<Vector2> edges = new List<Vector2>();
-
-        for(int point = 0; point<lineRenderer.positionCount; point++)
-        {
-            Vector3 lineRendererPoint = lineRenderer.GetPosition(point);
-            edges.Add(new Vector2(lineRendererPoint.x, lineRendererPoint.y));
-        }
-
-        _edgeCollider.SetPoints(edges);
+        return _ropeSegments.Last();
     }
 }
