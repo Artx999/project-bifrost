@@ -40111,59 +40111,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &471744425
+--- !u!1 &471744425 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6602162059660534231, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+  m_PrefabInstance: {fileID: 8321621379920805872}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 471744427}
-  - component: {fileID: 471744426}
-  m_Layer: 0
-  m_Name: Rope
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &471744426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 471744425}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5290348e97c7be40b07ea1f172678c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  initialRopeLength: 15
-  segmentLength: 0.2
-  ropeMass: 5
-  anchorPrefab: {fileID: 276442981167661313, guid: b63ad62385d3d3141b65cffe80d2ab24, type: 3}
-  ropeSegmentPrefab: {fileID: 1159149993262735539, guid: a0f654f49c569104c9d01f33f73ff073, type: 3}
-  gameManager: {fileID: 1589176992}
-  axe: {fileID: 257493857}
-  player: {fileID: 800802509}
-  ropeExists: 0
---- !u!4 &471744427
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 471744425}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.26, y: 2.76, z: 0.029861517}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -43675,6 +43627,67 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &8321621379920805872
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 112603182137388035, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: axe
+      value: 
+      objectReference: {fileID: 257493857}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402441637023704219, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602162059660534231, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
+      propertyPath: m_Name
+      value: Rope
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3e80ce7922a174d44a1c0c41c4f72607, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -43685,4 +43698,4 @@ SceneRoots:
   - {fileID: 257493862}
   - {fileID: 1354612693}
   - {fileID: 1546394830}
-  - {fileID: 471744427}
+  - {fileID: 8321621379920805872}

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1595626226608111425}
   - component: {fileID: -8825300592511066}
   m_Layer: 7
-  m_Name: Anchor
+  m_Name: Rope Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

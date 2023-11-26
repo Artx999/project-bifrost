@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4317373406746138376}
   - component: {fileID: -4713674060472698045}
   m_Layer: 7
-  m_Name: chain
+  m_Name: Rope Segment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
