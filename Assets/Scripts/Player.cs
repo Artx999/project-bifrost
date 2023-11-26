@@ -6,18 +6,30 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // We can reference like this, because of Singleton
-    // Singleton = One class can have only one instance
-    public GameManager gameManager;
+    public enum PlayerState
+    {
+        Grounded,
+        Fall,
+        GroundedAim,
+        AxeThrow,
+        AxeStuck,
+        WallSlide,
+        WallAim
+    }
+
+    public PlayerState currentState;
+    public GameObject gameManager;
     public GameObject axe;
     public GameObject sight;
+    public GameObject rope;
 
     private GameManager _gameManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Axe _axeThrow;
-    private Rigidbody2D _axeRigidbody;
-    private bool _mouseHeldDown;
+    private Camera _camera;
+    private RopeHingeJoint _ropeHingeJoint;
+    private GameObject _lastRopeSegment;
     
     private float _directionX;
     public float movementSpeed = 1f;
@@ -25,153 +37,387 @@ public class Player : MonoBehaviour
     private void Start()
     {
         // Initialize variables
+        this.currentState = PlayerState.Grounded;
         _gameManager = gameManager.GetComponent<GameManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _axeThrow = axe.GetComponent<Axe>();
-        _axeRigidbody = axe.GetComponent<Rigidbody2D>();
-        _mouseHeldDown = _gameManager.axeIsSeperated = false;
+        _camera = Camera.main;
+        _ropeHingeJoint = rope.GetComponent<RopeHingeJoint>();
         sight.SetActive(false);
     }
 
     private void Update()
     {
-        Walk();
-        
-        TeleportToAxe();
-        
-        /* Axe throw */
-        // If the axe is thrown, we dont want to repeat the throw mechanic below
-        if (_gameManager.axeIsSeperated)
-            return;
-        
-        // If the left button is pressed start the throw mechanic here
-        if (IsAiming() && IsGrounded() && !_mouseHeldDown)
+        switch (this.currentState)
         {
-            _mouseHeldDown = true;
+            case PlayerState.Grounded:
+                OnGrounded();
+                break;
             
-            // Stop the players movement completely while aiming
-            _rigidbody.velocity = Vector2.zero;
-        }
-
-        // While the player is holding down the mouse button (ie. aiming), we show a simple sight in form
-        // of a white dot
-        else if (Input.GetMouseButton(0) && _mouseHeldDown)
-        {
-            // Gets the player position, mouse position and calculates the throw vector with these two points
-            // This new vector is sent to the show sight method
-            Vector2 playerPos = transform.position;
-            Vector2 currentMousePos = GetMousePosition();
-            Vector2 currentThrowVec = GetThrowVector(playerPos, currentMousePos);
+            case PlayerState.Fall:
+                OnFall();
+                break;
             
-            ShowSight(currentThrowVec);
-        }
-        
-        // If the code has been through the above two blocks (ie. left button has been pressed and held down)
-        // and been released we start the actual axe throw
-        else if(_mouseHeldDown)
-        {
-            _mouseHeldDown = false;
-            _gameManager.axeIsSeperated = true;
-            sight.SetActive(false);
-
-            Vector2 playerPos = transform.position;
-            Vector2 newMousePos = GetMousePosition();
-            Vector2 throwVec = GetThrowVector(playerPos, newMousePos);
+            case PlayerState.GroundedAim:
+                OnGroundAim();
+                break;
             
-            // Reference the axe and apply the speed based on the aim vector
-            _axeThrow.ApplyAxeSpeed(throwVec);
+            case PlayerState.AxeThrow:
+                OnAxeThrow();
+                break;
+            
+            case PlayerState.AxeStuck:
+                OnAxeStuck();
+                break;
+            
+            case PlayerState.WallSlide:
+                OnWallSlide();
+                break;
+            
+            case PlayerState.WallAim:
+                OnWallAim();
+                break;
+            
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    private void Walk()
+    private void FixedUpdate()
     {
-        /* Walk */
-        if (!_gameManager.axeIsSeperated && IsGrounded() && !_mouseHeldDown)
+        if (this.currentState == PlayerState.Grounded)
         {
             _directionX = Input.GetAxisRaw("Horizontal");
             _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
         }
     }
 
+    /* STATE METHODS */
+    private void OnGrounded()
+    {
+        // Movement done in FixedUpdate()
+        
+        // Aim
+        if (IsAiming())
+        {
+            _rigidbody.velocity = Vector2.zero;
+            this.currentState = PlayerState.GroundedAim;
+        }
+        
+        // Step off ledge
+        if (!IsGrounded())
+        {
+            this._rigidbody.velocity = Vector2.zero;
+            this.currentState = PlayerState.Fall;
+        }
+    }
+
+    private void OnFall()
+    {
+        // Land
+        if (IsGrounded())
+        {
+            this.currentState = PlayerState.Grounded;
+        }
+        else if (IsWalled())
+        {
+            this.currentState = PlayerState.WallSlide;
+        }
+    }
+
+    private void OnGroundAim()
+    {
+        // AIMING
+        // While the player is holding down the mouse button (ie. aiming), we show a simple sight
+        if (Input.GetMouseButton(0))
+        {
+            // Gets the player position, mouse position and calculates the throw vector with these two points
+            // This new vector is sent to the show sight method
+            Vector2 playerPosition = transform.position;
+            var currentMousePosition = GetMousePosition();
+            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            
+            ShowSight(currentThrowVector);
+        }
+        
+        // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
+        else
+        {
+            sight.SetActive(false);
+
+            Vector2 playerPosition = transform.position;
+            var newMousePosition = GetMousePosition();
+            var throwVector = GetThrowVector(playerPosition, newMousePosition);
+            
+            // Reference the axe and apply the speed based on the aim vector
+            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
+            {
+                this.currentState = PlayerState.Grounded;
+                return;
+            }
+
+            this.currentState = PlayerState.AxeThrow;
+            _axeThrow.ApplyAxeSpeed(throwVector);
+        }
+    }
+
+    private void OnAxeThrow()
+    {
+        // Initialize rope
+        _ropeHingeJoint.CreateRope();
+        _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+        
+        EnablePlayerPhysics(false);
+        this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+        
+        // Axe collide
+        if(_axeThrow.currentAxePosition != Axe.AxePosition.Null)
+            this.currentState = PlayerState.AxeStuck;
+    }
+
+    private void OnAxeStuck()
+    {
+        if(_ropeHingeJoint.ropeExists)
+        {
+            // While the rope still exists we can climb the rope
+            _lastRopeSegment = _ropeHingeJoint.GetLastRopeSegment();
+            this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+            
+            // Climb rope
+            // TODO: Better climbing mechanic
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                _ropeHingeJoint.RemoveLastRopeSegment();
+                return;
+            }
+            
+            // Release rope
+            if (Input.GetMouseButtonDown(1))
+            {
+                _ropeHingeJoint.DestroyRope();
+                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.EnablePlayerPhysics(true);
+                this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
+                
+                this.currentState = PlayerState.Fall;
+            }
+            
+            return;
+        }
+        
+        // Reached axe
+        this.EnablePlayerPhysics(true);
+        switch (_axeThrow.currentAxePosition)
+        {
+            case Axe.AxePosition.Null:
+                break;
+            
+            // Climb to axe (roof)
+            case Axe.AxePosition.Roof:
+                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.Fall;
+                break;
+            
+            // Climb to axe (wall)
+            case Axe.AxePosition.Wall:
+                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.WallSlide;
+                break;
+            
+            // Climb to axe (floor)
+            case Axe.AxePosition.Floor:
+                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this.currentState = PlayerState.Grounded;
+                break;
+                
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void OnWallSlide()
+    {
+        // Wall sliding check is done in OnCollisionStay2D()
+
+        // Slide to ground
+        if (IsGrounded())
+        {
+            this.currentState = PlayerState.Grounded;
+        }
+
+        // Slide off wall
+        else if (!IsWalled())
+        {
+            this.currentState = PlayerState.Fall;
+        }
+
+        // Slide and aim
+        else if (IsAiming())
+        {
+            this.currentState = PlayerState.WallAim;
+        }
+    }
+
+    private void OnWallAim()
+    {
+        // If we slide to the ground/off the wall while aiming, we change state
+        if (IsGrounded())
+        {
+            if (Input.GetMouseButton(0))
+            {
+                this.currentState = PlayerState.GroundedAim;
+            }
+            else
+            {
+                sight.SetActive(false);
+                this.currentState = PlayerState.Grounded;
+            }
+            
+            return;
+        }
+
+        // Slide off wall
+        if (!IsWalled())
+        {
+            sight.SetActive(false);
+            this.currentState = PlayerState.Fall;
+            return;
+        }
+        
+        // TODO: Make aiming possible while sliding down wall
+        // AIMING
+        // While the player is holding down the mouse button (ie. aiming), we show a simple sight
+        if (Input.GetMouseButton(0))
+        {
+            // Gets the player position, mouse position and calculates the throw vector with these two points
+            // This new vector is sent to the show sight method
+            Vector2 playerPosition = transform.position;
+            var currentMousePosition = GetMousePosition();
+            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            
+            ShowSight(currentThrowVector);
+        }
+        
+        // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
+        else
+        {
+            sight.SetActive(false);
+
+            Vector2 playerPosition = transform.position;
+            var newMousePosition = GetMousePosition();
+            var throwVector = GetThrowVector(playerPosition, newMousePosition);
+            
+            // Reference the axe and apply the speed based on the aim vector
+            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
+            {
+                this.currentState = PlayerState.WallSlide;
+                return;
+            }
+
+            this.currentState = PlayerState.AxeThrow;
+            _axeThrow.ApplyAxeSpeed(throwVector);
+        }
+        
+        // Slide off wall
+        //this.currentState = PlayerState.Fall;
+    }
+    
+    /* PRIVATE METHODS */
+    private void EnablePlayerPhysics(bool activate)
+    {
+        if (activate)
+        {
+            this._boxCollider.enabled = true;
+            this._rigidbody.gravityScale = 1f;
+
+            return;
+        }
+
+        this._boxCollider.enabled = false;
+        this._rigidbody.gravityScale = 0f;
+    }
     private void TeleportToAxe()
     {
-        /* Move to axe */
-        // Temporary: Right click to move there, in future this will be a rope mechanic
-        if(_axeRigidbody.velocity.magnitude <= 0.1f && Input.GetMouseButtonDown(1))
+        var oldVal = transform.position;
+
+        var axeDiff = axe.transform.position - oldVal;
+        if (axeDiff.x > 0f)
         {
-            var oldVal = transform.position;
-            
-            var axeDiff = axe.transform.position - transform.position;
-            if (axeDiff.x > 0f)
-            {
-                transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-            }
-            else if (axeDiff.x < 0f)
-            {
-                transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-            }
-
-            if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-            {
-                transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-            }
-            
-            Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-            
-            _rigidbody.velocity = Vector2.zero;
-            _gameManager.axeIsSeperated = false;
+            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
         }
-    }
-
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Surface"))
+        else if (axeDiff.x < 0f)
         {
-            _rigidbody.AddForce(Vector2.up * _gameManager.playerWallFriction, ForceMode2D.Force);
+            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
         }
-    }
 
+        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
+        {
+            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
+        }
+
+        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
+
+        _rigidbody.velocity = Vector2.zero;
+    }
+    
     private Vector2 GetMousePosition()
     {
-        if(Camera.main != null)
-            return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if(_camera != null)
+            return _camera.ScreenToWorldPoint(Input.mousePosition);
         
         return Vector2.zero;
     }
 
-    private Vector2 GetThrowVector(Vector2 startPos, Vector2 endPos)
+    private Vector2 GetThrowVector(Vector2 startPosition, Vector2 endPosition)
     {
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
-        Vector2 aimVec = endPos - startPos;
-        Debug.DrawLine(transform.position, endPos, Color.green, 3f);
+        var aimVector = endPosition - startPosition;
+        Debug.DrawLine(transform.position, endPosition, Color.green, 3f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
-        return -aimVec;
+        return -aimVector;
     }
     
     private bool IsGrounded()
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
-        return Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0f, Vector2.down, .1f, desiredMask);
+        var boxColliderBounds = _boxCollider.bounds;
+        
+        return Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.down, .1f, desiredMask);
+    }
+
+    private bool IsWalled()
+    {
+        if (IsGrounded())
+            return false;
+        
+        LayerMask desiredMask = LayerMask.GetMask("Surface");
+        var boxColliderBounds = _boxCollider.bounds;
+        
+        var leftBoxCast = Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.left, .1f, desiredMask);
+        
+        var rightBoxCast = Physics2D.BoxCast(
+            boxColliderBounds.center, boxColliderBounds.size, 
+            0f, Vector2.right, .1f, desiredMask);
+        
+        return leftBoxCast || rightBoxCast;
     }
 
     private bool IsAiming()
     {
-        if (Input.GetMouseButton(0))
-        {
-            // Detect if mouse is hitting 
-            RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
-
-            if (!hit.collider)
-                return false;
-
-            // Method will only return true if left mouse is clicking on the player, else everything is false
-            if (hit.collider.CompareTag("Player"))
-                return true;
-        }
-        return false;
+        if (!Input.GetMouseButton(0)) return false;
+        
+        // Detect if mouse is hitting 
+        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+    
+        // Method will only return true if left mouse is clicking on the player, else everything is false
+        return hit.collider && hit.collider.CompareTag("Player");
     }
 
     private void ShowSight(Vector2 inputVec)
@@ -196,10 +442,5 @@ public class Player : MonoBehaviour
         // I am unsure why we multiply bu 0.1f^2, but it works
         sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
         sight.SetActive(true);
-    }
-
-    public void CancelThrow()
-    {
-        _gameManager.axeIsSeperated = false;
     }
 }

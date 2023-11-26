@@ -12,16 +12,15 @@ public class GameManager : MonoBehaviour
     public float maxAxeThrowMag;
     public float minAxeThrowMag;
     public float axeSpeedAmp;
-    public bool axeIsSeperated;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         /* Reload scene */
         if (Input.GetKeyDown(KeyCode.R))
