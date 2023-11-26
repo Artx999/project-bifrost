@@ -58,7 +58,7 @@ public class Rope : MonoBehaviour
         
         GameObject currentSegment = Instantiate(ropeSegmentPrefab, lastSegmentPosition, lastSegmentRotation, _transform);
         _ropeSegments.Add(currentSegment);
-        currentSegment.transform.localScale = new Vector3(segmentLength, segmentLength, segmentLength);
+        currentSegment.transform.localScale *= segmentLength;
         currentSegment.GetComponent<Rigidbody2D>().mass = ropeMass;
         
         // Connect the hinge joints of the current segment to the last segment of the rope
@@ -72,8 +72,8 @@ public class Rope : MonoBehaviour
         // All other segments need to be connected further down from the last
         if (currentSegment != _ropeSegments.First())
         {
-            hingeJoint2D.connectedAnchor = new Vector2(0, -1);
-            distanceJoint2D.connectedAnchor = new Vector2(0, -1);
+            hingeJoint2D.connectedAnchor = new Vector2(0, -.5f);
+            distanceJoint2D.connectedAnchor = new Vector2(0, -.5f);
         }
 
         //Debug.Log("Current rope length: " + _ropeSegments.Count);
