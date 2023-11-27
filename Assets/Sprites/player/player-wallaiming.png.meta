@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f7f7965af0b0302459d6d0447dc95ccc
+guid: 67582874cc534b746822f89ca1a028ff
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,12 +110,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player-extra-v1_0
+      name: player-wallaiming_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 47
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -124,19 +124,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0579c64a50fdd474897aa14e581a75f4
-      internalID: 1847198064
+      spriteID: f177a360eeeb7034ba8577131f2a4686
+      internalID: -1827113285
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player-extra-v1_1
+      name: player-wallaiming_1
       rect:
         serializedVersion: 2
-        x: 47
+        x: 32
         y: 0
-        width: 47
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -145,19 +145,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e967c9ecb371424b92fb26cd7fcfba8
-      internalID: -1983023218
+      spriteID: 8c31fcd460df70b419b452d1877ad114
+      internalID: -357431325
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player-extra-v1_2
+      name: player-wallaiming_2
       rect:
         serializedVersion: 2
-        x: 94
+        x: 64
         y: 0
-        width: 47
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -166,19 +166,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 428f8108217659b4da7dc4d18bac125b
-      internalID: -1050430849
+      spriteID: 306f2a34e2e116d49aa2492d08356594
+      internalID: -743021396
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player-extra-v1_3
+      name: player-wallaiming_3
       rect:
         serializedVersion: 2
-        x: 141
+        x: 96
         y: 0
-        width: 47
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -187,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d71cef78aa288734ba8caaf4586f16c5
-      internalID: -913956279
+      spriteID: e291823a05ea7e84b8bfa1734812b7ab
+      internalID: 1056483333
       vertices: []
       indices: 
       edges: []
@@ -204,10 +204,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player-extra-v1_0: 1847198064
-      player-extra-v1_1: -1983023218
-      player-extra-v1_2: -1050430849
-      player-extra-v1_3: -913956279
+      player-wallaiming_0: -1827113285
+      player-wallaiming_1: -357431325
+      player-wallaiming_2: -743021396
+      player-wallaiming_3: 1056483333
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
