@@ -31,8 +31,9 @@ public class Player : MonoBehaviour
     private Rope _rope;
     private GameObject _lastRopeSegment;
     private Animator _animator;
-    
-    private float _directionX;
+
+    private float _aimingVectorX = 0f;
+    private float _directionX = 0f;
     public float movementSpeed = 1f;
 
     private void Start()
@@ -54,7 +55,7 @@ public class Player : MonoBehaviour
         _animator.SetInteger("currentState", (int)currentState);
         
         var rigidBodyVelocityX = _rigidbody.velocity.x;
-        if (rigidBodyVelocityX > 0.1f || rigidBodyVelocityX < -0.1f)
+        if (Mathf.Abs(rigidBodyVelocityX) > _gameManager.minAxeThrowMag)
         {
             _animator.SetFloat("movementX", rigidBodyVelocityX);
         }
@@ -71,7 +72,16 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.GroundedAim:
-                OnGroundAim();
+                var aimingVector = Vector2.zero;
+                OnGroundAim(ref aimingVector);
+                if (currentState == PlayerState.GroundedAim)
+                {
+                    _aimingVectorX = aimingVector.x;
+                    _animator.SetFloat("aimingX", _aimingVectorX);
+                    _animator.SetBool("aimCancel", 
+                        Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
+                    _animator.SetFloat("movementX", _aimingVectorX);
+                }
                 break;
             
             case PlayerState.AxeThrow:
@@ -137,7 +147,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnGroundAim()
+    private void OnGroundAim(ref Vector2 animatorAimVector)
     {
         // AIMING
         // While the player is holding down the mouse button (ie. aiming), we show a simple sight
@@ -148,6 +158,7 @@ public class Player : MonoBehaviour
             Vector2 playerPosition = transform.position;
             var currentMousePosition = GetMousePosition();
             var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            animatorAimVector = currentThrowVector;
             
             ShowSight(currentThrowVector);
         }
@@ -164,6 +175,7 @@ public class Player : MonoBehaviour
             // Reference the axe and apply the speed based on the aim vector
             if (throwVector.magnitude < _gameManager.minAxeThrowMag)
             {
+                animatorAimVector = throwVector;
                 this.currentState = PlayerState.Grounded;
                 return;
             }
