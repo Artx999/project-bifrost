@@ -223,7 +223,18 @@ public class Player : MonoBehaviour
                 this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
-                this.currentState = PlayerState.Fall;
+                if (IsGrounded())
+                {
+                    this.currentState = PlayerState.Grounded;
+                }
+                else if (IsWalled())
+                {
+                    this.currentState = PlayerState.WallSlide;
+                }
+                else
+                {
+                    this.currentState = PlayerState.Fall;
+                }
             }
             
             return;
