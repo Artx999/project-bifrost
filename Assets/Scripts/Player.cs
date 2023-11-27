@@ -30,10 +30,11 @@ public class Player : MonoBehaviour
     private Camera _camera;
     private Rope _rope;
     private GameObject _lastRopeSegment;
+    private Animator _animator;
     
     private float _directionX;
     public float movementSpeed = 1f;
-    
+
     private void Start()
     {
         // Initialize variables
@@ -44,14 +45,24 @@ public class Player : MonoBehaviour
         _axeThrow = axe.GetComponent<Axe>();
         _camera = Camera.main;
         _rope = rope.GetComponent<Rope>();
+        _animator = GetComponent<Animator>();
         sight.SetActive(false);
     }
 
     private void Update()
     {
+        _animator.SetInteger("currentState", (int)currentState);
+        
+        var rigidBodyVelocityX = _rigidbody.velocity.x;
+        if (rigidBodyVelocityX > 0.1f || rigidBodyVelocityX < -0.1f)
+        {
+            _animator.SetFloat("movementX", rigidBodyVelocityX);
+        }
+        
         switch (this.currentState)
         {
             case PlayerState.Grounded:
+                _animator.SetBool("isWalking", _rigidbody.velocity.magnitude > 0.1f);
                 OnGrounded();
                 break;
             
