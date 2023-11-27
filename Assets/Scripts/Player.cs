@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
     private Animator _animator;
 
     private float _aimingVectorX = 0f;
+    private float _animatorLeftWallCheck = 0f;
     private float _directionX = 0f;
     public float movementSpeed = 1f;
 
@@ -60,6 +61,7 @@ public class Player : MonoBehaviour
             _animator.SetFloat("movementX", rigidBodyVelocityX);
         }
         
+        var aimingVector = Vector2.zero;
         switch (this.currentState)
         {
             case PlayerState.Grounded:
@@ -72,7 +74,6 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.GroundedAim:
-                var aimingVector = Vector2.zero;
                 OnGroundAim(ref aimingVector);
                 if (currentState == PlayerState.GroundedAim)
                 {
@@ -93,11 +94,19 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.WallSlide:
+                _animator.SetFloat("wallSlideLeft", _animatorLeftWallCheck);
                 OnWallSlide();
                 break;
             
             case PlayerState.WallAim:
-                OnWallAim();
+                OnWallAim(ref aimingVector);
+                if (currentState == PlayerState.WallAim)
+                {
+                    _aimingVectorX = aimingVector.x;
+                    _animator.SetFloat("aimingX", _aimingVectorX);
+                    _animator.SetBool("aimCancel", 
+                        Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
+                }
                 break;
             
             default:
@@ -293,7 +302,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnWallAim()
+    private void OnWallAim(ref Vector2 animatorAimVector)
     {
         // If we slide to the ground/off the wall while aiming, we change state
         if (IsGrounded())
@@ -329,6 +338,7 @@ public class Player : MonoBehaviour
             Vector2 playerPosition = transform.position;
             var currentMousePosition = GetMousePosition();
             var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            animatorAimVector = currentThrowVector;
             
             ShowSight(currentThrowVector);
         }
@@ -345,6 +355,7 @@ public class Player : MonoBehaviour
             // Reference the axe and apply the speed based on the aim vector
             if (throwVector.magnitude < _gameManager.minAxeThrowMag)
             {
+                animatorAimVector = throwVector;
                 this.currentState = PlayerState.WallSlide;
                 return;
             }
@@ -439,6 +450,8 @@ public class Player : MonoBehaviour
         var rightBoxCast = Physics2D.BoxCast(
             boxColliderBounds.center, boxColliderBounds.size, 
             0f, Vector2.right, .1f, desiredMask);
+
+        _animatorLeftWallCheck = leftBoxCast ? 1f : 0f;
         
         return leftBoxCast || rightBoxCast;
     }
