@@ -168,7 +168,7 @@ public class Player : MonoBehaviour
         _rope.CreateRope();
         _lastRopeSegment = _rope.GetLastRopeSegment();
         
-        EnablePlayerPhysics(false);
+        this.EnablePlayerPhysics(false);
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
         
         // Axe collide
