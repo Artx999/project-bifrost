@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: dc46712b9fa874943a3c02376211007e
+guid: 93c01884d272f2b429e05e17c8fd3fe1
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c20cdc7bca734f4ca7ca794d117d7e7
-      internalID: 1169156583
+      spriteID: 1f9a75be97c75d84c8a8e460d315deb2
+      internalID: 384132133
       vertices: []
       indices: 
       edges: []
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d8f10451f700e494289653e0d67b7af9
-      internalID: 2118848705
+      spriteID: 303c4c5e112dfcf4899121d7e8fe2306
+      internalID: 1172652256
       vertices: []
       indices: 
       edges: []
@@ -162,8 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player-throw_0: 1169156583
-      player-throw_1: 2118848705
+      player-throw_0: 384132133
+      player-throw_1: 1172652256
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
