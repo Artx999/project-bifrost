@@ -65,6 +65,10 @@ public class Axe : MonoBehaviour
                 FollowPlayer();
                 break;
             
+            case Player.PlayerState.GroundStun:
+                FollowPlayer();
+                break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }

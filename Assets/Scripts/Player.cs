@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
         AxeThrow,
         AxeStuck,
         WallSlide,
-        WallAim
+        WallAim,
+        GroundStun
     }
 
     public PlayerState currentState;
@@ -35,6 +36,10 @@ public class Player : MonoBehaviour
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
     private float _directionX = 0f;
+    private float _groundStunTimeNormal = 0.34f;
+    private float _groundStunTimeBack = 1.67f;
+    private float _verticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
+    private bool _airStunned = false;
     public float movementSpeed = 1f;
 
     private void Start()
@@ -53,20 +58,22 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        _animator.SetInteger("currentState", (int)currentState);
+        var aimingVector = Vector2.zero;
+        var rigidBodyVelocity = _rigidbody.velocity;
         
-        var rigidBodyVelocityX = _rigidbody.velocity.x;
-        if (Mathf.Abs(rigidBodyVelocityX) > _gameManager.minAxeThrowMag)
+        _animator.SetInteger("currentState", (int)currentState);
+        _animator.SetFloat("speedY", rigidBodyVelocity.y);
+        _animator.SetFloat("speedX", rigidBodyVelocity.x);
+        if (Mathf.Abs(rigidBodyVelocity.x) > 0.1f)
         {
-            _animator.SetFloat("movementX", rigidBodyVelocityX);
+            _animator.SetFloat("lateSpeedX", rigidBodyVelocity.x);
         }
         
-        var aimingVector = Vector2.zero;
         switch (this.currentState)
         {
             case PlayerState.Grounded:
-                _animator.SetBool("isWalking", _rigidbody.velocity.magnitude > 0.1f);
                 OnGrounded();
+                _animator.SetBool("isWalking", Mathf.Abs(_rigidbody.velocity.x) > 0.1f);
                 break;
             
             case PlayerState.Fall:
@@ -81,7 +88,7 @@ public class Player : MonoBehaviour
                     _animator.SetFloat("aimingX", _aimingVectorX);
                     _animator.SetBool("aimCancel", 
                         Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
-                    _animator.SetFloat("movementX", _aimingVectorX);
+                    _animator.SetFloat("lateSpeedX", _aimingVectorX);
                 }
                 break;
             
@@ -94,8 +101,8 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.WallSlide:
-                _animator.SetFloat("wallSlideLeft", _animatorLeftWallCheck);
                 OnWallSlide();
+                _animator.SetFloat("wallSlideLeft", _animatorLeftWallCheck);
                 break;
             
             case PlayerState.WallAim:
@@ -107,6 +114,10 @@ public class Player : MonoBehaviour
                     _animator.SetBool("aimCancel", 
                         Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
                 }
+                break;
+            
+            case PlayerState.GroundStun:
+                StartCoroutine(OnGroundStun());
                 break;
             
             default:
@@ -145,13 +156,18 @@ public class Player : MonoBehaviour
 
     private void OnFall()
     {
+        if(!_airStunned)
+            _airStunned = _rigidbody.velocity.y < -_verticalSpeedLimit;
+        
         // Land
         if (IsGrounded())
         {
-            this.currentState = PlayerState.Grounded;
+            //this.currentState = PlayerState.Grounded;
+            this.currentState = PlayerState.GroundStun;
         }
         else if (IsWalled())
         {
+            _airStunned = false;
             this.currentState = PlayerState.WallSlide;
         }
     }
@@ -200,6 +216,13 @@ public class Player : MonoBehaviour
         _rope.CreateRope();
         _lastRopeSegment = _rope.GetLastRopeSegment();
         
+        var playerSegment = _rope.GetLastRopeSegmentIndex();
+        var ropeHangDirection = _rope.GetRopeSegmentDirection(playerSegment, 3);
+        var xValue = ropeHangDirection.normalized.x;
+        var yValue = ropeHangDirection.normalized.y;
+        _animator.SetFloat("ropeHangX", xValue);
+        _animator.SetFloat("ropeHangY", yValue);
+        
         EnablePlayerPhysics(false);
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
         
@@ -214,6 +237,14 @@ public class Player : MonoBehaviour
         {
             // While the rope still exists we can climb the rope
             _lastRopeSegment = _rope.GetLastRopeSegment();
+            
+            var playerSegment = _rope.GetLastRopeSegmentIndex();
+            var ropeHangDirection = _rope.GetRopeSegmentDirection(playerSegment, 3);
+            var xValue = ropeHangDirection.normalized.x;
+            var yValue = ropeHangDirection.normalized.y;
+            _animator.SetFloat("ropeHangX", xValue);
+            _animator.SetFloat("ropeHangY", yValue);
+            
             this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
             
             // Climb rope
@@ -366,6 +397,18 @@ public class Player : MonoBehaviour
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
+    }
+    private IEnumerator OnGroundStun()
+    {
+        this._rigidbody.velocity = Vector2.zero;
+        
+        if (this._airStunned)
+            yield return new WaitForSeconds(_groundStunTimeBack);
+        else
+            yield return new WaitForSeconds(_groundStunTimeNormal);
+        
+        this._airStunned = false;
+        this.currentState = PlayerState.Grounded;
     }
     
     /* PRIVATE METHODS */
