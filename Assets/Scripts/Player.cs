@@ -166,10 +166,9 @@ public class Player : MonoBehaviour
     {
         // Initialize rope
         _rope.CreateRope();
-        _lastRopeSegment = _rope.GetLastRopeSegment();
-        
         this.EnablePlayerPhysics(false);
-        this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+        
+        MoveToRope();
         
         // Axe collide
         if(_axeThrow.currentAxePosition != Axe.AxePosition.Null)
@@ -180,9 +179,8 @@ public class Player : MonoBehaviour
     {
         if(_rope.RopeExists)
         {
-            // While the rope still exists we can climb the rope
-            _lastRopeSegment = _rope.GetLastRopeSegment();
-            this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+            // While the rope still exists, move player to it
+            MoveToRope();
             
             // Climb rope
             // TODO: Better climbing mechanic
@@ -442,5 +440,11 @@ public class Player : MonoBehaviour
         // I am unsure why we multiply bu 0.1f^2, but it works
         sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
         sight.SetActive(true);
+    }
+
+    private void MoveToRope()
+    {
+        _lastRopeSegment = _rope.GetLastRopeSegment();
+        this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
     }
 }
