@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
         var aimingVector = Vector2.zero;
         var rigidBodyVelocity = _rigidbody.velocity;
         
-        _animator.SetInteger("currentState", (int)currentState);
+        _animator.SetInteger("currentState", (int)this.currentState);
         _animator.SetFloat("speedY", rigidBodyVelocity.y);
         _animator.SetFloat("speedX", rigidBodyVelocity.x);
         if (Mathf.Abs(rigidBodyVelocity.x) > 0.1f)
@@ -162,7 +162,6 @@ public class Player : MonoBehaviour
         // Land
         if (IsGrounded())
         {
-            //this.currentState = PlayerState.Grounded;
             this.currentState = PlayerState.GroundStun;
         }
         else if (IsWalled())
@@ -409,6 +408,7 @@ public class Player : MonoBehaviour
         
         this._airStunned = false;
         this.currentState = PlayerState.Grounded;
+        StopAllCoroutines();    // Stop all the identical coroutines, maybe temp?
     }
     
     /* PRIVATE METHODS */
@@ -483,7 +483,7 @@ public class Player : MonoBehaviour
         if (IsGrounded())
             return false;
         
-        LayerMask desiredMask = LayerMask.GetMask("Surface");
+        var desiredMask = LayerMask.GetMask("Surface");
         var boxColliderBounds = _boxCollider.bounds;
         
         var leftBoxCast = Physics2D.BoxCast(
@@ -501,10 +501,11 @@ public class Player : MonoBehaviour
 
     private bool IsAiming()
     {
-        if (!Input.GetMouseButton(0)) return false;
+        if (!Input.GetMouseButtonDown(0)) return false;
         
-        // Detect if mouse is hitting 
-        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+        // Detect if mouse is hitting
+        var desiredMask = LayerMask.GetMask("Player");
+        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero , Mathf.Infinity, desiredMask);
     
         // Method will only return true if left mouse is clicking on the player, else everything is false
         return hit.collider && hit.collider.CompareTag("Player");
