@@ -40027,7 +40027,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &257493860
 MonoBehaviour:
@@ -40272,6 +40272,7 @@ GameObject:
   - component: {fileID: 800802510}
   - component: {fileID: 800802504}
   - component: {fileID: 800802508}
+  - component: {fileID: 800802511}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -40412,7 +40413,7 @@ Transform:
   m_GameObject: {fileID: 800802503}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.7978616, y: -0.47297585, z: 0}
+  m_LocalPosition: {x: 0.821, y: -0.47297585, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40485,6 +40486,31 @@ CircleCollider2D:
   m_Offset: {x: 0.008802891, y: -0.034122944}
   serializedVersion: 2
   m_Radius: 1.0626438
+--- !u!233 &800802511
+HingeJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800802503}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0.821, y: -0.47297585}
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 0
+  m_AngleLimits:
+    m_LowerAngle: 0
+    m_UpperAngle: 359
 --- !u!1 &1107668405
 GameObject:
   m_ObjectHideFlags: 0

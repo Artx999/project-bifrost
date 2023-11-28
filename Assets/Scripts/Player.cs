@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
     private GameManager _gameManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
+    private HingeJoint2D _hingeJoint;
+    
     private Axe _axeThrow;
     private Camera _camera;
     private Rope _rope;
@@ -41,6 +43,7 @@ public class Player : MonoBehaviour
         _gameManager = gameManager.GetComponent<GameManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
+        _hingeJoint = GetComponent<HingeJoint2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _camera = Camera.main;
         _rope = rope.GetComponent<Rope>();
@@ -166,9 +169,11 @@ public class Player : MonoBehaviour
     {
         // Initialize rope
         _rope.CreateRope();
-        this.EnablePlayerPhysics(false);
+        _lastRopeSegment = _rope.GetLastRopeSegment();
+        //this.EnablePlayerPhysics(false);
         
-        MoveToRope();
+        //MoveToRope();
+        ConnectToRope(_lastRopeSegment);
         
         // Axe collide
         if(_axeThrow.currentAxePosition != Axe.AxePosition.Null)
@@ -180,7 +185,7 @@ public class Player : MonoBehaviour
         if(_rope.RopeExists)
         {
             // While the rope still exists, move player to it
-            MoveToRope();
+            //MoveToRope();
             
             // Climb rope
             // TODO: Better climbing mechanic
@@ -195,7 +200,7 @@ public class Player : MonoBehaviour
             {
                 _rope.DestroyRope();
                 this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
-                this.EnablePlayerPhysics(true);
+                //this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 this.currentState = PlayerState.Fall;
@@ -205,7 +210,7 @@ public class Player : MonoBehaviour
         }
         
         // Reached axe
-        this.EnablePlayerPhysics(true);
+        //this.EnablePlayerPhysics(true);
         switch (_axeThrow.currentAxePosition)
         {
             case Axe.AxePosition.Null:
@@ -446,5 +451,12 @@ public class Player : MonoBehaviour
     {
         _lastRopeSegment = _rope.GetLastRopeSegment();
         this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+    }
+
+    private void ConnectToRope(GameObject ropeSegment)
+    {
+        _hingeJoint.enabled = true;
+        _hingeJoint.connectedBody = ropeSegment.GetComponent<Rigidbody2D>();
+        _hingeJoint.connectedAnchor = new Vector2(0, -.5f);
     }
 }
