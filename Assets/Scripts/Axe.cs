@@ -25,8 +25,10 @@ public class Axe : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
+    private Animator _animator;
     private GameManager _gameManager;
     private Vector2 _movementVector;
+    private float _speedX = 0f;
     
     private void Start()
     {
@@ -35,6 +37,7 @@ public class Axe : MonoBehaviour
         this._rigidbody = GetComponent<Rigidbody2D>();
         this._spriteRenderer = GetComponent<SpriteRenderer>();
         this._boxCollider = GetComponent<BoxCollider2D>();
+        this._animator = GetComponent<Animator>();
         this._gameManager = gameManager.GetComponent<GameManager>();
 
         this._rigidbody.gravityScale = 0f;
@@ -42,6 +45,14 @@ public class Axe : MonoBehaviour
 
     private void Update()
     {
+        this._speedX = _rigidbody.velocity.x;
+        this._animator.SetInteger("currentState", (int)this.currentState);
+        
+        if (Mathf.Abs(this._speedX) > 0.1f)
+        {
+            this._animator.SetFloat("speedX", this._speedX);
+        }
+        
         switch(this.currentState)
         {
             case AxeState.Player:
