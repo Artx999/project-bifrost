@@ -8,61 +8,75 @@ using UnityEngine;
 
 public class Axe : MonoBehaviour
 {
-    public enum AxePosition
+    public enum AxeState
     {
-        Null,
+        Player,
+        Air,
         Floor,
-        Wall,
+        LeftWall,
+        RightWall,
         Roof
     }
-    
+
+    public AxeState currentState;
     public GameObject gameManager;
     public Player player;
-    public AxePosition currentAxePosition;
     
     private Rigidbody2D _rigidbody;
+    private SpriteRenderer _spriteRenderer;
+    private BoxCollider2D _boxCollider;
+    private Animator _animator;
     private GameManager _gameManager;
     private Vector2 _movementVector;
+    private float _speedX = 0f;
     
-    // Start is called before the first frame update
     private void Start()
     {
         // Initialize variables
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _gameManager = gameManager.GetComponent<GameManager>();
-        currentAxePosition = AxePosition.Null;
-        
-        _rigidbody.gravityScale = 0f;
+        this.currentState = AxeState.Player;
+        this._rigidbody = GetComponent<Rigidbody2D>();
+        this._spriteRenderer = GetComponent<SpriteRenderer>();
+        this._boxCollider = GetComponent<BoxCollider2D>();
+        this._animator = GetComponent<Animator>();
+        this._gameManager = gameManager.GetComponent<GameManager>();
+
+        this._rigidbody.gravityScale = 0f;
     }
 
     private void Update()
     {
-        switch (player.currentState)
+        this._speedX = _rigidbody.velocity.x;
+        this._animator.SetInteger("currentState", (int)this.currentState);
+        
+        if (Mathf.Abs(this._speedX) > 0.1f)
         {
-            case Player.PlayerState.Grounded:
-                FollowPlayer();
+            this._animator.SetFloat("speedX", this._speedX);
+        }
+        
+        switch(this.currentState)
+        {
+            case AxeState.Player:
+                OnPlayer();
                 break;
             
-            case Player.PlayerState.Fall:
-                FollowPlayer();
+            case AxeState.Air:
+                OnAir();
                 break;
             
-            case Player.PlayerState.GroundedAim:
-                FollowPlayer();
+            case AxeState.Floor:
+                OnFloor();
                 break;
             
-            case Player.PlayerState.AxeThrow:
+            case AxeState.LeftWall:
+                OnLeftWall();
                 break;
             
-            case Player.PlayerState.AxeStuck:
+            case AxeState.RightWall:
+                OnRightWall();
                 break;
             
-            case Player.PlayerState.WallSlide:
-                FollowPlayer();
-                break;
-            
-            case Player.PlayerState.WallAim:
-                FollowPlayer();
+            case AxeState.Roof:
+                OnRoof();
                 break;
             
             default:
@@ -79,19 +93,50 @@ public class Axe : MonoBehaviour
         var collisionHitNormal = other.GetContact(0).normal;
         
         if ((collisionHitNormal - Vector2.right).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Wall;
+            this.currentState = AxeState.LeftWall;
         else if ((collisionHitNormal - Vector2.left).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Wall;
+            this.currentState = AxeState.RightWall;
         else if ((collisionHitNormal - Vector2.up).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Floor;
+            this.currentState = AxeState.Floor;
         else if ((collisionHitNormal - Vector2.down).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Roof;
+            this.currentState = AxeState.Roof;
         
         // We hit a surface successfully and can stop the axe movement
         this._rigidbody.velocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
     }
 
+    private void OnPlayer()
+    {
+        FollowPlayer();
+        DisableAxe(true);
+    }
+
+    private void OnAir()
+    {
+        DisableAxe(false);
+    }
+
+    private void OnFloor()
+    {
+        
+    }
+
+    private void OnLeftWall()
+    {
+        
+    }
+
+    private void OnRightWall()
+    {
+        
+    }
+
+    private void OnRoof()
+    {
+        
+    }
+    
     public void ApplyAxeSpeed(Vector2 inputVector)
     {
         var inputVecMag = inputVector.magnitude;
@@ -108,5 +153,12 @@ public class Axe : MonoBehaviour
     private void FollowPlayer()
     {
         this.transform.position = player.transform.position;
+        DisableAxe(true);
+    }
+
+    private void DisableAxe(bool isDisabled)
+    {
+        this._spriteRenderer.enabled = !isDisabled;
+        this._boxCollider.enabled = !isDisabled;
     }
 }
