@@ -39,7 +39,8 @@ public class Player : MonoBehaviour
     private float _groundStunTimeNormal = 0.34f;
     private float _groundStunTimeBack = 1.67f;
     private float _verticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
-    private bool _airStunned = false;
+    private bool _isBufferedGroundStun = false;
+    private bool _isStunCoroutineStarted = false;
     public float movementSpeed = 1f;
 
     private void Start()
@@ -117,7 +118,8 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.GroundStun:
-                StartCoroutine(OnGroundStun());
+                if(!this._isStunCoroutineStarted)
+                    StartCoroutine(OnGroundStun());
                 break;
             
             default:
@@ -156,8 +158,8 @@ public class Player : MonoBehaviour
 
     private void OnFall()
     {
-        if(!_airStunned)
-            _airStunned = _rigidbody.velocity.y < -_verticalSpeedLimit;
+        if(!_isBufferedGroundStun)
+            _isBufferedGroundStun = _rigidbody.velocity.y < -_verticalSpeedLimit;
         
         // Land
         if (IsGrounded())
@@ -166,7 +168,7 @@ public class Player : MonoBehaviour
         }
         else if (IsWalled())
         {
-            _airStunned = false;
+            _isBufferedGroundStun = false;
             this.currentState = PlayerState.WallSlide;
         }
     }
@@ -399,16 +401,18 @@ public class Player : MonoBehaviour
     }
     private IEnumerator OnGroundStun()
     {
+        Debug.Log("Coroutine started!");
         this._rigidbody.velocity = Vector2.zero;
+        this._isStunCoroutineStarted = true;
         
-        if (this._airStunned)
+        if (this._isBufferedGroundStun)
             yield return new WaitForSeconds(_groundStunTimeBack);
         else
             yield return new WaitForSeconds(_groundStunTimeNormal);
-        
-        this._airStunned = false;
+
+        this._isStunCoroutineStarted = false;
+        this._isBufferedGroundStun = false;
         this.currentState = PlayerState.Grounded;
-        StopAllCoroutines();    // Stop all the identical coroutines, maybe temp?
     }
     
     /* PRIVATE METHODS */
