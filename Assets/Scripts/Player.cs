@@ -207,13 +207,14 @@ public class Player : MonoBehaviour
             }
 
             this.currentState = PlayerState.AxeThrow;
+            this._axeThrow.currentState = Axe.AxeState.Air;
             this._axeThrow.ApplyAxeSpeed(throwVector);
         }
     }
 
     private void OnAxeThrow()
     {
-        // Initialize rope
+        // Initialize rope and axe
         this._rope.CreateRope();
         this._lastRopeSegment = this._rope.GetLastRopeSegment();
         
@@ -228,7 +229,7 @@ public class Player : MonoBehaviour
         this._rigidbody.MovePosition(this._lastRopeSegment.transform.position);
         
         // Axe collide
-        if(this._axeThrow.currentAxePosition != Axe.AxePosition.Null)
+        if(this._axeThrow.currentState != Axe.AxeState.Air)
             this.currentState = PlayerState.AxeStuck;
     }
 
@@ -260,7 +261,7 @@ public class Player : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 this._rope.DestroyRope();
-                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this._axeThrow.currentState = Axe.AxeState.Player;
                 this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
@@ -282,27 +283,38 @@ public class Player : MonoBehaviour
         
         // Reached axe
         this.EnablePlayerPhysics(true);
-        switch (this._axeThrow.currentAxePosition)
+        switch (this._axeThrow.currentState)
         {
-            case Axe.AxePosition.Null:
+            case Axe.AxeState.Player:
+                // Do nothing
                 break;
             
-            // Climb to axe (roof)
-            case Axe.AxePosition.Roof:
-                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
-                this.currentState = PlayerState.Fall;
-                break;
-            
-            // Climb to axe (wall)
-            case Axe.AxePosition.Wall:
-                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
-                this.currentState = PlayerState.WallSlide;
+            case Axe.AxeState.Air:
+                // Do nothing
                 break;
             
             // Climb to axe (floor)
-            case Axe.AxePosition.Floor:
-                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
+            case Axe.AxeState.Floor:
+                this._axeThrow.currentState = Axe.AxeState.Player;
                 this.currentState = PlayerState.Grounded;
+                break;
+            
+            // Climb to axe (left wall)
+            case Axe.AxeState.LeftWall:
+                this._axeThrow.currentState = Axe.AxeState.Player;
+                this.currentState = PlayerState.WallSlide;
+                break;
+            
+            // Climb to axe (right wall)
+            case Axe.AxeState.RightWall:
+                this._axeThrow.currentState = Axe.AxeState.Player;
+                this.currentState = PlayerState.WallSlide;
+                break;
+            
+            // Climb to axe (roof)
+            case Axe.AxeState.Roof:
+                this._axeThrow.currentState = Axe.AxeState.Player;
+                this.currentState = PlayerState.Fall;
                 break;
                 
             default:
@@ -392,6 +404,7 @@ public class Player : MonoBehaviour
             }
 
             this.currentState = PlayerState.AxeThrow;
+            this._axeThrow.currentState = Axe.AxeState.Air;
             this._axeThrow.ApplyAxeSpeed(throwVector);
         }
         
