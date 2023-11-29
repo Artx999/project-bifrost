@@ -36,9 +36,9 @@ public class Player : MonoBehaviour
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
     private float _directionX = 0f;
-    private float _groundStunTimeNormal = 0.34f;
-    private float _groundStunTimeBack = 1.67f;
-    private float _verticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
+    private const float GroundStunTimeNormal = 0.34f;
+    private const float GroundStunTimeBack = 1.67f;
+    private const float VerticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
     private bool _isBufferedGroundStun = false;
     private bool _isStunCoroutineStarted = false;
     public float movementSpeed = 1f;
@@ -60,66 +60,66 @@ public class Player : MonoBehaviour
     private void Update()
     {
         var aimingVector = Vector2.zero;
-        var rigidBodyVelocity = _rigidbody.velocity;
+        var rigidBodyVelocity = this._rigidbody.velocity;
         
-        _animator.SetInteger("currentState", (int)this.currentState);
-        _animator.SetFloat("speedY", rigidBodyVelocity.y);
-        _animator.SetFloat("speedX", rigidBodyVelocity.x);
+        this._animator.SetInteger("currentState", (int)this.currentState);
+        this._animator.SetFloat("speedY", rigidBodyVelocity.y);
+        this._animator.SetFloat("speedX", rigidBodyVelocity.x);
         if (Mathf.Abs(rigidBodyVelocity.x) > 0.1f)
         {
-            _animator.SetFloat("lateSpeedX", rigidBodyVelocity.x);
+            this._animator.SetFloat("lateSpeedX", rigidBodyVelocity.x);
         }
         
         switch (this.currentState)
         {
             case PlayerState.Grounded:
-                OnGrounded();
-                _animator.SetBool("isWalking", Mathf.Abs(_rigidbody.velocity.x) > 0.1f);
+                this.OnGrounded();
+                this._animator.SetBool("isWalking", Mathf.Abs(this._rigidbody.velocity.x) > 0.1f);
                 break;
             
             case PlayerState.Fall:
-                OnFall();
+                this.OnFall();
                 break;
             
             case PlayerState.GroundedAim:
-                OnGroundAim(ref aimingVector);
-                if (currentState == PlayerState.GroundedAim)
+                this.OnGroundAim(ref aimingVector);
+                if (this.currentState == PlayerState.GroundedAim)
                 {
-                    _aimingVectorX = aimingVector.x;
-                    _animator.SetFloat("aimingX", _aimingVectorX);
-                    _animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
-                    _animator.SetFloat("lateSpeedX", _aimingVectorX);
+                    this._aimingVectorX = aimingVector.x;
+                    this._animator.SetFloat("aimingX", this._aimingVectorX);
+                    this._animator.SetBool("aimCancel", 
+                        Mathf.Abs(aimingVector.magnitude) < this._gameManager.minAxeThrowMag);
+                    this._animator.SetFloat("lateSpeedX", this._aimingVectorX);
                 }
                 break;
             
             case PlayerState.AxeThrow:
-                OnAxeThrow();
+                this.OnAxeThrow();
                 break;
             
             case PlayerState.AxeStuck:
-                OnAxeStuck();
+                this.OnAxeStuck();
                 break;
             
             case PlayerState.WallSlide:
-                OnWallSlide();
-                _animator.SetFloat("wallSlideLeft", _animatorLeftWallCheck);
+                this.OnWallSlide();
+                this._animator.SetFloat("wallSlideLeft", _animatorLeftWallCheck);
                 break;
             
             case PlayerState.WallAim:
-                OnWallAim(ref aimingVector);
-                if (currentState == PlayerState.WallAim)
+                this.OnWallAim(ref aimingVector);
+                if (this.currentState == PlayerState.WallAim)
                 {
-                    _aimingVectorX = aimingVector.x;
-                    _animator.SetFloat("aimingX", _aimingVectorX);
-                    _animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < _gameManager.minAxeThrowMag);
+                    this._aimingVectorX = aimingVector.x;
+                    this._animator.SetFloat("aimingX", this._aimingVectorX);
+                    this._animator.SetBool("aimCancel", 
+                        Mathf.Abs(aimingVector.magnitude) < this._gameManager.minAxeThrowMag);
                 }
                 break;
             
             case PlayerState.GroundStun:
                 if(!this._isStunCoroutineStarted)
-                    StartCoroutine(OnGroundStun());
+                    StartCoroutine(this.OnGroundStun());
                 break;
             
             default:
@@ -131,8 +131,8 @@ public class Player : MonoBehaviour
     {
         if (this.currentState == PlayerState.Grounded)
         {
-            _directionX = Input.GetAxisRaw("Horizontal");
-            _rigidbody.velocity = new Vector2(_directionX * movementSpeed, _rigidbody.velocity.y);
+            this._directionX = Input.GetAxisRaw("Horizontal");
+            this._rigidbody.velocity = new Vector2(this._directionX * this.movementSpeed, this._rigidbody.velocity.y);
         }
     }
 
@@ -144,7 +144,7 @@ public class Player : MonoBehaviour
         // Aim
         if (IsAiming())
         {
-            _rigidbody.velocity = Vector2.zero;
+            this._rigidbody.velocity = Vector2.zero;
             this.currentState = PlayerState.GroundedAim;
         }
         
@@ -158,8 +158,8 @@ public class Player : MonoBehaviour
 
     private void OnFall()
     {
-        if(!_isBufferedGroundStun)
-            _isBufferedGroundStun = _rigidbody.velocity.y < -_verticalSpeedLimit;
+        if(!this._isBufferedGroundStun)
+            this._isBufferedGroundStun = this._rigidbody.velocity.y < -Player.VerticalSpeedLimit;
         
         // Land
         if (IsGrounded())
@@ -168,7 +168,7 @@ public class Player : MonoBehaviour
         }
         else if (IsWalled())
         {
-            _isBufferedGroundStun = false;
+            this._isBufferedGroundStun = false;
             this.currentState = PlayerState.WallSlide;
         }
     }
@@ -181,25 +181,25 @@ public class Player : MonoBehaviour
         {
             // Gets the player position, mouse position and calculates the throw vector with these two points
             // This new vector is sent to the show sight method
-            Vector2 playerPosition = transform.position;
-            var currentMousePosition = GetMousePosition();
-            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            Vector2 playerPosition = this.transform.position;
+            var currentMousePosition = this.GetMousePosition();
+            var currentThrowVector = this.GetThrowVector(playerPosition, currentMousePosition);
             animatorAimVector = currentThrowVector;
             
-            ShowSight(currentThrowVector);
+            this.ShowSight(currentThrowVector);
         }
         
         // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
         else
         {
-            sight.SetActive(false);
+            this.sight.SetActive(false);
 
-            Vector2 playerPosition = transform.position;
-            var newMousePosition = GetMousePosition();
-            var throwVector = GetThrowVector(playerPosition, newMousePosition);
+            Vector2 playerPosition = this.transform.position;
+            var newMousePosition = this.GetMousePosition();
+            var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameManager.minAxeThrowMag)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.Grounded;
@@ -207,62 +207,62 @@ public class Player : MonoBehaviour
             }
 
             this.currentState = PlayerState.AxeThrow;
-            _axeThrow.ApplyAxeSpeed(throwVector);
+            this._axeThrow.ApplyAxeSpeed(throwVector);
         }
     }
 
     private void OnAxeThrow()
     {
         // Initialize rope
-        _rope.CreateRope();
-        _lastRopeSegment = _rope.GetLastRopeSegment();
+        this._rope.CreateRope();
+        this._lastRopeSegment = this._rope.GetLastRopeSegment();
         
-        var playerSegment = _rope.GetLastRopeSegmentIndex();
-        var ropeHangDirection = _rope.GetRopeSegmentDirection(playerSegment, 3);
+        var playerSegment = this._rope.GetLastRopeSegmentIndex();
+        var ropeHangDirection = this._rope.GetRopeSegmentDirection(playerSegment, 3);
         var xValue = ropeHangDirection.normalized.x;
         var yValue = ropeHangDirection.normalized.y;
-        _animator.SetFloat("ropeHangX", xValue);
-        _animator.SetFloat("ropeHangY", yValue);
+        this._animator.SetFloat("ropeHangX", xValue);
+        this._animator.SetFloat("ropeHangY", yValue);
         
-        EnablePlayerPhysics(false);
-        this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+        this.EnablePlayerPhysics(false);
+        this._rigidbody.MovePosition(this._lastRopeSegment.transform.position);
         
         // Axe collide
-        if(_axeThrow.currentAxePosition != Axe.AxePosition.Null)
+        if(this._axeThrow.currentAxePosition != Axe.AxePosition.Null)
             this.currentState = PlayerState.AxeStuck;
     }
 
     private void OnAxeStuck()
     {
-        if(_rope.RopeExists)
+        if(this._rope.RopeExists)
         {
             // While the rope still exists we can climb the rope
-            _lastRopeSegment = _rope.GetLastRopeSegment();
+            this._lastRopeSegment = this._rope.GetLastRopeSegment();
             
-            var playerSegment = _rope.GetLastRopeSegmentIndex();
-            var ropeHangDirection = _rope.GetRopeSegmentDirection(playerSegment, 3);
+            var playerSegment = this._rope.GetLastRopeSegmentIndex();
+            var ropeHangDirection = this._rope.GetRopeSegmentDirection(playerSegment, 3);
             var xValue = ropeHangDirection.normalized.x;
             var yValue = ropeHangDirection.normalized.y;
-            _animator.SetFloat("ropeHangX", xValue);
-            _animator.SetFloat("ropeHangY", yValue);
+            this._animator.SetFloat("ropeHangX", xValue);
+            this._animator.SetFloat("ropeHangY", yValue);
             
-            this._rigidbody.MovePosition(_lastRopeSegment.transform.position);
+            this._rigidbody.MovePosition(this._lastRopeSegment.transform.position);
             
             // Climb rope
             // TODO: Better climbing mechanic
             if (Input.GetKeyDown(KeyCode.W))
             {
-                _rope.RemoveLastRopeSegment();
+                this._rope.RemoveLastRopeSegment();
                 return;
             }
             
             // Release rope
             if (Input.GetMouseButtonDown(1))
             {
-                _rope.DestroyRope();
+                this._rope.DestroyRope();
                 this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 this.EnablePlayerPhysics(true);
-                this._rigidbody.velocity = _lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
+                this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 if (IsGrounded())
                 {
@@ -277,32 +277,31 @@ public class Player : MonoBehaviour
                     this.currentState = PlayerState.Fall;
                 }
             }
-            
             return;
         }
         
         // Reached axe
         this.EnablePlayerPhysics(true);
-        switch (_axeThrow.currentAxePosition)
+        switch (this._axeThrow.currentAxePosition)
         {
             case Axe.AxePosition.Null:
                 break;
             
             // Climb to axe (roof)
             case Axe.AxePosition.Roof:
-                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 this.currentState = PlayerState.Fall;
                 break;
             
             // Climb to axe (wall)
             case Axe.AxePosition.Wall:
-                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 this.currentState = PlayerState.WallSlide;
                 break;
             
             // Climb to axe (floor)
             case Axe.AxePosition.Floor:
-                _axeThrow.currentAxePosition = Axe.AxePosition.Null;
+                this._axeThrow.currentAxePosition = Axe.AxePosition.Null;
                 this.currentState = PlayerState.Grounded;
                 break;
                 
@@ -355,7 +354,7 @@ public class Player : MonoBehaviour
         // Slide off wall
         if (!IsWalled())
         {
-            sight.SetActive(false);
+            this.sight.SetActive(false);
             this.currentState = PlayerState.Fall;
             return;
         }
@@ -367,25 +366,25 @@ public class Player : MonoBehaviour
         {
             // Gets the player position, mouse position and calculates the throw vector with these two points
             // This new vector is sent to the show sight method
-            Vector2 playerPosition = transform.position;
-            var currentMousePosition = GetMousePosition();
-            var currentThrowVector = GetThrowVector(playerPosition, currentMousePosition);
+            Vector2 playerPosition = this.transform.position;
+            var currentMousePosition = this.GetMousePosition();
+            var currentThrowVector = this.GetThrowVector(playerPosition, currentMousePosition);
             animatorAimVector = currentThrowVector;
             
-            ShowSight(currentThrowVector);
+            this.ShowSight(currentThrowVector);
         }
         
         // The moment the player releases the mouse button the axe is thrown (if the throw is strong enough)
         else
         {
-            sight.SetActive(false);
+            this.sight.SetActive(false);
 
-            Vector2 playerPosition = transform.position;
-            var newMousePosition = GetMousePosition();
-            var throwVector = GetThrowVector(playerPosition, newMousePosition);
+            Vector2 playerPosition = this.transform.position;
+            var newMousePosition = this.GetMousePosition();
+            var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < _gameManager.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameManager.minAxeThrowMag)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.WallSlide;
@@ -393,7 +392,7 @@ public class Player : MonoBehaviour
             }
 
             this.currentState = PlayerState.AxeThrow;
-            _axeThrow.ApplyAxeSpeed(throwVector);
+            this._axeThrow.ApplyAxeSpeed(throwVector);
         }
         
         // Slide off wall
@@ -401,14 +400,13 @@ public class Player : MonoBehaviour
     }
     private IEnumerator OnGroundStun()
     {
-        Debug.Log("Coroutine started!");
         this._rigidbody.velocity = Vector2.zero;
         this._isStunCoroutineStarted = true;
         
         if (this._isBufferedGroundStun)
-            yield return new WaitForSeconds(_groundStunTimeBack);
+            yield return new WaitForSeconds(GroundStunTimeBack);
         else
-            yield return new WaitForSeconds(_groundStunTimeNormal);
+            yield return new WaitForSeconds(GroundStunTimeNormal);
 
         this._isStunCoroutineStarted = false;
         this._isBufferedGroundStun = false;
@@ -455,8 +453,8 @@ public class Player : MonoBehaviour
     
     private Vector2 GetMousePosition()
     {
-        if(_camera != null)
-            return _camera.ScreenToWorldPoint(Input.mousePosition);
+        if(this._camera != null)
+            return this._camera.ScreenToWorldPoint(Input.mousePosition);
         
         return Vector2.zero;
     }
@@ -466,7 +464,7 @@ public class Player : MonoBehaviour
         // Since vectors are lines from origin to a specified point, we need to move
         // the "wrong " vector (from player to mouse position) to have origin in "origin"
         var aimVector = endPosition - startPosition;
-        Debug.DrawLine(transform.position, endPosition, Color.green, 3f);
+        Debug.DrawLine(this.transform.position, endPosition, Color.green, 3f);
 
         // We are aiming in the opposite direction of the throw, so we flip the result vector
         return -aimVector;
@@ -475,7 +473,7 @@ public class Player : MonoBehaviour
     private bool IsGrounded()
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
-        var boxColliderBounds = _boxCollider.bounds;
+        var boxColliderBounds = this._boxCollider.bounds;
         
         return Physics2D.BoxCast(
             boxColliderBounds.center, boxColliderBounds.size, 
@@ -488,7 +486,7 @@ public class Player : MonoBehaviour
             return false;
         
         var desiredMask = LayerMask.GetMask("Surface");
-        var boxColliderBounds = _boxCollider.bounds;
+        var boxColliderBounds = this._boxCollider.bounds;
         
         var leftBoxCast = Physics2D.BoxCast(
             boxColliderBounds.center, boxColliderBounds.size, 
@@ -498,7 +496,7 @@ public class Player : MonoBehaviour
             boxColliderBounds.center, boxColliderBounds.size, 
             0f, Vector2.right, .1f, desiredMask);
 
-        _animatorLeftWallCheck = leftBoxCast ? 1f : 0f;
+        this._animatorLeftWallCheck = leftBoxCast ? 1f : 0f;
         
         return leftBoxCast || rightBoxCast;
     }
@@ -509,33 +507,33 @@ public class Player : MonoBehaviour
         
         // Detect if mouse is hitting
         var desiredMask = LayerMask.GetMask("Player");
-        var hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero , Mathf.Infinity, desiredMask);
+        var hit = Physics2D.Raycast(this.GetMousePosition(), Vector2.zero , Mathf.Infinity, desiredMask);
     
         // Method will only return true if left mouse is clicking on the player, else everything is false
         return hit.collider && hit.collider.CompareTag("Player");
     }
 
-    private void ShowSight(Vector2 inputVec)
+    private void ShowSight(Vector2 inputVector)
     {
         // If the aim vector is too short for a throw, dont show the dot
-        var inputVecMag = inputVec.magnitude;
+        var inputVectorMagnitude = inputVector.magnitude;
 
-        if (inputVecMag < _gameManager.minAxeThrowMag)
+        if (inputVectorMagnitude < this._gameManager.minAxeThrowMag)
         {
-            sight.SetActive(false);
+            this.sight.SetActive(false);
             return;
         }
         
         // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
         // the vector magnitude based on the defined max magnitude from GM
-        var newMag = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
-        inputVec = inputVec.normalized * newMag;
+        var newMagnitude = Math.Min(this._gameManager.maxAxeThrowMag, inputVectorMagnitude);
+        inputVector = inputVector.normalized * newMagnitude;
         
-        Vector2 playerPos = transform.position;
+        Vector2 playerPosition = this.transform.position;
         
         // Calculate the position with player position and throw vector and activate the sight
         // I am unsure why we multiply bu 0.1f^2, but it works
-        sight.transform.position = playerPos + inputVec + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
-        sight.SetActive(true);
+        this.sight.transform.position = playerPosition + inputVector + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
+        this.sight.SetActive(true);
     }
 }
