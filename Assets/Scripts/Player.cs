@@ -336,29 +336,6 @@ public class Player : MonoBehaviour
         this._boxCollider.enabled = false;
         this._rigidbody.gravityScale = 0f;
     }
-    private void TeleportToAxe()
-    {
-        var oldVal = transform.position;
-
-        var axeDiff = axe.transform.position - oldVal;
-        if (axeDiff.x > 0f)
-        {
-            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-        }
-        else if (axeDiff.x < 0f)
-        {
-            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-        }
-
-        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-        {
-            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-        }
-
-        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-
-        _rigidbody.velocity = Vector2.zero;
-    }
     
     private Vector2 GetMousePosition()
     {
