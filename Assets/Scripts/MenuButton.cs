@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class MenuButton : MonoBehaviour
 {
-    public AnimationClip buttonDefault;
-    public AnimationClip buttonHover;
-
     private Camera _camera;
     private Animator _animator;
     private PolygonCollider2D _collider;
@@ -30,12 +27,9 @@ public class MenuButton : MonoBehaviour
 
     private bool OnMouseHover()
     {
-        var mousePosition = Input.mousePosition;
-        mousePosition.z = _camera.nearClipPlane;
-        var worldPosition = _camera.ScreenToWorldPoint(mousePosition);
-        Debug.Log(worldPosition);
-        
-        var hit = Physics2D.Raycast(worldPosition, Vector2.zero);
+        Vector2 mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+
+        var hit = Physics2D.Raycast(mousePosition, Vector2.zero);
 
         return hit.collider == this._collider;
     }
