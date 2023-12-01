@@ -251,7 +251,6 @@ public class Player : MonoBehaviour
             this._animator.SetFloat("ropeHangY", yValue);
             
             // Climb rope
-            // TODO: Better climbing mechanic
             if (Input.GetKey(KeyCode.W))
             {
                 this.ClimbRope();
