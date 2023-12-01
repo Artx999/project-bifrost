@@ -436,7 +436,7 @@ public class Player : MonoBehaviour
         else
         {
             _rope.RemoveLastRopeSegment();
-            this.ConnectToRope(_rope.LastRopeSegment);
+            this.ConnectToRope(this._rope.LastRopeSegment);
         }
     }
 }
