@@ -187,7 +187,7 @@ public class Player : MonoBehaviour
             // TODO: Better climbing mechanic
             if (Input.GetKeyDown(KeyCode.W))
             {
-                _rope.RemoveLastRopeSegment();
+                this.ClimbRope();
                 return;
             }
             
@@ -425,5 +425,11 @@ public class Player : MonoBehaviour
         _hingeJoint.enabled = true;
         _hingeJoint.connectedBody = ropeSegment.GetComponent<Rigidbody2D>();
         _hingeJoint.connectedAnchor = new Vector2(0, -.5f);
+    }
+
+    private void ClimbRope()
+    {
+        _rope.RemoveLastRopeSegment();
+        this.ConnectToRope(_rope.LastRopeSegment);
     }
 }
