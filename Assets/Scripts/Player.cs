@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
     
     private float _directionX;
     public float movementSpeed = 1f;
+    public float climbSpeed = 1f;
     
     private void Start()
     {
@@ -185,7 +186,7 @@ public class Player : MonoBehaviour
         {
             // Climb rope
             // TODO: Better climbing mechanic
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKey(KeyCode.W))
             {
                 this.ClimbRope();
                 return;
@@ -429,7 +430,13 @@ public class Player : MonoBehaviour
 
     private void ClimbRope()
     {
-        _rope.RemoveLastRopeSegment();
-        this.ConnectToRope(_rope.LastRopeSegment);
+        float playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
+        if (playerPositionOnRopeSegment <= .5f)
+            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this.climbSpeed * .01f);
+        else
+        {
+            _rope.RemoveLastRopeSegment();
+            this.ConnectToRope(_rope.LastRopeSegment);
+        }
     }
 }
