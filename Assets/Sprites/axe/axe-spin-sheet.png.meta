@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 12ab2e93a2821bc4c8c96d37ae063f3c
+guid: f9b3932c5f2c4f54d8408428ca5bcfad
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 150
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -106,30 +106,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: demo_spritesheet_0
+      name: axe-spin-sheet_0
       rect:
         serializedVersion: 2
-        x: 78
+        x: 0
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bb557c668af37644da38bcec3ae5ecf5
-      internalID: -752273875
+      spriteID: 17cc62febd959384aac24e6967d902fc
+      internalID: 890363202
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_1
+      name: axe-spin-sheet_1
       rect:
         serializedVersion: 2
-        x: 398
+        x: 32
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +145,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be551af7786422b4990515550880f9ae
-      internalID: 1016820509
+      spriteID: 1a94d900834721e408e0ac44ef25c13b
+      internalID: 560216355
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_2
+      name: axe-spin-sheet_2
       rect:
         serializedVersion: 2
-        x: 717
+        x: 64
         y: 0
-        width: 156
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,20 +166,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4931d409b0315244d83936e111db156f
-      internalID: -1358499097
+      spriteID: cfc3e5e75405ea84ebb2f67c6ca04a0d
+      internalID: -1263832823
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_3
+      name: axe-spin-sheet_3
       rect:
         serializedVersion: 2
-        x: 1038
+        x: 96
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +187,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6b1a823926712444ba126f681bd08e95
-      internalID: 1681567850
+      spriteID: 385b6b1234f33084a878905eff846557
+      internalID: -809500935
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_4
+      name: axe-spin-sheet_4
       rect:
         serializedVersion: 2
-        x: 1328
+        x: 128
         y: 0
-        width: 214
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,20 +208,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 18ffe5fb1de4b0243845615821075500
-      internalID: 209258865
+      spriteID: 83c00524ae55e834b962c27dd963dad2
+      internalID: -1643346240
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_5
+      name: axe-spin-sheet_5
       rect:
         serializedVersion: 2
-        x: 1647
+        x: 160
         y: 0
-        width: 216
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,20 +229,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f68070442b61b8f4ca098b586d245aa0
-      internalID: -813018133
+      spriteID: 74a3ef276b61c7a458ba76a52ad94bee
+      internalID: 209024254
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_6
+      name: axe-spin-sheet_6
       rect:
         serializedVersion: 2
-        x: 1998
+        x: 192
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -263,20 +250,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 388b36698e6c3734abe00c56202f5902
-      internalID: -1076401945
+      spriteID: dc837821d53d1a241b8ec0f1a2b88a4a
+      internalID: -226469061
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_7
+      name: axe-spin-sheet_7
       rect:
         serializedVersion: 2
-        x: 2318
+        x: 224
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -284,20 +271,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9dfe5d874942bd3489b444a869ac5fcb
-      internalID: -454988521
+      spriteID: 572c023947f3a6044828a4416547617e
+      internalID: -1449875369
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_8
+      name: axe-spin-sheet_8
       rect:
         serializedVersion: 2
-        x: 2607
+        x: 256
         y: 0
-        width: 216
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -305,20 +292,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e4aa15bbdaaa223499761c2e2f5fff4c
-      internalID: -1701981124
+      spriteID: 66c93fa70a33c954ebe526649038a993
+      internalID: 922478305
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_9
+      name: axe-spin-sheet_9
       rect:
         serializedVersion: 2
-        x: 2928
+        x: 288
         y: 0
-        width: 214
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -326,20 +313,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 76a64b487486c7e4f81f9fd5be31683f
-      internalID: 356653580
+      spriteID: 30dfc40dbc907da45bd4c6a6ddfbacea
+      internalID: -373745048
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_10
+      name: axe-spin-sheet_10
       rect:
         serializedVersion: 2
-        x: 3278
+        x: 320
         y: 0
-        width: 154
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -347,20 +334,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 98eeac27115a7da4c80398e325b6d33c
-      internalID: -1347736854
+      spriteID: a60bf6366d477fa47a58ac7f7078276c
+      internalID: -820014560
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: demo_spritesheet_11
+      name: axe-spin-sheet_11
       rect:
         serializedVersion: 2
-        x: 3597
+        x: 352
         y: 0
-        width: 156
-        height: 320
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -368,8 +355,92 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 46e6f8a64171a5a429dcf2807a9d25f0
-      internalID: -2002325299
+      spriteID: 81a9638c3cd5530458d2a168f94469b2
+      internalID: -440211731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: axe-spin-sheet_12
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e817da1725116904b9106458f56b0754
+      internalID: -831438436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: axe-spin-sheet_13
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb857a7ab747b344bb62671d2cf69a42
+      internalID: 579676978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: axe-spin-sheet_14
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ddef25b7442d5d4d9f00a992c8694ce
+      internalID: -741744720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: axe-spin-sheet_15
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ac8ccae9adb9af459dd100f1a14f952
+      internalID: -780078836
       vertices: []
       indices: 
       edges: []
@@ -385,18 +456,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      demo_spritesheet_0: -752273875
-      demo_spritesheet_1: 1016820509
-      demo_spritesheet_10: -1347736854
-      demo_spritesheet_11: -2002325299
-      demo_spritesheet_2: -1358499097
-      demo_spritesheet_3: 1681567850
-      demo_spritesheet_4: 209258865
-      demo_spritesheet_5: -813018133
-      demo_spritesheet_6: -1076401945
-      demo_spritesheet_7: -454988521
-      demo_spritesheet_8: -1701981124
-      demo_spritesheet_9: 356653580
+      axe-spin-sheet_0: 890363202
+      axe-spin-sheet_1: 560216355
+      axe-spin-sheet_10: -820014560
+      axe-spin-sheet_11: -440211731
+      axe-spin-sheet_12: -831438436
+      axe-spin-sheet_13: 579676978
+      axe-spin-sheet_14: -741744720
+      axe-spin-sheet_15: -780078836
+      axe-spin-sheet_2: -1263832823
+      axe-spin-sheet_3: -809500935
+      axe-spin-sheet_4: -1643346240
+      axe-spin-sheet_5: 209024254
+      axe-spin-sheet_6: -226469061
+      axe-spin-sheet_7: -1449875369
+      axe-spin-sheet_8: 922478305
+      axe-spin-sheet_9: -373745048
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

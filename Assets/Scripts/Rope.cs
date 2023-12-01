@@ -125,4 +125,24 @@ public class Rope : MonoBehaviour
         this.LastRopeSegment = _ropeSegments.Last();
         return this.LastRopeSegment;
     }
+
+    public int GetLastRopeSegmentIndex()
+    {
+        return _ropeSegments.Count - 1;
+    }
+
+    public Vector2 GetRopeSegmentDirection(int segmentIndex, uint length)
+    {
+        if (segmentIndex >= _ropeSegments.Count || segmentIndex - length <= 0)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 currentSegmentPosition = _ropeSegments[segmentIndex].transform.position;
+        Vector2 nextSegmentPosition = _ropeSegments[segmentIndex-(int)length].transform.position;
+
+        var result = nextSegmentPosition - currentSegmentPosition;
+
+        return result;
+    }
 }
