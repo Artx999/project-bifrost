@@ -240,8 +240,7 @@ public class Player : MonoBehaviour
     {
         if(this._rope.RopeExists)
         {
-            // While the rope still exists we can climb the rope
-            //this._lastRopeSegment = this._rope.GetLastRopeSegment();
+            this._lastRopeSegment = this._rope.GetLastRopeSegment();
             
             var playerSegment = this._rope.GetLastRopeSegmentIndex();
             var ropeHangDirection = this._rope.GetRopeSegmentDirection(playerSegment, 3);
