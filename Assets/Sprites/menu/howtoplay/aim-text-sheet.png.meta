@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: be839ce4331104f469d96e4c078fbc10
-      internalID: -1275606142
+      spriteID: 63439637614f04145b9c21b3d85299cb
+      internalID: -1960477420
       vertices: []
       indices: 
       edges: []
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c32533eb61d79854c9cc15450d35225d
-      internalID: 1889275558
+      spriteID: a85d5d9e2eb61e54dae8c8c540ea473c
+      internalID: 1245220077
       vertices: []
       indices: 
       edges: []
@@ -166,8 +166,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0813ef3687899b14f9756518493c7568
-      internalID: -858590897
+      spriteID: 6468edf4d22de3f48914ce069af76d27
+      internalID: 577547258
       vertices: []
       indices: 
       edges: []
@@ -187,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6cf357bfd95fbcd48b09f39fc36d13d2
-      internalID: 1446996671
+      spriteID: ed3f50ce8f0c5504f9b41626a4a6df6c
+      internalID: 1676449839
       vertices: []
       indices: 
       edges: []
@@ -204,10 +204,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      aim-text-sheet_0: -1275606142
-      aim-text-sheet_1: 1889275558
-      aim-text-sheet_2: -858590897
-      aim-text-sheet_3: 1446996671
+      aim-text-sheet_0: -1960477420
+      aim-text-sheet_1: 1245220077
+      aim-text-sheet_2: 577547258
+      aim-text-sheet_3: 1676449839
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
