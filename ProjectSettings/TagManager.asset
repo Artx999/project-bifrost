@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Axe
   - Surface
+  - Button
   layers:
   - Default
   - TransparentFX
