@@ -6,25 +6,25 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     [Header("Player adjustment variables")]
+    public float playerWalkSpeed;
     public float playerWallFriction;
-    public float playerWalkSpeed = 1f;
+    public float playerClimbSpeed;
     
     [Header("Axe adjustment variables")]
-    public float maxAxeThrowMag;
-    public float minAxeThrowMag;
-    public float axeSpeedAmp;
+    public float maxAxeThrowMagnitude;
+    public float minAxeThrowMagnitude;
+    public float axeSpeedAmplitude;
     
-    // Start is called before the first frame update
-    private void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     private void Update()
     {
         /* Reload scene */
         if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadGameScene()
+    {
+        // Samplescene - Index 1
+        SceneManager.LoadScene(1);
     }
 }

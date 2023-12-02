@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public AudioSource sfxSource;
-
     [Header("Game SFXs")]
     public AudioClip axeThrow;
     public AudioClip axeHit;
@@ -16,9 +14,19 @@ public class AudioManager : MonoBehaviour
     [Header("Menu SFXs")]
     public AudioClip buttonHover;
     public AudioClip buttonClick;
-    
+
+    private AudioSource _audioSource;
+
+    private void Start()
+    {
+        this._audioSource = GetComponent<AudioSource>();
+    }
+
     public void PlaySfx(AudioClip clip)
     {
-        sfxSource.PlayOneShot(clip);
+        if (this._audioSource.isPlaying)
+            return;
+
+        this._audioSource.PlayOneShot(clip);
     }
 }

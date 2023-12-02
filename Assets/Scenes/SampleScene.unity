@@ -47210,15 +47210,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.6672059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.3538074
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.015962346
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
       propertyPath: m_LocalRotation.w
@@ -47250,7 +47250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8823237450978804442, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
       propertyPath: m_Name
-      value: Game Manager
+      value: Game Controller
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

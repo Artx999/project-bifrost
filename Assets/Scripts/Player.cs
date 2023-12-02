@@ -29,10 +29,6 @@ public class Player : MonoBehaviour
     public GameObject sight;
     public GameObject rope;
     
-    [Header("Adjustment variables")]
-    public float movementSpeed = 1f;
-    public float climbSpeed = 1f;
-    
     // PRIVATE FIELDS
     private GameController _gameController;
     private AudioManager _audioManager;
@@ -111,7 +107,7 @@ public class Player : MonoBehaviour
                     this._aimingVectorX = aimingVector.x;
                     this._animator.SetFloat("aimingX", this._aimingVectorX);
                     this._animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMag);
+                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMagnitude);
                     this._animator.SetFloat("lateSpeedX", this._aimingVectorX);
                 }
                 break;
@@ -136,7 +132,7 @@ public class Player : MonoBehaviour
                     this._aimingVectorX = aimingVector.x;
                     this._animator.SetFloat("aimingX", this._aimingVectorX);
                     this._animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMag);
+                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMagnitude);
                 }
                 break;
             
@@ -155,7 +151,7 @@ public class Player : MonoBehaviour
         if (this.currentState == PlayerState.Grounded)
         {
             this._directionX = Input.GetAxisRaw("Horizontal");
-            this._rigidbody.velocity = new Vector2(this._directionX * this.movementSpeed, this._rigidbody.velocity.y);
+            this._rigidbody.velocity = new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
         }
     }
 
@@ -227,7 +223,7 @@ public class Player : MonoBehaviour
             var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < this._gameController.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameController.minAxeThrowMagnitude)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.Grounded;
@@ -255,7 +251,7 @@ public class Player : MonoBehaviour
         this._animator.SetFloat("ropeHangX", xValue);
         this._animator.SetFloat("ropeHangY", yValue);
         
-        ConnectToRope(_lastRopeSegment);
+        this.ConnectToRope(_lastRopeSegment);
         
         // AxeThrow --> AxeStuck
         if (this._axeThrow.currentState != Axe.AxeState.Air)
@@ -425,7 +421,7 @@ public class Player : MonoBehaviour
             var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < this._gameController.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameController.minAxeThrowMagnitude)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.WallSlide;
@@ -441,20 +437,6 @@ public class Player : MonoBehaviour
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
-    }
-    private IEnumerator OnGroundStun()
-    {
-        this._rigidbody.velocity = Vector2.zero;
-        this._isStunCoroutineStarted = true;
-        
-        if (this._isBufferedGroundStun)
-            yield return new WaitForSeconds(GroundStunTimeBack);
-        else
-            yield return new WaitForSeconds(GroundStunTimeNormal);
-
-        this._isStunCoroutineStarted = false;
-        this._isBufferedGroundStun = false;
-        this.currentState = PlayerState.Grounded;
     }
     
     /* PRIVATE METHODS */
@@ -539,7 +521,7 @@ public class Player : MonoBehaviour
         // If the aim vector is too short for a throw, dont show the dot
         var inputVectorMagnitude = inputVector.magnitude;
 
-        if (inputVectorMagnitude < this._gameController.minAxeThrowMag)
+        if (inputVectorMagnitude < this._gameController.minAxeThrowMagnitude)
         {
             this.sight.SetActive(false);
             return;
@@ -547,7 +529,7 @@ public class Player : MonoBehaviour
         
         // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
         // the vector magnitude based on the defined max magnitude from GM
-        var newMagnitude = Math.Min(this._gameController.maxAxeThrowMag, inputVectorMagnitude);
+        var newMagnitude = Math.Min(this._gameController.maxAxeThrowMagnitude, inputVectorMagnitude);
         inputVector = inputVector.normalized * newMagnitude;
         
         Vector2 playerPosition = this.transform.position;
@@ -560,20 +542,35 @@ public class Player : MonoBehaviour
 
     private void ConnectToRope(GameObject ropeSegment)
     {
-        _hingeJoint.enabled = true;
-        _hingeJoint.connectedBody = ropeSegment.GetComponent<Rigidbody2D>();
-        _hingeJoint.connectedAnchor = new Vector2(0, -.5f);
+        this._hingeJoint.enabled = true;
+        this._hingeJoint.connectedBody = ropeSegment.GetComponent<Rigidbody2D>();
+        this._hingeJoint.connectedAnchor = new Vector2(0, -.5f);
     }
 
     private void ClimbRope()
     {
-        float playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
+        var playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
         if (playerPositionOnRopeSegment <= .5f)
-            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this.climbSpeed * .01f);
+            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this._gameController.playerWalkSpeed * .01f);
         else
         {
-            _rope.RemoveLastRopeSegment();
+            this._rope.RemoveLastRopeSegment();
             this.ConnectToRope(this._rope.LastRopeSegment);
         }
+    }
+    
+    private IEnumerator OnGroundStun()
+    {
+        this._rigidbody.velocity = Vector2.zero;
+        this._isStunCoroutineStarted = true;
+        
+        if (this._isBufferedGroundStun)
+            yield return new WaitForSeconds(Player.GroundStunTimeBack);
+        else
+            yield return new WaitForSeconds(Player.GroundStunTimeNormal);
+
+        this._isStunCoroutineStarted = false;
+        this._isBufferedGroundStun = false;
+        this.currentState = PlayerState.Grounded;
     }
 }

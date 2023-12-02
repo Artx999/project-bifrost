@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 138667866484522250}
   - component: {fileID: 8283524964660635527}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GameController
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 8823237450978804442}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.6672059, y: 0.3538074, z: 0.015962346}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e472f1329c9fb9f4ba07abd185bcc7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerWalkSpeed: 5
   playerWallFriction: 4
-  playerWalkSpeed: 4
-  maxAxeThrowMag: 4
-  minAxeThrowMag: 1
-  axeSpeedAmp: 4
+  playerClimbSpeed: 2
+  maxAxeThrowMagnitude: 4
+  minAxeThrowMagnitude: 1
+  axeSpeedAmplitude: 4

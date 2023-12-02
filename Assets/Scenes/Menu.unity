@@ -218,9 +218,8 @@ GameObject:
   - component: {fileID: 157801715}
   - component: {fileID: 157801716}
   - component: {fileID: 157801717}
-  - component: {fileID: 157801718}
   - component: {fileID: 157801719}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Exit
   m_TagString: Button
   m_Icon: {fileID: 0}
@@ -315,21 +314,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &157801718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 157801714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startMenu: {fileID: 170695329}
-  controlsMenu: {fileID: 1614714106}
-  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &157801719
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -650,10 +634,9 @@ GameObject:
   - component: {fileID: 442611940}
   - component: {fileID: 442611941}
   - component: {fileID: 442611942}
-  - component: {fileID: 442611943}
   - component: {fileID: 442611944}
-  m_Layer: 0
-  m_Name: HowToPlay
+  m_Layer: 5
+  m_Name: Tutorial
   m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -747,21 +730,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &442611943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 442611939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startMenu: {fileID: 170695329}
-  controlsMenu: {fileID: 1614714106}
-  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &442611944
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -849,6 +817,7 @@ GameObject:
   - component: {fileID: 448344940}
   - component: {fileID: 448344939}
   - component: {fileID: 448344938}
+  - component: {fileID: 448344941}
   m_Layer: 0
   m_Name: MainMenu
   m_TagString: Untagged
@@ -946,6 +915,26 @@ Transform:
   - {fileID: 1614714107}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &448344941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448344937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7649275aff84be34d943ecc70f0203f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  audioManager: {fileID: 0}
+  startMenu: {fileID: 170695329}
+  tutorialMenu: {fileID: 1614714106}
+  playButton: {fileID: 1342293449}
+  tutorialButton: {fileID: 442611939}
+  exitButton: {fileID: 157801714}
+  backButton: {fileID: 1489786442}
 --- !u!1 &521371590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,9 +1453,8 @@ GameObject:
   - component: {fileID: 1342293450}
   - component: {fileID: 1342293451}
   - component: {fileID: 1342293452}
-  - component: {fileID: 1342293453}
   - component: {fileID: 1342293454}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Play
   m_TagString: Button
   m_Icon: {fileID: 0}
@@ -1561,21 +1549,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1342293453
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342293449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startMenu: {fileID: 170695329}
-  controlsMenu: {fileID: 1614714106}
-  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &1342293454
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1653,9 +1626,8 @@ GameObject:
   - component: {fileID: 1489786443}
   - component: {fileID: 1489786446}
   - component: {fileID: 1489786445}
-  - component: {fileID: 1489786444}
   - component: {fileID: 1489786447}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1677,21 +1649,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1614714107}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1489786444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489786442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startMenu: {fileID: 170695329}
-  controlsMenu: {fileID: 1614714106}
-  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!95 &1489786445
 Animator:
   serializedVersion: 5
@@ -1831,6 +1788,63 @@ PolygonCollider2D:
       - {x: 0.3125, y: -3.625}
       - {x: 0.875, y: -3.4375}
   m_UseDelaunayMesh: 0
+--- !u!1001 &1558662561
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 138667866484522250, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8823237450978804442, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
+      propertyPath: m_Name
+      value: Game Controller
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9f2803a32d887b941a5f0413bd0db5ef, type: 3}
 --- !u!1 &1614714106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2030,6 +2044,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 396794418}
+  - {fileID: 1558662561}
   - {fileID: 448344940}
   - {fileID: 2014558169}
   - {fileID: 1007013663}
