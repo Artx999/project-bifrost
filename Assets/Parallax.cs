@@ -8,18 +8,12 @@ public class Parallax : MonoBehaviour
     public Camera cam;
     public Transform subject;
     public float parallaxNumber;
-    
-
     Vector2 startPosition;
     float startZ;
-
     Vector2 travel => (Vector2)cam.transform.position - startPosition;
-
     float distancefromSubject => transform.position.z - subject.position.z; 
-
     float clippingPlane => (cam.transform.position.z +(distancefromSubject > 0 ? cam.nearClipPlane : cam.nearClipPlane));
-
-    float parallaxFactor => (Mathf.Abs(distancefromSubject) / clippingPlane ) * parallaxNumber;
+    float parallaxFactor => (Mathf.Abs(distancefromSubject) / clippingPlane ) * parallaxNumber * -1;
 
 
     // Start is called before the first frame update
