@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
     private AudioManager _audioManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
+    private HingeJoint2D _hingeJoint;
+    
     private Axe _axeThrow;
     private Camera _camera;
     private Rope _rope;
@@ -44,7 +46,8 @@ public class Player : MonoBehaviour
     private bool _isBufferedGroundStun = false;
     private bool _isStunCoroutineStarted = false;
     public float movementSpeed = 1f;
-
+    public float climbSpeed = 1f;
+    
     private void Start()
     {
         // Initialize variables
@@ -53,6 +56,7 @@ public class Player : MonoBehaviour
         _audioManager = audioManager.GetComponent<AudioManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
+        _hingeJoint = GetComponent<HingeJoint2D>();
         _axeThrow = axe.GetComponent<Axe>();
         _camera = Camera.main;
         _rope = rope.GetComponent<Rope>();
@@ -235,8 +239,7 @@ public class Player : MonoBehaviour
         this._animator.SetFloat("ropeHangX", xValue);
         this._animator.SetFloat("ropeHangY", yValue);
         
-        this.EnablePlayerPhysics(false);
-        this._rigidbody.MovePosition(this._lastRopeSegment.transform.position);
+        ConnectToRope(_lastRopeSegment);
         
         // AxeThrow --> AxeStuck
         if (this._axeThrow.currentState != Axe.AxeState.Air)
@@ -250,7 +253,6 @@ public class Player : MonoBehaviour
     {
         if(this._rope.RopeExists)
         {
-            // While the rope still exists we can climb the rope
             this._lastRopeSegment = this._rope.GetLastRopeSegment();
             
             var playerSegment = this._rope.GetLastRopeSegmentIndex();
@@ -260,13 +262,10 @@ public class Player : MonoBehaviour
             this._animator.SetFloat("ropeHangX", xValue);
             this._animator.SetFloat("ropeHangY", yValue);
             
-            this._rigidbody.MovePosition(this._lastRopeSegment.transform.position);
-            
             // Climb rope
-            // TODO: Better climbing mechanic
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKey(KeyCode.W))
             {
-                this._rope.RemoveLastRopeSegment();
+                this.ClimbRope();
                 return;
             }
             
@@ -275,7 +274,7 @@ public class Player : MonoBehaviour
             {
                 this._rope.DestroyRope();
                 this._axeThrow.currentState = Axe.AxeState.Player;
-                this.EnablePlayerPhysics(true);
+                //this.EnablePlayerPhysics(true);
                 this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 if (IsGrounded())
@@ -295,7 +294,7 @@ public class Player : MonoBehaviour
         }
         
         // Reached axe
-        this.EnablePlayerPhysics(true);
+        //this.EnablePlayerPhysics(true);
         switch (this._axeThrow.currentState)
         {
             case Axe.AxeState.Player:
@@ -455,29 +454,6 @@ public class Player : MonoBehaviour
         this._boxCollider.enabled = false;
         this._rigidbody.gravityScale = 0f;
     }
-    private void TeleportToAxe()
-    {
-        var oldVal = transform.position;
-
-        var axeDiff = axe.transform.position - oldVal;
-        if (axeDiff.x > 0f)
-        {
-            transform.position = axe.transform.position - new Vector3(_boxCollider.size.x/2, 0);
-        }
-        else if (axeDiff.x < 0f)
-        {
-            transform.position = axe.transform.position + new Vector3(_boxCollider.size.x/2, 0);
-        }
-
-        if (axeDiff.y + _boxCollider.size.y/2 > .1f)
-        {
-            transform.position = axe.transform.position + new Vector3(0, _boxCollider.size.y/2);
-        }
-
-        Debug.DrawLine(oldVal, transform.position, Color.red, 3f);
-
-        _rigidbody.velocity = Vector2.zero;
-    }
     
     private Vector2 GetMousePosition()
     {
@@ -563,5 +539,24 @@ public class Player : MonoBehaviour
         // I am unsure why we multiply bu 0.1f^2, but it works
         this.sight.transform.position = playerPosition + inputVector + Physics2D.gravity * ((float)Math.Pow(0.1f, 2));
         this.sight.SetActive(true);
+    }
+
+    private void ConnectToRope(GameObject ropeSegment)
+    {
+        _hingeJoint.enabled = true;
+        _hingeJoint.connectedBody = ropeSegment.GetComponent<Rigidbody2D>();
+        _hingeJoint.connectedAnchor = new Vector2(0, -.5f);
+    }
+
+    private void ClimbRope()
+    {
+        float playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
+        if (playerPositionOnRopeSegment <= .5f)
+            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this.climbSpeed * .01f);
+        else
+        {
+            _rope.RemoveLastRopeSegment();
+            this.ConnectToRope(this._rope.LastRopeSegment);
+        }
     }
 }
