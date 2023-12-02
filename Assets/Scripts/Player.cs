@@ -342,6 +342,7 @@ public class Player : MonoBehaviour
         if (IsGrounded())
         {
             this.currentState = PlayerState.Grounded;
+            this._audioManager.PlaySfx(this._audioManager.landing);
         }
 
         // Slide off wall
