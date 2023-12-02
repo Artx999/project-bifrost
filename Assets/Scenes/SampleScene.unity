@@ -41465,17 +41465,6 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 3
   m_ColliderType: 1
---- !u!114 &800802509 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5036130160038753415, guid: 5c2b0bcc868596e4fbbb6aa48794c78f, type: 3}
-  m_PrefabInstance: {fileID: 4868663749917776091}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf044befbcff64b40a742e0032ef5a1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &831136506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47276,14 +47265,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5072184760323369244, guid: a0f3851cc0916a549ba0fe6c4ce05d63, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 800802509}
-    - target: {fileID: 5072184760323369244, guid: a0f3851cc0916a549ba0fe6c4ce05d63, type: 3}
-      propertyPath: gameManager
-      value: 
-      objectReference: {fileID: 1589176991}
     - target: {fileID: 5762292977700105583, guid: a0f3851cc0916a549ba0fe6c4ce05d63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.86

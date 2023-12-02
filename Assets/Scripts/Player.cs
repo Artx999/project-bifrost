@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Player-state enum
     public enum PlayerState
     {
         Grounded,
@@ -17,15 +18,23 @@ public class Player : MonoBehaviour
         WallAim,
         GroundStun
     }
-
+    
+    // PUBLIC FIELDS
     public PlayerState currentState;
-    public GameObject gameManager;
+    
+    [Header("Gameobject references")]
+    public GameObject gameController;
     public GameObject audioManager;
     public GameObject axe;
     public GameObject sight;
     public GameObject rope;
-
-    private GameManager _gameManager;
+    
+    [Header("Adjustment variables")]
+    public float movementSpeed = 1f;
+    public float climbSpeed = 1f;
+    
+    // PRIVATE FIELDS
+    private GameController _gameController;
     private AudioManager _audioManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
@@ -45,19 +54,21 @@ public class Player : MonoBehaviour
     private const float VerticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
     private bool _isBufferedGroundStun = false;
     private bool _isStunCoroutineStarted = false;
-    public float movementSpeed = 1f;
-    public float climbSpeed = 1f;
-
+    
     private void Awake()
     {
-        
+        // Suppose we only have one object of these tags
+        this.gameController = GameObject.FindGameObjectWithTag("GameController");
+        this.audioManager = GameObject.FindGameObjectWithTag("AudioManager");
+        this.axe = GameObject.FindGameObjectWithTag("Axe");
+        this.rope = GameObject.FindGameObjectWithTag("Rope");
     }
 
     private void Start()
     {
         // Initialize variables
         this.currentState = PlayerState.Grounded;
-        _gameManager = gameManager.GetComponent<GameManager>();
+        _gameController = gameController.GetComponent<GameController>();
         _audioManager = audioManager.GetComponent<AudioManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
@@ -100,7 +111,7 @@ public class Player : MonoBehaviour
                     this._aimingVectorX = aimingVector.x;
                     this._animator.SetFloat("aimingX", this._aimingVectorX);
                     this._animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < this._gameManager.minAxeThrowMag);
+                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMag);
                     this._animator.SetFloat("lateSpeedX", this._aimingVectorX);
                 }
                 break;
@@ -125,7 +136,7 @@ public class Player : MonoBehaviour
                     this._aimingVectorX = aimingVector.x;
                     this._animator.SetFloat("aimingX", this._aimingVectorX);
                     this._animator.SetBool("aimCancel", 
-                        Mathf.Abs(aimingVector.magnitude) < this._gameManager.minAxeThrowMag);
+                        Mathf.Abs(aimingVector.magnitude) < this._gameController.minAxeThrowMag);
                 }
                 break;
             
@@ -216,7 +227,7 @@ public class Player : MonoBehaviour
             var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < this._gameManager.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameController.minAxeThrowMag)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.Grounded;
@@ -414,7 +425,7 @@ public class Player : MonoBehaviour
             var throwVector = this.GetThrowVector(playerPosition, newMousePosition);
             
             // Reference the axe and apply the speed based on the aim vector
-            if (throwVector.magnitude < this._gameManager.minAxeThrowMag)
+            if (throwVector.magnitude < this._gameController.minAxeThrowMag)
             {
                 animatorAimVector = throwVector;
                 this.currentState = PlayerState.WallSlide;
@@ -528,7 +539,7 @@ public class Player : MonoBehaviour
         // If the aim vector is too short for a throw, dont show the dot
         var inputVectorMagnitude = inputVector.magnitude;
 
-        if (inputVectorMagnitude < this._gameManager.minAxeThrowMag)
+        if (inputVectorMagnitude < this._gameController.minAxeThrowMag)
         {
             this.sight.SetActive(false);
             return;
@@ -536,7 +547,7 @@ public class Player : MonoBehaviour
         
         // Since the throw has a max strength, the sight should have a max length, and we do this by limiting
         // the vector magnitude based on the defined max magnitude from GM
-        var newMagnitude = Math.Min(this._gameManager.maxAxeThrowMag, inputVectorMagnitude);
+        var newMagnitude = Math.Min(this._gameController.maxAxeThrowMag, inputVectorMagnitude);
         inputVector = inputVector.normalized * newMagnitude;
         
         Vector2 playerPosition = this.transform.position;

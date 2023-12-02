@@ -8,10 +8,13 @@ using UnityEngine.SceneManagement;
 
 public class MenuButton : MonoBehaviour
 {
+    // PUBLIC FIELDS
+    [Header("Gameobject references")]
     public GameObject startMenu = null;
     public GameObject controlsMenu = null;
     public GameObject audioManager;
     
+    // PRIVATE FIELDS
     private Camera _camera;
     private Animator _animator;
     private PolygonCollider2D _collider;

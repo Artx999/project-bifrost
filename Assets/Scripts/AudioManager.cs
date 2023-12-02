@@ -16,12 +16,7 @@ public class AudioManager : MonoBehaviour
     [Header("Menu SFXs")]
     public AudioClip buttonHover;
     public AudioClip buttonClick;
-
-    private void Awake()
-    {
-        //sfxSource = this.AddComponent<AudioSource>();
-    }
-
+    
     public void PlaySfx(AudioClip clip)
     {
         sfxSource.PlayOneShot(clip);

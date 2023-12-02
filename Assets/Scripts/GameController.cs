@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameController : MonoBehaviour
 {
-    [Header("Player")]
+    [Header("Player adjustment variables")]
     public float playerWallFriction;
-    public float playerWalkSpeed;
-    [Header("Axe")]
+    public float playerWalkSpeed = 1f;
+    
+    [Header("Axe adjustment variables")]
     public float maxAxeThrowMag;
     public float minAxeThrowMag;
     public float axeSpeedAmp;
