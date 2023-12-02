@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class Axe : MonoBehaviour
 {
+    // Axe-state enum
     public enum AxeState
     {
         Player,
@@ -17,19 +18,31 @@ public class Axe : MonoBehaviour
         RightWall,
         Roof
     }
-
-    public AxeState currentState;
-    public GameObject gameManager;
-    public Player player;
     
+    // PUBLIC FIELDS
+    public AxeState currentState;
+    
+    [Header("Gameobject references")]
+    public GameObject gameController;
+    public GameObject player;
+    
+    // PRIVATE FIELDS
     private Rigidbody2D _rigidbody;
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
     private Animator _animator;
-    private GameManager _gameManager;
+    
+    private GameController _gameController;
+    
     private Vector2 _movementVector;
     private float _speedX = 0f;
-    
+
+    private void Awake()
+    {
+        this.gameController = GameObject.FindWithTag("GameController");
+        this.player = GameObject.FindWithTag("Player");
+    }
+
     private void Start()
     {
         // Initialize variables
@@ -38,14 +51,14 @@ public class Axe : MonoBehaviour
         this._spriteRenderer = GetComponent<SpriteRenderer>();
         this._boxCollider = GetComponent<BoxCollider2D>();
         this._animator = GetComponent<Animator>();
-        this._gameManager = gameManager.GetComponent<GameManager>();
+        this._gameController = this.gameController.GetComponent<GameController>();
 
-        this._rigidbody.gravityScale = 0f;
+        this.DisableAxe(true);
     }
 
     private void Update()
     {
-        this._speedX = _rigidbody.velocity.x;
+        this._speedX = this._rigidbody.velocity.x;
         this._animator.SetInteger("currentState", (int)this.currentState);
         
         if (Mathf.Abs(this._speedX) > 0.1f)
@@ -64,19 +77,15 @@ public class Axe : MonoBehaviour
                 break;
             
             case AxeState.Floor:
-                OnFloor();
                 break;
             
             case AxeState.LeftWall:
-                OnLeftWall();
                 break;
             
             case AxeState.RightWall:
-                OnRightWall();
                 break;
             
             case AxeState.Roof:
-                OnRoof();
                 break;
             
             default:
@@ -108,57 +117,38 @@ public class Axe : MonoBehaviour
 
     private void OnPlayer()
     {
-        FollowPlayer();
-        DisableAxe(true);
+        this.FollowPlayer();
+        this.DisableAxe(true);
     }
 
     private void OnAir()
     {
-        DisableAxe(false);
-    }
-
-    private void OnFloor()
-    {
-        
-    }
-
-    private void OnLeftWall()
-    {
-        
-    }
-
-    private void OnRightWall()
-    {
-        
-    }
-
-    private void OnRoof()
-    {
-        
+        this.DisableAxe(false);
     }
     
     public void ApplyAxeSpeed(Vector2 inputVector)
     {
-        var inputVecMag = inputVector.magnitude;
-        _rigidbody.gravityScale = 1f;
+        var inputVectorMagnitude = inputVector.magnitude;
+        this._rigidbody.gravityScale = 1f;
         
         // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
-        var realSpeed = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
-        _movementVector = inputVector.normalized * (realSpeed * _gameManager.axeSpeedAmp);
+        var realSpeed = Math.Min(this._gameController.maxAxeThrowMagnitude, inputVectorMagnitude);
+        this._movementVector = inputVector.normalized * (realSpeed * this._gameController.axeSpeedAmplitude);
         
         // Lastly, we add a force and let gravity do its thing
-        _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
+        this._rigidbody.AddForce(this._movementVector, ForceMode2D.Impulse);
     }
 
     private void FollowPlayer()
     {
-        this.transform.position = player.transform.position;
-        DisableAxe(true);
+        this.transform.position = this.player.transform.position;
+        this.DisableAxe(true);
     }
 
     private void DisableAxe(bool isDisabled)
     {
         this._spriteRenderer.enabled = !isDisabled;
         this._boxCollider.enabled = !isDisabled;
+        this._rigidbody.gravityScale = isDisabled ? 0f : 1f;
     }
 }
