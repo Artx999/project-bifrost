@@ -47,7 +47,12 @@ public class Player : MonoBehaviour
     private bool _isStunCoroutineStarted = false;
     public float movementSpeed = 1f;
     public float climbSpeed = 1f;
-    
+
+    private void Awake()
+    {
+        
+    }
+
     private void Start()
     {
         // Initialize variables
