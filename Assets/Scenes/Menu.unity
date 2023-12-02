@@ -595,8 +595,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startMenu: {fileID: 0}
-  controlsMenu: {fileID: 0}
+  startMenu: {fileID: 170695329}
+  controlsMenu: {fileID: 1614714106}
+  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &157801719
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1263,6 +1264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startMenu: {fileID: 170695329}
   controlsMenu: {fileID: 1614714106}
+  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &442611944
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2019,6 +2021,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 851938579}
   m_CullTransparentMesh: 1
+--- !u!1001 &1007013663
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3743887915550539288, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_Volume
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7708961945675926859, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
+      propertyPath: m_Name
+      value: Audio Manager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!1 &1024734345
 GameObject:
   m_ObjectHideFlags: 3
@@ -2624,8 +2687,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5a11ff88bcc144f87514a8190ff523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startMenu: {fileID: 0}
-  controlsMenu: {fileID: 0}
+  startMenu: {fileID: 170695329}
+  controlsMenu: {fileID: 1614714106}
+  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!60 &1342293454
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2875,6 +2939,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startMenu: {fileID: 170695329}
   controlsMenu: {fileID: 1614714106}
+  audioManager: {fileID: 7797021412601411394, guid: bce6e9dd268397f4f9835a5661f1fcc7, type: 3}
 --- !u!95 &1489786445
 Animator:
   serializedVersion: 5
@@ -4077,3 +4142,4 @@ SceneRoots:
   - {fileID: 1966834725}
   - {fileID: 448344940}
   - {fileID: 2014558169}
+  - {fileID: 1007013663}
