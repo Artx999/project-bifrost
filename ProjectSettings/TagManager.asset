@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Axe
   - Surface
-  - Button
+  - AudioManager
   layers:
   - Default
   - TransparentFX
@@ -15,7 +15,7 @@ TagManager:
   - Water
   - UI
   - Surface
-  - Rope
+  - Chain
   - Player
   - Axe
   - 

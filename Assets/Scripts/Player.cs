@@ -20,11 +20,13 @@ public class Player : MonoBehaviour
 
     public PlayerState currentState;
     public GameObject gameManager;
+    public GameObject audioManager;
     public GameObject axe;
     public GameObject sight;
     public GameObject rope;
 
     private GameManager _gameManager;
+    private AudioManager _audioManager;
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private HingeJoint2D _hingeJoint;
@@ -51,6 +53,7 @@ public class Player : MonoBehaviour
         // Initialize variables
         this.currentState = PlayerState.Grounded;
         _gameManager = gameManager.GetComponent<GameManager>();
+        _audioManager = audioManager.GetComponent<AudioManager>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _hingeJoint = GetComponent<HingeJoint2D>();
@@ -165,15 +168,20 @@ public class Player : MonoBehaviour
         if(!this._isBufferedGroundStun)
             this._isBufferedGroundStun = this._rigidbody.velocity.y < -Player.VerticalSpeedLimit;
         
-        // Land
+        // Fall --> GroundStun
         if (IsGrounded())
         {
             this.currentState = PlayerState.GroundStun;
+            this._audioManager.PlaySfx(this._isBufferedGroundStun
+                ? this._audioManager.backLanding
+                : this._audioManager.landing);
         }
+        // Fall --> WallSlide
         else if (IsWalled())
         {
             this._isBufferedGroundStun = false;
             this.currentState = PlayerState.WallSlide;
+            this._audioManager.PlaySfx(this._audioManager.wallLanding);
         }
     }
 
@@ -210,9 +218,11 @@ public class Player : MonoBehaviour
                 return;
             }
 
+            // GroundAim --> AxeThrow
             this.currentState = PlayerState.AxeThrow;
             this._axeThrow.currentState = Axe.AxeState.Air;
             this._axeThrow.ApplyAxeSpeed(throwVector);
+            this._audioManager.PlaySfx(this._audioManager.axeThrow);
         }
     }
 
@@ -231,9 +241,12 @@ public class Player : MonoBehaviour
         
         ConnectToRope(_lastRopeSegment);
         
-        // Axe collide
-        if(this._axeThrow.currentState != Axe.AxeState.Air)
+        // AxeThrow --> AxeStuck
+        if (this._axeThrow.currentState != Axe.AxeState.Air)
+        {
             this.currentState = PlayerState.AxeStuck;
+            this._audioManager.PlaySfx(this._audioManager.axeHit);
+        }
     }
 
     private void OnAxeStuck()
@@ -329,6 +342,7 @@ public class Player : MonoBehaviour
         if (IsGrounded())
         {
             this.currentState = PlayerState.Grounded;
+            this._audioManager.PlaySfx(this._audioManager.landing);
         }
 
         // Slide off wall
@@ -401,10 +415,12 @@ public class Player : MonoBehaviour
                 this.currentState = PlayerState.WallSlide;
                 return;
             }
-
+            
+            // GroundAim --> AxeThrow
             this.currentState = PlayerState.AxeThrow;
             this._axeThrow.currentState = Axe.AxeState.Air;
             this._axeThrow.ApplyAxeSpeed(throwVector);
+            this._audioManager.PlaySfx(this._audioManager.axeThrow);
         }
         
         // Slide off wall
