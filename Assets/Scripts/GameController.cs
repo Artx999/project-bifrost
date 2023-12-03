@@ -55,18 +55,21 @@ public class GameController : MonoBehaviour
 
     private void PauseGame(bool pauseGame)
     {
+        this._audioManager.PlaySfx(this._audioManager.pauseAndResume);
+        
         if (pauseGame)
         {
-            Time.timeScale = 0f;
             this.isGamePaused = true;
             this._audioManager.PauseAllAudio(true);
             Debug.Log("Paused game");
+            Time.timeScale = 0f;
+            
             return;
         }
-
+        
         this.isGamePaused = false;
-        Time.timeScale = 1f;
         this._audioManager.PauseAllAudio(false);
+        Time.timeScale = 1f;
         Debug.Log("Resumed game");
     }
 }
