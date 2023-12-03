@@ -21,6 +21,7 @@ public class Rope : MonoBehaviour
     public GameObject ropeSegmentPrefab;
     
     private List<GameObject> _ropeSegments;
+    public GameObject LastRopeSegment { get; private set;  }
     
     public GameObject axe;
     public bool RopeExists { get; private set; }
@@ -58,6 +59,7 @@ public class Rope : MonoBehaviour
         
         GameObject currentSegment = Instantiate(ropeSegmentPrefab, lastSegmentPosition, lastSegmentRotation, _transform);
         _ropeSegments.Add(currentSegment);
+        this.LastRopeSegment = currentSegment;
         currentSegment.transform.localScale *= segmentLength;
         currentSegment.GetComponent<Rigidbody2D>().mass = ropeMass;
         
@@ -89,6 +91,7 @@ public class Rope : MonoBehaviour
         
         Destroy(lastSegment);
         _ropeSegments.RemoveAt(lastSegmentIndex);
+        this.LastRopeSegment = _ropeSegments.Last();
     }
 
     public void CreateRope()
@@ -119,6 +122,27 @@ public class Rope : MonoBehaviour
 
     public GameObject GetLastRopeSegment()
     {
-        return _ropeSegments.Last();
+        this.LastRopeSegment = _ropeSegments.Last();
+        return this.LastRopeSegment;
+    }
+
+    public int GetLastRopeSegmentIndex()
+    {
+        return _ropeSegments.Count - 1;
+    }
+
+    public Vector2 GetRopeSegmentDirection(int segmentIndex, uint length)
+    {
+        if (segmentIndex >= _ropeSegments.Count || segmentIndex - length <= 0)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 currentSegmentPosition = _ropeSegments[segmentIndex].transform.position;
+        Vector2 nextSegmentPosition = _ropeSegments[segmentIndex-(int)length].transform.position;
+
+        var result = nextSegmentPosition - currentSegmentPosition;
+
+        return result;
     }
 }

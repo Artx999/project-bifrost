@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Axe
   - Surface
+  - AudioManager
+  - Button
+  - Rope
   layers:
   - Default
   - TransparentFX
@@ -48,4 +51,7 @@ TagManager:
     locked: 0
   - name: Terrain
     uniqueID: 1845276485
+    locked: 0
+  - name: UI
+    uniqueID: 3572357085
     locked: 0

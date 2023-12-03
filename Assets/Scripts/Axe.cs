@@ -8,61 +8,87 @@ using UnityEngine;
 
 public class Axe : MonoBehaviour
 {
-    public enum AxePosition
+    // Axe-state enum
+    public enum AxeState
     {
-        Null,
+        Player,
+        Air,
         Floor,
-        Wall,
+        LeftWall,
+        RightWall,
         Roof
     }
     
-    public GameObject gameManager;
-    public Player player;
-    public AxePosition currentAxePosition;
+    // PUBLIC FIELDS
+    public AxeState currentState;
     
+    [Header("Gameobject references")]
+    public GameObject gameController;
+    public GameObject player;
+    
+    // PRIVATE FIELDS
     private Rigidbody2D _rigidbody;
-    private GameManager _gameManager;
-    private Vector2 _movementVector;
+    private SpriteRenderer _spriteRenderer;
+    private BoxCollider2D _boxCollider;
+    private Animator _animator;
     
-    // Start is called before the first frame update
+    private GameController _gameController;
+    
+    private Vector2 _movementVector;
+    private float _speedX = 0f;
+
+    private void Awake()
+    {
+        this.gameController = GameObject.FindWithTag("GameController");
+        this.player = GameObject.FindWithTag("Player");
+    }
+
     private void Start()
     {
         // Initialize variables
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _gameManager = gameManager.GetComponent<GameManager>();
-        currentAxePosition = AxePosition.Null;
-        
-        _rigidbody.gravityScale = 0f;
+        this.currentState = AxeState.Player;
+        this._rigidbody = GetComponent<Rigidbody2D>();
+        this._spriteRenderer = GetComponent<SpriteRenderer>();
+        this._boxCollider = GetComponent<BoxCollider2D>();
+        this._animator = GetComponent<Animator>();
+        this._gameController = this.gameController.GetComponent<GameController>();
+
+        this.DisableAxe(true);
     }
 
     private void Update()
     {
-        switch (player.currentState)
+        if (this._gameController.isGamePaused)
+            return;
+        
+        this._speedX = this._rigidbody.velocity.x;
+        this._animator.SetInteger("currentState", (int)this.currentState);
+        
+        if (Mathf.Abs(this._speedX) > 0.1f)
         {
-            case Player.PlayerState.Grounded:
-                FollowPlayer();
+            this._animator.SetFloat("speedX", this._speedX);
+        }
+        
+        switch(this.currentState)
+        {
+            case AxeState.Player:
+                OnPlayer();
                 break;
             
-            case Player.PlayerState.Fall:
-                FollowPlayer();
+            case AxeState.Air:
+                OnAir();
                 break;
             
-            case Player.PlayerState.GroundedAim:
-                FollowPlayer();
+            case AxeState.Floor:
                 break;
             
-            case Player.PlayerState.AxeThrow:
+            case AxeState.LeftWall:
                 break;
             
-            case Player.PlayerState.AxeStuck:
+            case AxeState.RightWall:
                 break;
             
-            case Player.PlayerState.WallSlide:
-                FollowPlayer();
-                break;
-            
-            case Player.PlayerState.WallAim:
-                FollowPlayer();
+            case AxeState.Roof:
                 break;
             
             default:
@@ -79,34 +105,53 @@ public class Axe : MonoBehaviour
         var collisionHitNormal = other.GetContact(0).normal;
         
         if ((collisionHitNormal - Vector2.right).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Wall;
+            this.currentState = AxeState.LeftWall;
         else if ((collisionHitNormal - Vector2.left).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Wall;
+            this.currentState = AxeState.RightWall;
         else if ((collisionHitNormal - Vector2.up).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Floor;
+            this.currentState = AxeState.Floor;
         else if ((collisionHitNormal - Vector2.down).magnitude < 0.1f)
-            this.currentAxePosition = AxePosition.Roof;
+            this.currentState = AxeState.Roof;
         
         // We hit a surface successfully and can stop the axe movement
         this._rigidbody.velocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
     }
 
+    private void OnPlayer()
+    {
+        this.FollowPlayer();
+        this.DisableAxe(true);
+    }
+
+    private void OnAir()
+    {
+        this.DisableAxe(false);
+    }
+    
     public void ApplyAxeSpeed(Vector2 inputVector)
     {
-        var inputVecMag = inputVector.magnitude;
-        _rigidbody.gravityScale = 1f;
+        var inputVectorMagnitude = inputVector.magnitude;
+        this._rigidbody.gravityScale = 1f;
         
         // Fix up the throw vector, by making a new vector with a direction and giving a capped speed
-        var realSpeed = Math.Min(_gameManager.maxAxeThrowMag, inputVecMag);
-        _movementVector = inputVector.normalized * (realSpeed * _gameManager.axeSpeedAmp);
+        var realSpeed = Math.Min(this._gameController.maxAxeThrowMagnitude, inputVectorMagnitude);
+        this._movementVector = inputVector.normalized * (realSpeed * this._gameController.axeSpeedAmplitude);
         
         // Lastly, we add a force and let gravity do its thing
-        _rigidbody.AddForce(_movementVector, ForceMode2D.Impulse);
+        this._rigidbody.AddForce(this._movementVector, ForceMode2D.Impulse);
     }
 
     private void FollowPlayer()
     {
-        this.transform.position = player.transform.position;
+        this.transform.position = this.player.transform.position;
+        this.DisableAxe(true);
+    }
+
+    private void DisableAxe(bool isDisabled)
+    {
+        this._spriteRenderer.enabled = !isDisabled;
+        this._boxCollider.enabled = !isDisabled;
+        this._rigidbody.gravityScale = isDisabled ? 0f : 1f;
     }
 }
