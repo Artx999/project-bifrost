@@ -256,6 +256,7 @@ public class Player : MonoBehaviour
         this._animator.SetFloat("ropeHangY", yValue);
         
         this.ConnectToRope(_lastRopeSegment);
+        this.TogglePlayerPhysics(false);
         
         // AxeThrow --> AxeStuck
         if (this._axeThrow.currentState != Axe.AxeState.Air)
@@ -290,7 +291,7 @@ public class Player : MonoBehaviour
             {
                 this._rope.DestroyRope();
                 this._axeThrow.currentState = Axe.AxeState.Player;
-                //this.EnablePlayerPhysics(true);
+                this.TogglePlayerPhysics(true);
                 this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 if (IsGrounded())
@@ -310,7 +311,7 @@ public class Player : MonoBehaviour
         }
         
         // Reached axe
-        //this.EnablePlayerPhysics(true);
+        this.TogglePlayerPhysics(true);
         switch (this._axeThrow.currentState)
         {
             case Axe.AxeState.Player:
@@ -444,7 +445,7 @@ public class Player : MonoBehaviour
     }
     
     /* PRIVATE METHODS */
-    private void EnablePlayerPhysics(bool activate)
+    private void TogglePlayerPhysics(bool activate)
     {
         if (activate)
         {
