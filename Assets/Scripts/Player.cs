@@ -78,6 +78,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (this._gameController.isGamePaused)
+            return;
+        
         var aimingVector = Vector2.zero;
         var rigidBodyVelocity = this._rigidbody.velocity;
         
@@ -151,7 +154,8 @@ public class Player : MonoBehaviour
         if (this.currentState == PlayerState.Grounded)
         {
             this._directionX = Input.GetAxisRaw("Horizontal");
-            this._rigidbody.velocity = new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
+            this._rigidbody.velocity = 
+                new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
         }
     }
 

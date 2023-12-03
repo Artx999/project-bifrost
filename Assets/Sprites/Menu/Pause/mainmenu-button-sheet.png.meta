@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d1f4c0047242884439575ede0ba0a90c
+guid: 19ceae69b9768884cb5cdc19942949b8
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,12 +110,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: back-button-sheet_0
+      name: mainmenu-button-sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
+        width: 512
         height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -124,19 +124,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5549d8d75a29eb54fa113e7bba1a8870
-      internalID: -1246927644
+      spriteID: 7fcf493897a55ae46b114303ebe266f3
+      internalID: 990249714
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: back-button-sheet_1
+      name: mainmenu-button-sheet_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 512
         y: 0
-        width: 256
+        width: 512
         height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 23bf8731144b33a4184ab8e94ae35149
-      internalID: -856782766
+      spriteID: 50643bc98f3f20f489fd95ca6e396f55
+      internalID: 430120639
       vertices: []
       indices: 
       edges: []
@@ -162,8 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      back-button-sheet_0: -1246927644
-      back-button-sheet_1: -856782766
+      mainmenu-button-sheet_0: 990249714
+      mainmenu-button-sheet_1: 430120639
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

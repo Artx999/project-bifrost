@@ -58,6 +58,9 @@ public class Axe : MonoBehaviour
 
     private void Update()
     {
+        if (this._gameController.isGamePaused)
+            return;
+        
         this._speedX = this._rigidbody.velocity.x;
         this._animator.SetInteger("currentState", (int)this.currentState);
         

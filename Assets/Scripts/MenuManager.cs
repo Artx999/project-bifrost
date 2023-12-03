@@ -59,11 +59,10 @@ public class MenuManager : MonoBehaviour
     private void Update()
     {
         var mouseHover = OnMouseHover();
+        PlaySfxOnceOnHover(mouseHover);
         
         if (mouseHover)
         {
-            PlaySfxOnceOnHover(true);
-            
             if (this._currentButton == this.playButton)
             {
                 this._playAnimator.SetBool("mouseHover", true);
@@ -107,7 +106,6 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            PlaySfxOnceOnHover(false);
             if (this.startMenu.activeSelf)
             {
                 this._playAnimator.SetBool("mouseHover", false);
@@ -156,11 +154,11 @@ public class MenuManager : MonoBehaviour
         switch (mouseHover)
         {
             case true when _hoverSoundFlag:
-                _hoverSoundFlag = false;
+                this._hoverSoundFlag = false;
                 this._audioManager.PlaySfx(this._audioManager.buttonHover);
                 break;
             case false:
-                _hoverSoundFlag = true;
+                this._hoverSoundFlag = true;
                 break;
         }
     }

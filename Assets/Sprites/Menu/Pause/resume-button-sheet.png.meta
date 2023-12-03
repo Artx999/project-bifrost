@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d1f4c0047242884439575ede0ba0a90c
+guid: 57e32f23c07fc8c49a19859be7e9e06b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: back-button-sheet_0
+      name: resume-button-sheet_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5549d8d75a29eb54fa113e7bba1a8870
-      internalID: -1246927644
+      spriteID: 9830845db0e4393419a4153b5f92c758
+      internalID: 1640041726
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: back-button-sheet_1
+      name: resume-button-sheet_1
       rect:
         serializedVersion: 2
         x: 256
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 23bf8731144b33a4184ab8e94ae35149
-      internalID: -856782766
+      spriteID: a9c46385cc7780c4187cf1faf88fb9c8
+      internalID: 159871572
       vertices: []
       indices: 
       edges: []
@@ -162,8 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      back-button-sheet_0: -1246927644
-      back-button-sheet_1: -856782766
+      resume-button-sheet_0: 1640041726
+      resume-button-sheet_1: 159871572
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
