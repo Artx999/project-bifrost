@@ -104,13 +104,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
-  gameManager: {fileID: 0}
+  gameController: {fileID: 0}
   audioManager: {fileID: 0}
   axe: {fileID: 0}
   sight: {fileID: 8256521437847697611}
   rope: {fileID: 0}
-  movementSpeed: 5
-  climbSpeed: 2
 --- !u!50 &1303244568483783995
 Rigidbody2D:
   serializedVersion: 4
@@ -205,7 +203,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.03671953, y: -0.0983659}
+  m_Offset: {x: 0.031053275, y: -0.062187135}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -216,7 +214,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.7937916, y: 1.9298203}
+  m_Size: {x: 0.75526124, y: 1.816666}
   m_EdgeRadius: 0
 --- !u!95 &8117137167461042094
 Animator:
