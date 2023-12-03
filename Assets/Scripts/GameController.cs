@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 {
     [Header("Gameobject references")]
     public GameObject audioManager;
+    public GameObject pauseMenu;        // VERY TEMP
 
     [Header("Game controller variables")]
     public bool isPauseEnabled;
@@ -32,14 +33,15 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        //Application.targetFrameRate = 60;
         this._audioManager = this.audioManager.GetComponent<AudioManager>();
         this.isGamePaused = false;
     }
 
     private void Update()
     {
-        // Reload scene
-        if (Input.GetKeyDown(KeyCode.R))
+        // Reload scene - DEVELOPMENT ONLY
+        if (Input.GetKeyDown(KeyCode.R) && !this.isGamePaused)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         
         // Pause game
@@ -53,7 +55,13 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    private void PauseGame(bool pauseGame)
+    public void LoadStartMenuScene()
+    {
+        // Menu - Index
+        SceneManager.LoadScene(0);
+    }
+
+    public void PauseGame(bool pauseGame)
     {
         this._audioManager.PlaySfx(this._audioManager.pauseAndResume);
         
@@ -61,6 +69,7 @@ public class GameController : MonoBehaviour
         {
             this.isGamePaused = true;
             this._audioManager.PauseAllAudio(true);
+            this.pauseMenu.SetActive(true);
             Debug.Log("Paused game");
             Time.timeScale = 0f;
             
@@ -69,6 +78,7 @@ public class GameController : MonoBehaviour
         
         this.isGamePaused = false;
         this._audioManager.PauseAllAudio(false);
+        this.pauseMenu.SetActive(false);
         Time.timeScale = 1f;
         Debug.Log("Resumed game");
     }

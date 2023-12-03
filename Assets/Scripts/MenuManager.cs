@@ -156,11 +156,11 @@ public class MenuManager : MonoBehaviour
         switch (mouseHover)
         {
             case true when _hoverSoundFlag:
-                _hoverSoundFlag = false;
+                this._hoverSoundFlag = false;
                 this._audioManager.PlaySfx(this._audioManager.buttonHover);
                 break;
             case false:
-                _hoverSoundFlag = true;
+                this._hoverSoundFlag = true;
                 break;
         }
     }
