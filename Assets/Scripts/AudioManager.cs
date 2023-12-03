@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    [Header("GameObject references")]
+    public GameObject mainCamera;
+    
     [Header("Game SFXs")]
     public AudioClip axeThrow;
     public AudioClip axeHit;
@@ -17,6 +20,11 @@ public class AudioManager : MonoBehaviour
 
     private AudioSource _audioSource;
 
+    private void Awake()
+    {
+        this.mainCamera = GameObject.FindWithTag("MainCamera");
+    }
+
     private void Start()
     {
         this._audioSource = GetComponent<AudioSource>();
@@ -28,5 +36,10 @@ public class AudioManager : MonoBehaviour
             return;
 
         this._audioSource.PlayOneShot(clip);
+    }
+
+    public void PauseAllAudio(bool shouldPause)
+    {
+        AudioListener.pause = shouldPause;
     }
 }
