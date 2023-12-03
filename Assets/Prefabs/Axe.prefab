@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
-  gameManager: {fileID: 0}
+  gameController: {fileID: 0}
   player: {fileID: 0}
 --- !u!50 &5203857908551517337
 Rigidbody2D:
@@ -128,7 +128,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &3636962895972661414
 BoxCollider2D:
