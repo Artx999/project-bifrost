@@ -556,7 +556,7 @@ public class Player : MonoBehaviour
     {
         var playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
         if (playerPositionOnRopeSegment <= .5f)
-            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this._gameController.playerWalkSpeed * .01f);
+            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this._gameController.playerClimbSpeed * .01f);
         else
         {
             this._rope.RemoveLastRopeSegment();
