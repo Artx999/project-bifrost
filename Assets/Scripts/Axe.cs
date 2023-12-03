@@ -96,6 +96,17 @@ public class Axe : MonoBehaviour
         }
     }
     
+    private void FixedUpdate()
+    {
+        // Check for terminal velocity
+        if (this._rigidbody.velocity.y <=
+            -this._gameController.terminalVelocity)
+        {
+            this._rigidbody.velocity =
+                new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+        }
+    }
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (!other.collider.CompareTag("Surface"))
