@@ -17,7 +17,8 @@ public class Player : MonoBehaviour
         AxeStuck,
         WallSlide,
         WallAim,
-        GroundStun
+        GroundStun,
+        Finished
     }
     
     // PUBLIC FIELDS
@@ -51,6 +52,7 @@ public class Player : MonoBehaviour
     private const float VerticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
     private bool _isBufferedGroundStun = false;
     private bool _isStunCoroutineStarted = false;
+    private bool _hasEnteredWinTrigger = false;
     
     private void Awake()
     {
@@ -98,6 +100,8 @@ public class Player : MonoBehaviour
             case PlayerState.Grounded:
                 this.OnGrounded();
                 this._animator.SetBool("isWalking", Mathf.Abs(this._rigidbody.velocity.x) > 0.1f);
+                if (this._hasEnteredWinTrigger)
+                    this.currentState = PlayerState.Finished;
                 break;
             
             case PlayerState.Fall:
@@ -145,6 +149,9 @@ public class Player : MonoBehaviour
                     StartCoroutine(this.OnGroundStun());
                 break;
             
+            case PlayerState.Finished:
+                break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -165,6 +172,16 @@ public class Player : MonoBehaviour
         {
             this._rigidbody.velocity =
                 new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Finish"))
+        {
+            // We wait until the player is in the Grounded state until we trigger the victory screen,
+            // so we just update a flag
+            this._hasEnteredWinTrigger = true;
         }
     }
 

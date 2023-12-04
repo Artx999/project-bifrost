@@ -81,4 +81,9 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1f;
         Debug.Log("Resumed game");
     }
+
+    public void StartWinCondition()
+    {
+        
+    }
 }
