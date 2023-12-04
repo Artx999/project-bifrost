@@ -157,6 +157,14 @@ public class Player : MonoBehaviour
             this._rigidbody.velocity = 
                 new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
         }
+        
+        // Check for terminal velocity
+        if (this._rigidbody.velocity.y <=
+            -this._gameController.terminalVelocity)
+        {
+            this._rigidbody.velocity =
+                new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+        }
     }
 
     /* STATE METHODS */
