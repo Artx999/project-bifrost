@@ -457,6 +457,7 @@ public class Player : MonoBehaviour
     {
         if (activate)
         {
+            PushColliderIntoBounds();
             this._boxCollider.enabled = true;
             this._rigidbody.gravityScale = 1f;
 
@@ -465,6 +466,49 @@ public class Player : MonoBehaviour
 
         this._boxCollider.enabled = false;
         this._rigidbody.gravityScale = 0f;
+    }
+
+    private void PushColliderIntoBounds()
+    {
+        var colliderCenter = (Vector2)this._boxCollider.bounds.center;
+        var colliderSize = this._boxCollider.size;
+        var colliderSizeX = colliderSize.x;
+        var colliderSizeY = colliderSize.y;
+
+        var centerLeft = new Vector2(colliderCenter.x - colliderSizeX / 2f, colliderCenter.y);
+        var centerRight = new Vector2(colliderCenter.x + colliderSizeX / 2f, colliderCenter.y);
+        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
+        var centerUp = new Vector2(colliderCenter.x, colliderCenter.y + colliderSizeY / 2);
+
+        var desiredMask = LayerMask.GetMask("Surface");
+        var rayOffset = 0f;
+
+        var rayRight = 
+            Physics2D.Raycast(centerLeft, Vector2.right, colliderSizeX + rayOffset, desiredMask);
+        var rayDown =
+            Physics2D.Raycast(centerUp, Vector2.down, colliderSizeY + rayOffset, desiredMask);
+        var rayLeft =
+            Physics2D.Raycast(centerRight, Vector2.left, colliderSizeX + rayOffset, desiredMask);
+        
+
+        Debug.DrawLine(centerDown, new Vector2(centerDown.x, centerDown.y + colliderSizeY + rayOffset), Color.red, 3f);
+        Debug.Log("Rigidbody before: " + this._rigidbody.position.y);
+            
+        var rayUp =
+            Physics2D.Raycast(centerDown, Vector2.up, colliderSizeY + rayOffset, desiredMask);
+
+        if (!rayUp.collider)
+            return;
+
+        var hitPoint = rayUp.point;
+        var distanceToHitPoint = (hitPoint - centerDown).magnitude;
+        var distanceToPush = colliderSizeY - distanceToHitPoint;
+        
+        this._rigidbody.position = new Vector2(this._rigidbody.position.x, this._rigidbody.position.y - distanceToPush);
+        
+        Debug.Log("Rigidbody after: " + this._rigidbody.position.y);
+        Debug.Log("Distance: " + distanceToPush);
+        
     }
     
     private Vector2 GetMousePosition()
