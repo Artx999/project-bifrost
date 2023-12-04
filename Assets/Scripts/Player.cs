@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
@@ -35,12 +36,12 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private HingeJoint2D _hingeJoint;
-    
+    private Animator _animator;
+
     private Axe _axeThrow;
     private Camera _camera;
     private Rope _rope;
     private GameObject _lastRopeSegment;
-    private Animator _animator;
 
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
@@ -470,45 +471,70 @@ public class Player : MonoBehaviour
 
     private void PushColliderIntoBounds()
     {
+        // First, check if the raycast origin is not in the surface, because if it is we do not cast the ray
+        
+        // Second, cast the ray from origin to check for hit
+        
+        // Lastly, move the rigidbody based on how far the collider is pushed in
+        /*
         var colliderCenter = (Vector2)this._boxCollider.bounds.center;
         var colliderSize = this._boxCollider.size;
         var colliderSizeX = colliderSize.x;
         var colliderSizeY = colliderSize.y;
-
-        var centerLeft = new Vector2(colliderCenter.x - colliderSizeX / 2f, colliderCenter.y);
-        var centerRight = new Vector2(colliderCenter.x + colliderSizeX / 2f, colliderCenter.y);
-        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
-        var centerUp = new Vector2(colliderCenter.x, colliderCenter.y + colliderSizeY / 2);
-
-        var desiredMask = LayerMask.GetMask("Surface");
-        var rayOffset = 0f;
-
-        var rayRight = 
-            Physics2D.Raycast(centerLeft, Vector2.right, colliderSizeX + rayOffset, desiredMask);
-        var rayDown =
-            Physics2D.Raycast(centerUp, Vector2.down, colliderSizeY + rayOffset, desiredMask);
-        var rayLeft =
-            Physics2D.Raycast(centerRight, Vector2.left, colliderSizeX + rayOffset, desiredMask);
         
+        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
+        
+        var desiredMask = LayerMask.GetMask("Surface");
+        var rayOffset = 0.1f;
 
-        Debug.DrawLine(centerDown, new Vector2(centerDown.x, centerDown.y + colliderSizeY + rayOffset), Color.red, 3f);
-        Debug.Log("Rigidbody before: " + this._rigidbody.position.y);
-            
+        var test = Physics2D.OverlapCircle(centerDown, 0.1f, desiredMask);
+        
         var rayUp =
             Physics2D.Raycast(centerDown, Vector2.up, colliderSizeY + rayOffset, desiredMask);
-
-        if (!rayUp.collider)
+        
+        if (!rayUp.collider || test)
             return;
-
+        
         var hitPoint = rayUp.point;
         var distanceToHitPoint = (hitPoint - centerDown).magnitude;
         var distanceToPush = colliderSizeY - distanceToHitPoint;
+
+        var rigidBodyPosition = this._rigidbody.position;
+        this._rigidbody.position = new Vector2(rigidBodyPosition.x, rigidBodyPosition.y - distanceToPush); */
         
-        this._rigidbody.position = new Vector2(this._rigidbody.position.x, this._rigidbody.position.y - distanceToPush);
+        var colliderCenter = (Vector2)this._boxCollider.bounds.center;
+        var colliderSize = this._boxCollider.size;
+        var colliderSizeX = colliderSize.x;
+        var colliderSizeY = colliderSize.y;
         
-        Debug.Log("Rigidbody after: " + this._rigidbody.position.y);
-        Debug.Log("Distance: " + distanceToPush);
+        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
+        var centerLeft = new Vector2(colliderCenter.x - colliderSizeX / 2, colliderCenter.y);
+        var centerUp = new Vector2(colliderCenter.x, colliderCenter.y + colliderSizeY / 2);
+        var centerRight = new Vector2(colliderCenter.x + colliderSizeX / 2, colliderCenter.y);
+
+        var rayOffset = 0.1f;
+        var desiredMask = LayerMask.GetMask("Surface");
         
+        PushRigidbodyInDirection(centerDown, Vector2.up, colliderSizeY, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerLeft, Vector2.right, colliderSizeX, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerUp, Vector2.down, colliderSizeY, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerRight, Vector2.left, colliderSizeX, rayOffset, desiredMask);
+    }
+
+    private void PushRigidbodyInDirection(Vector2 rayOrigin, Vector2 rayDirection, float colliderSize, float rayOffset, LayerMask mask)
+    {
+        var originInsideColliderTest = Physics2D.OverlapCircle(rayOrigin, 0.1f, mask);
+        var rayHit = Physics2D.Raycast(rayOrigin, rayDirection, colliderSize + rayOffset, mask);
+
+        if (originInsideColliderTest || !rayHit.collider)
+            return;
+
+        var hitPoint = rayHit.point;
+        var directionToPush = (rayOrigin - hitPoint).normalized;
+        var distanceToPush = colliderSize - (rayOrigin - hitPoint).magnitude;
+        var pushVector = directionToPush * distanceToPush;
+
+        this._rigidbody.position += pushVector;
     }
     
     private Vector2 GetMousePosition()
