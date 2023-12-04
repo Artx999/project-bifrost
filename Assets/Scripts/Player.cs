@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
@@ -35,12 +36,12 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private HingeJoint2D _hingeJoint;
-    
+    private Animator _animator;
+
     private Axe _axeThrow;
     private Camera _camera;
     private Rope _rope;
     private GameObject _lastRopeSegment;
-    private Animator _animator;
 
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
@@ -264,6 +265,7 @@ public class Player : MonoBehaviour
         this._animator.SetFloat("ropeHangY", yValue);
         
         this.ConnectToRope(_lastRopeSegment);
+        this.TogglePlayerPhysics(false);
         
         // AxeThrow --> AxeStuck
         if (this._axeThrow.currentState != Axe.AxeState.Air)
@@ -298,7 +300,7 @@ public class Player : MonoBehaviour
             {
                 this._rope.DestroyRope();
                 this._axeThrow.currentState = Axe.AxeState.Player;
-                //this.EnablePlayerPhysics(true);
+                this.TogglePlayerPhysics(true);
                 this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
                 
                 if (IsGrounded())
@@ -318,7 +320,7 @@ public class Player : MonoBehaviour
         }
         
         // Reached axe
-        //this.EnablePlayerPhysics(true);
+        this.TogglePlayerPhysics(true);
         switch (this._axeThrow.currentState)
         {
             case Axe.AxeState.Player:
@@ -452,10 +454,11 @@ public class Player : MonoBehaviour
     }
     
     /* PRIVATE METHODS */
-    private void EnablePlayerPhysics(bool activate)
+    private void TogglePlayerPhysics(bool activate)
     {
         if (activate)
         {
+            PushColliderIntoBounds();
             this._boxCollider.enabled = true;
             this._rigidbody.gravityScale = 1f;
 
@@ -464,6 +467,74 @@ public class Player : MonoBehaviour
 
         this._boxCollider.enabled = false;
         this._rigidbody.gravityScale = 0f;
+    }
+
+    private void PushColliderIntoBounds()
+    {
+        // First, check if the raycast origin is not in the surface, because if it is we do not cast the ray
+        
+        // Second, cast the ray from origin to check for hit
+        
+        // Lastly, move the rigidbody based on how far the collider is pushed in
+        /*
+        var colliderCenter = (Vector2)this._boxCollider.bounds.center;
+        var colliderSize = this._boxCollider.size;
+        var colliderSizeX = colliderSize.x;
+        var colliderSizeY = colliderSize.y;
+        
+        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
+        
+        var desiredMask = LayerMask.GetMask("Surface");
+        var rayOffset = 0.1f;
+
+        var test = Physics2D.OverlapCircle(centerDown, 0.1f, desiredMask);
+        
+        var rayUp =
+            Physics2D.Raycast(centerDown, Vector2.up, colliderSizeY + rayOffset, desiredMask);
+        
+        if (!rayUp.collider || test)
+            return;
+        
+        var hitPoint = rayUp.point;
+        var distanceToHitPoint = (hitPoint - centerDown).magnitude;
+        var distanceToPush = colliderSizeY - distanceToHitPoint;
+
+        var rigidBodyPosition = this._rigidbody.position;
+        this._rigidbody.position = new Vector2(rigidBodyPosition.x, rigidBodyPosition.y - distanceToPush); */
+        
+        var colliderCenter = (Vector2)this._boxCollider.bounds.center;
+        var colliderSize = this._boxCollider.size;
+        var colliderSizeX = colliderSize.x;
+        var colliderSizeY = colliderSize.y;
+        
+        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
+        var centerLeft = new Vector2(colliderCenter.x - colliderSizeX / 2, colliderCenter.y);
+        var centerUp = new Vector2(colliderCenter.x, colliderCenter.y + colliderSizeY / 2);
+        var centerRight = new Vector2(colliderCenter.x + colliderSizeX / 2, colliderCenter.y);
+
+        var rayOffset = 0.1f;
+        var desiredMask = LayerMask.GetMask("Surface");
+        
+        PushRigidbodyInDirection(centerDown, Vector2.up, colliderSizeY, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerLeft, Vector2.right, colliderSizeX, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerUp, Vector2.down, colliderSizeY, rayOffset, desiredMask);
+        PushRigidbodyInDirection(centerRight, Vector2.left, colliderSizeX, rayOffset, desiredMask);
+    }
+
+    private void PushRigidbodyInDirection(Vector2 rayOrigin, Vector2 rayDirection, float colliderSize, float rayOffset, LayerMask mask)
+    {
+        var originInsideColliderTest = Physics2D.OverlapCircle(rayOrigin, 0.1f, mask);
+        var rayHit = Physics2D.Raycast(rayOrigin, rayDirection, colliderSize + rayOffset, mask);
+
+        if (originInsideColliderTest || !rayHit.collider)
+            return;
+
+        var hitPoint = rayHit.point;
+        var directionToPush = (rayOrigin - hitPoint).normalized;
+        var distanceToPush = colliderSize - (rayOrigin - hitPoint).magnitude;
+        var pushVector = directionToPush * distanceToPush;
+
+        this._rigidbody.position += pushVector;
     }
     
     private Vector2 GetMousePosition()
@@ -563,7 +634,7 @@ public class Player : MonoBehaviour
     {
         var playerPositionOnRopeSegment = this._hingeJoint.connectedAnchor.y;
         if (playerPositionOnRopeSegment <= .5f)
-            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this._gameController.playerWalkSpeed * .01f);
+            this._hingeJoint.connectedAnchor = new Vector2(0, playerPositionOnRopeSegment + this._gameController.playerClimbSpeed * .01f);
         else
         {
             this._rope.RemoveLastRopeSegment();
