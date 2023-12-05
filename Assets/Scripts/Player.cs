@@ -17,7 +17,9 @@ public class Player : MonoBehaviour
         AxeStuck,
         WallSlide,
         WallAim,
-        GroundStun
+        GroundStun,
+        Finished,
+        Null
     }
     
     // PUBLIC FIELDS
@@ -51,6 +53,7 @@ public class Player : MonoBehaviour
     private const float VerticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
     private bool _isBufferedGroundStun = false;
     private bool _isStunCoroutineStarted = false;
+    private bool _hasEnteredWinTrigger = false;
     
     private void Awake()
     {
@@ -98,6 +101,8 @@ public class Player : MonoBehaviour
             case PlayerState.Grounded:
                 this.OnGrounded();
                 this._animator.SetBool("isWalking", Mathf.Abs(this._rigidbody.velocity.x) > 0.1f);
+                if (this._hasEnteredWinTrigger)
+                    this.currentState = PlayerState.Finished;
                 break;
             
             case PlayerState.Fall:
@@ -145,6 +150,13 @@ public class Player : MonoBehaviour
                     StartCoroutine(this.OnGroundStun());
                 break;
             
+            case PlayerState.Finished:
+                this.OnFinished();
+                break;
+            
+            case PlayerState.Null:
+                break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -165,6 +177,16 @@ public class Player : MonoBehaviour
         {
             this._rigidbody.velocity =
                 new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Finish"))
+        {
+            // We wait until the player is in the Grounded state until we trigger the victory screen,
+            // so we just update a flag
+            this._hasEnteredWinTrigger = true;
         }
     }
 
@@ -451,6 +473,30 @@ public class Player : MonoBehaviour
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
+    }
+
+    private void OnFinished()
+    {
+        this._rigidbody.velocity = Vector2.zero;
+        
+        // First, cast a ray to the right. If surface is hit we do the victory condition to the left.
+        var winConditionLeft = false;
+        var desiredMask = LayerMask.GetMask("Surface");
+        var rayDistance = 5f;
+        var hit = Physics2D.Raycast(this._rigidbody.position, Vector2.right , rayDistance, desiredMask);
+        
+        if(hit.collider)
+        {
+            this._animator.SetTrigger("gameFinishLeft");
+            winConditionLeft = true;
+        }
+        else
+        {
+            this._animator.SetTrigger("gameFinishRight");
+        }
+        
+        this._gameController.StartWinCondition(winConditionLeft, this.transform, rayDistance);
+        this.currentState = PlayerState.Null;
     }
     
     /* PRIVATE METHODS */
