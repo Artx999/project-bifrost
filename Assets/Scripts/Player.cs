@@ -165,13 +165,21 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (this.currentState == PlayerState.Grounded)
+        switch (this.currentState)
         {
-            this._directionX = Input.GetAxisRaw("Horizontal");
-            this._rigidbody.velocity = 
-                new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
+            case PlayerState.Grounded:
+                this._directionX = Input.GetAxisRaw("Horizontal");
+                this._rigidbody.velocity = 
+                    new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
+                break;
+            
+            case PlayerState.WallSlide or PlayerState.WallAim:
+                var currentVelocity = this._rigidbody.velocity;
+                currentVelocity.y *= this._gameController.playerWallFriction;
+                this._rigidbody.velocity = currentVelocity;
+                break;
         }
-        
+
         // Check for terminal velocity
         if (this._rigidbody.velocity.y <=
             -this._gameController.terminalVelocity)

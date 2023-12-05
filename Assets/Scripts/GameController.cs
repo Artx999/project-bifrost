@@ -15,14 +15,18 @@ public class GameController : MonoBehaviour
     [Header("Game controller variables")]
     public bool isGamePaused;
 
-    [Header("Game adjustment variables")]
+    [Header("-------Game adjustment variables-------")]
+    [Header("Player")]
     public float terminalVelocity;
     public float playerWalkSpeed;
     public float playerWallFriction;
     public float playerClimbSpeed;
+    [Header("Axe")]
     public float maxAxeThrowMagnitude;
     public float minAxeThrowMagnitude;
     public float axeSpeedAmplitude;
+    [Header("Rope")]
+    public int initialRopeLength;
     
     private AudioManager _audioManager;
     private int _currentScene;
