@@ -332,7 +332,6 @@ public class Player : MonoBehaviour
                 if (IsGrounded())
                 {
                     this.currentState = PlayerState.Grounded;
-                    Debug.Log("Test?");
                 }
                 else if (IsWalled())
                 {
