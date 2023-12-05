@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
     private float _directionX = 0f;
+    private float _groundCheckWidth = 1f;
     private const float GroundStunTimeNormal = 0.34f;
     private const float GroundStunTimeBack = 1.67f;
     private const float VerticalSpeedLimit = 10f; // REMEMBER TO CHANGE IN ANIMATOR TRANSITIONS AS WELL
@@ -194,6 +195,7 @@ public class Player : MonoBehaviour
     private void OnGrounded()
     {
         // Movement done in FixedUpdate()
+        this._groundCheckWidth = 1f;
         
         // Aim
         if (IsAiming())
@@ -299,6 +301,8 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
+        this._groundCheckWidth = 0.9f;
+        
         if(this._rope.RopeExists)
         {
             this._lastRopeSegment = this._rope.GetLastRopeSegment();
@@ -328,6 +332,7 @@ public class Player : MonoBehaviour
                 if (IsGrounded())
                 {
                     this.currentState = PlayerState.Grounded;
+                    Debug.Log("Test?");
                 }
                 else if (IsWalled())
                 {
@@ -343,6 +348,7 @@ public class Player : MonoBehaviour
         
         // Reached axe
         this.TogglePlayerPhysics(true);
+        this._groundCheckWidth = 1f;
         switch (this._axeThrow.currentState)
         {
             case Axe.AxeState.Player:
@@ -385,12 +391,15 @@ public class Player : MonoBehaviour
     private void OnWallSlide()
     {
         // Wall sliding check is done in OnCollisionStay2D()
+        this._rigidbody.velocity = new Vector2(0f, this._rigidbody.velocity.y);
 
         // Slide to ground
         if (IsGrounded())
         {
-            this.currentState = PlayerState.Grounded;
-            this._audioManager.PlaySfx(this._audioManager.landing);
+            this.currentState = PlayerState.GroundStun;
+            this._audioManager.PlaySfx(this._isBufferedGroundStun
+                ? this._audioManager.backLanding
+                : this._audioManager.landing);
         }
 
         // Slide off wall
@@ -517,37 +526,6 @@ public class Player : MonoBehaviour
 
     private void PushColliderIntoBounds()
     {
-        // First, check if the raycast origin is not in the surface, because if it is we do not cast the ray
-        
-        // Second, cast the ray from origin to check for hit
-        
-        // Lastly, move the rigidbody based on how far the collider is pushed in
-        /*
-        var colliderCenter = (Vector2)this._boxCollider.bounds.center;
-        var colliderSize = this._boxCollider.size;
-        var colliderSizeX = colliderSize.x;
-        var colliderSizeY = colliderSize.y;
-        
-        var centerDown = new Vector2(colliderCenter.x, colliderCenter.y - colliderSizeY / 2);
-        
-        var desiredMask = LayerMask.GetMask("Surface");
-        var rayOffset = 0.1f;
-
-        var test = Physics2D.OverlapCircle(centerDown, 0.1f, desiredMask);
-        
-        var rayUp =
-            Physics2D.Raycast(centerDown, Vector2.up, colliderSizeY + rayOffset, desiredMask);
-        
-        if (!rayUp.collider || test)
-            return;
-        
-        var hitPoint = rayUp.point;
-        var distanceToHitPoint = (hitPoint - centerDown).magnitude;
-        var distanceToPush = colliderSizeY - distanceToHitPoint;
-
-        var rigidBodyPosition = this._rigidbody.position;
-        this._rigidbody.position = new Vector2(rigidBodyPosition.x, rigidBodyPosition.y - distanceToPush); */
-        
         var colliderCenter = (Vector2)this._boxCollider.bounds.center;
         var colliderSize = this._boxCollider.size;
         var colliderSizeX = colliderSize.x;
@@ -606,9 +584,12 @@ public class Player : MonoBehaviour
     {
         LayerMask desiredMask = LayerMask.GetMask("Surface");
         var boxColliderBounds = this._boxCollider.bounds;
+        var boxColliderSize = boxColliderBounds.size;
+        var newBoxColliderX = boxColliderSize.x * _groundCheckWidth;
+        var newBoxColliderSize = new Vector2(newBoxColliderX, boxColliderSize.y);
         
         return Physics2D.BoxCast(
-            boxColliderBounds.center, boxColliderBounds.size, 
+            boxColliderBounds.center, newBoxColliderSize, 
             0f, Vector2.down, .1f, desiredMask);
     }
 
