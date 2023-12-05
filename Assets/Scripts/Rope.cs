@@ -91,6 +91,10 @@ public class Rope : MonoBehaviour
         
         Destroy(lastSegment);
         _ropeSegments.RemoveAt(lastSegmentIndex);
+        if (lastSegmentIndex <= 0)
+        {
+            return;
+        }
         this.LastRopeSegment = _ropeSegments.Last();
     }
 

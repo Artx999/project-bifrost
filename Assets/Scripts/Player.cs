@@ -315,7 +315,7 @@ public class Player : MonoBehaviour
             this._animator.SetFloat("ropeHangY", yValue);
             
             // Climb rope
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
             {
                 this.ClimbRope();
                 return;

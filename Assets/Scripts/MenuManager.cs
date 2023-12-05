@@ -68,7 +68,6 @@ public class MenuManager : MonoBehaviour
                 this._playAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Play");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     _gameController.LoadGameScene();
                 }
@@ -78,7 +77,6 @@ public class MenuManager : MonoBehaviour
                 this._tutorialAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Tutorial");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     this.LoadMenu(false);
                 }
@@ -88,7 +86,6 @@ public class MenuManager : MonoBehaviour
                 this._exitAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Exit");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     Application.Quit();
                 }
@@ -98,7 +95,6 @@ public class MenuManager : MonoBehaviour
                 this._backAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Back");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     this.LoadMenu(true);
                 }
@@ -122,7 +118,7 @@ public class MenuManager : MonoBehaviour
         var desiredMask = LayerMask.GetMask("UI");
         var mousePosition = this.GetMousePosition();
 
-        var hit = Physics2D.Raycast(mousePosition, Vector2.zero, desiredMask);
+        var hit = Physics2D.Raycast(mousePosition, Vector2.zero, Mathf.Infinity, desiredMask);
         if (hit)
         {
             this._currentButton = hit.collider.gameObject;

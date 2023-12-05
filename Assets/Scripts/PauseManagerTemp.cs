@@ -83,8 +83,8 @@ public class PauseManagerTemp : MonoBehaviour
         var desiredMask = LayerMask.GetMask("UI");
         var mousePosition = this.GetMousePosition();
 
-        var hit = Physics2D.Raycast(mousePosition, Vector2.zero, desiredMask);
-        if (hit.collider)
+        var hit = Physics2D.Raycast(mousePosition, Vector2.zero, Mathf.Infinity, desiredMask);
+        if (hit)
         {
             this._currentButton = hit.collider.gameObject;
             return true;
