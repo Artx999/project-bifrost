@@ -9,7 +9,6 @@ using UnityEngine.UIElements;
 
 public class Rope : MonoBehaviour
 {
-    public int initialRopeLength;
     public float segmentLength;
     public float ropeMass;
     
@@ -25,7 +24,14 @@ public class Rope : MonoBehaviour
     
     public GameObject axe;
     public bool RopeExists { get; private set; }
-    
+
+    private GameController _gameController;
+
+    private void Awake()
+    {
+        this._gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -91,6 +97,10 @@ public class Rope : MonoBehaviour
         
         Destroy(lastSegment);
         _ropeSegments.RemoveAt(lastSegmentIndex);
+        if (lastSegmentIndex <= 0)
+        {
+            return;
+        }
         this.LastRopeSegment = _ropeSegments.Last();
     }
 
@@ -100,7 +110,7 @@ public class Rope : MonoBehaviour
             return;
         
         // Add rope segments equal to the desired rope length
-        for (int i = 0; i < initialRopeLength; i++)
+        for (int i = 0; i < this._gameController.initialRopeLength; i++)
             AddRopeSegment();
         
         _anchorRigidbody.gravityScale = 1f;

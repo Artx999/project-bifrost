@@ -46,12 +46,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioManager: {fileID: 0}
   pauseMenu: {fileID: 0}
-  isPauseEnabled: 0
+  ratatosk: {fileID: 0}
   isGamePaused: 0
   terminalVelocity: 30
   playerWalkSpeed: 5
   playerWallFriction: 4
-  playerClimbSpeed: 2
+  playerClimbSpeed: 3
   maxAxeThrowMagnitude: 4
   minAxeThrowMagnitude: 1
-  axeSpeedAmplitude: 4
+  axeSpeedAmplitude: 3.5
+  initialRopeLength: 13
