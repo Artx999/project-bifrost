@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
@@ -309,7 +306,7 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
-        this._groundCheckWidth = 0.9f;
+        this._groundCheckWidth = 0.1f;
         
         if(this._rope.RopeExists)
         {

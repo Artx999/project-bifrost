@@ -51,7 +51,7 @@ MonoBehaviour:
   terminalVelocity: 30
   playerWalkSpeed: 5
   playerWallFriction: 4
-  playerClimbSpeed: 3
+  playerClimbSpeed: 7
   maxAxeThrowMagnitude: 4
   minAxeThrowMagnitude: 1
   axeSpeedAmplitude: 3.5

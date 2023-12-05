@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 public class GameController : MonoBehaviour
 {
@@ -49,6 +45,7 @@ public class GameController : MonoBehaviour
         switch (_currentScene)
         {
             case -1:        // This is when the player triggers the win condition
+                OnGame();
                 break;
             case 0:         // Menu scene
                 break;
