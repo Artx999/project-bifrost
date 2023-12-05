@@ -18,7 +18,8 @@ public class Player : MonoBehaviour
         WallSlide,
         WallAim,
         GroundStun,
-        Finished
+        Finished,
+        Null
     }
     
     // PUBLIC FIELDS
@@ -150,6 +151,10 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.Finished:
+                this.OnFinished();
+                break;
+            
+            case PlayerState.Null:
                 break;
             
             default:
@@ -468,6 +473,30 @@ public class Player : MonoBehaviour
         
         // Slide off wall
         //this.currentState = PlayerState.Fall;
+    }
+
+    private void OnFinished()
+    {
+        this._rigidbody.velocity = Vector2.zero;
+        
+        // First, cast a ray to the right. If surface is hit we do the victory condition to the left.
+        var winConditionLeft = false;
+        var desiredMask = LayerMask.GetMask("Surface");
+        var rayDistance = 5f;
+        var hit = Physics2D.Raycast(this._rigidbody.position, Vector2.right , rayDistance, desiredMask);
+        
+        if(hit.collider)
+        {
+            this._animator.SetTrigger("gameFinishLeft");
+            winConditionLeft = true;
+        }
+        else
+        {
+            this._animator.SetTrigger("gameFinishRight");
+        }
+        
+        this._gameController.StartWinCondition(winConditionLeft, this.transform, rayDistance);
+        this.currentState = PlayerState.Null;
     }
     
     /* PRIVATE METHODS */

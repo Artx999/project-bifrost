@@ -56,7 +56,6 @@ public class PauseManagerTemp : MonoBehaviour
                 this._resumeAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Resume");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     this._gameController.PauseGame(!this._gameController.isGamePaused);
                 }
@@ -66,7 +65,6 @@ public class PauseManagerTemp : MonoBehaviour
                 this._mainMenuAnimator.SetBool("mouseHover", true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Main menu");
                     this._audioManager.PlaySfx(this._audioManager.buttonClick);
                     this._gameController.PauseGame(false);
                     this._gameController.LoadStartMenuScene();
@@ -86,17 +84,14 @@ public class PauseManagerTemp : MonoBehaviour
         var mousePosition = this.GetMousePosition();
 
         var hit = Physics2D.Raycast(mousePosition, Vector2.zero, desiredMask);
-        if (hit)
+        if (hit.collider)
         {
             this._currentButton = hit.collider.gameObject;
             return true;
         }
-        else
-        {
-            this._currentButton = null;
-            return false;
-        }
-    }
+        this._currentButton = null;
+        return false;
+}
 
     private Vector2 GetMousePosition()
     {

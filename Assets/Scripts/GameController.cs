@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class GameController : MonoBehaviour
 {
     [Header("Gameobject references")]
     public GameObject audioManager;
     public GameObject pauseMenu;        // VERY TEMP
+    public GameObject ratatosk;
 
     [Header("Game controller variables")]
-    public bool isPauseEnabled;
     public bool isGamePaused;
 
     [Header("Game adjustment variables")]
@@ -24,10 +25,12 @@ public class GameController : MonoBehaviour
     public float axeSpeedAmplitude;
     
     private AudioManager _audioManager;
+    private int _currentScene;
 
     private void Awake()
     {
         this.audioManager = GameObject.FindWithTag("AudioManager");
+        this._currentScene = SceneManager.GetActiveScene().buildIndex;
     }
 
     private void Start()
@@ -40,12 +43,22 @@ public class GameController : MonoBehaviour
     private void Update()
     {
         // Reload scene - DEVELOPMENT ONLY
-        if (Input.GetKeyDown(KeyCode.R) && !this.isGamePaused)
+        if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         
-        // Pause game
-        if(Input.GetKeyDown(KeyCode.Escape) && this.isPauseEnabled)
-           this.PauseGame(!this.isGamePaused);
+        switch (_currentScene)
+        {
+            case -1:        // This is when the player triggers the win condition
+                break;
+            case 0:         // Menu scene
+                break;
+            case 1:         // Game scene
+                OnGame();
+                break;
+            default:
+                Debug.Log("ERROR: Scene does not exists");
+                break;
+        }
     }
 
     public void LoadGameScene()
@@ -56,7 +69,7 @@ public class GameController : MonoBehaviour
 
     public void LoadStartMenuScene()
     {
-        // Menu - Index
+        // Menu - Index 0
         SceneManager.LoadScene(0);
     }
 
@@ -69,7 +82,6 @@ public class GameController : MonoBehaviour
             this.isGamePaused = true;
             this._audioManager.PauseAllAudio(true);
             this.pauseMenu.SetActive(true);
-            Debug.Log("Paused game");
             Time.timeScale = 0f;
             
             return;
@@ -79,11 +91,34 @@ public class GameController : MonoBehaviour
         this._audioManager.PauseAllAudio(false);
         this.pauseMenu.SetActive(false);
         Time.timeScale = 1f;
-        Debug.Log("Resumed game");
     }
 
-    public void StartWinCondition()
+    public void StartWinCondition(bool windConditionLeft, Transform playerPosition, float wallCheckRayDistance)
     {
+        this._currentScene = -1;
+        var distanceToRatatosk = wallCheckRayDistance - 1f;
+        var ratatoskPosition = this.ratatosk.transform.position;
+        var ratatoskAnimator = this.ratatosk.GetComponent<Animator>();
+        this.ratatosk.GetComponent<SpriteRenderer>().enabled = true;
         
+        // The player is done, only thing left is to activate Ratatosk
+        if (windConditionLeft)
+        {
+            this.ratatosk.transform.position =
+                new Vector3(playerPosition.position.x - distanceToRatatosk, ratatoskPosition.y, ratatoskPosition.z);
+            ratatoskAnimator.SetTrigger("spawnToLeft");
+            return;
+        }
+
+        this.ratatosk.transform.position =
+            new Vector3(playerPosition.position.x + distanceToRatatosk, ratatoskPosition.y, ratatoskPosition.z);
+        ratatoskAnimator.SetTrigger("spawnToRight");
+    }
+    
+    private void OnGame()
+    {
+        // Pause game
+        if(Input.GetKeyDown(KeyCode.Escape))
+            this.PauseGame(!this.isGamePaused);
     }
 }
