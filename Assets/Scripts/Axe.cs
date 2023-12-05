@@ -98,6 +98,11 @@ public class Axe : MonoBehaviour
     
     private void FixedUpdate()
     {
+        if (this.currentState == AxeState.Player)
+        {
+            FollowPlayer();
+        }
+        
         // Check for terminal velocity
         if (this._rigidbody.velocity.y <=
             -this._gameController.terminalVelocity)
@@ -131,7 +136,6 @@ public class Axe : MonoBehaviour
 
     private void OnPlayer()
     {
-        this.FollowPlayer();
         this.DisableAxe(true);
     }
 
@@ -155,7 +159,7 @@ public class Axe : MonoBehaviour
 
     private void FollowPlayer()
     {
-        this.transform.position = this.player.transform.position;
+        this._rigidbody.position = this.player.transform.position;
         this.DisableAxe(true);
     }
 
