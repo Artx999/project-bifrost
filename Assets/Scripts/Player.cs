@@ -347,7 +347,6 @@ public class Player : MonoBehaviour
         
         // Reached axe
         this.TogglePlayerPhysics(true);
-        this._groundCheckWidth = 1f;
         switch (this._axeThrow.currentState)
         {
             case Axe.AxeState.Player:
