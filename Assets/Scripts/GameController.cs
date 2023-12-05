@@ -46,10 +46,6 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-        // Reload scene - DEVELOPMENT ONLY
-        if (Input.GetKeyDown(KeyCode.R))
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        
         switch (_currentScene)
         {
             case -1:        // This is when the player triggers the win condition
