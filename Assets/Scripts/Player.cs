@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -40,7 +41,7 @@ public class Player : MonoBehaviour
     private Axe _axeThrow;
     private Camera _camera;
     private Rope _rope;
-    private GameObject _lastRopeSegment;
+    [CanBeNull] private GameObject _lastRopeSegment;
 
     private float _aimingVectorX = 0f;
     private float _animatorLeftWallCheck = 0f;
@@ -168,6 +169,14 @@ public class Player : MonoBehaviour
                 this._directionX = Input.GetAxisRaw("Horizontal");
                 this._rigidbody.velocity = 
                     new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
+                break;
+            
+            case PlayerState.AxeStuck:
+                if (this._rope.RopeExists && 
+                    (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)))
+                {
+                    this.ClimbRope();
+                }
                 break;
             
             case PlayerState.WallSlide or PlayerState.WallAim:
@@ -318,13 +327,6 @@ public class Player : MonoBehaviour
             var yValue = ropeHangDirection.normalized.y;
             this._animator.SetFloat("ropeHangX", xValue);
             this._animator.SetFloat("ropeHangY", yValue);
-            
-            // Climb rope
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
-            {
-                this.ClimbRope();
-                return;
-            }
             
             // Release rope
             if (Input.GetMouseButtonDown(1))

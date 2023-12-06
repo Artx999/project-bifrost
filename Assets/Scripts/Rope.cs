@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Rope : MonoBehaviour
@@ -42,12 +43,12 @@ public class Rope : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        RopeExists = _ropeSegments.Any();
+        this.RopeExists = this._ropeSegments.Any();
     }
 
     private void FixedUpdate()
     {
-        _anchorRigidbody.MovePosition(axe.transform.position);
+        this._anchorRigidbody.MovePosition(axe.transform.position);
     }
 
     private void AddRopeSegment()
@@ -94,6 +95,7 @@ public class Rope : MonoBehaviour
         _ropeSegments.RemoveAt(lastSegmentIndex);
         if (lastSegmentIndex <= 0)
         {
+            this.RopeExists = false;
             return;
         }
         this.LastRopeSegment = _ropeSegments.Last();
@@ -124,7 +126,7 @@ public class Rope : MonoBehaviour
         
         _anchorRigidbody.gravityScale = 0f;
     }
-
+    
     public GameObject GetLastRopeSegment()
     {
         this.LastRopeSegment = _ropeSegments.Last();
