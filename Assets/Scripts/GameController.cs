@@ -35,7 +35,6 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        Application.targetFrameRate = 20;
         this._audioManager = this.audioManager.GetComponent<AudioManager>();
         this.isGamePaused = false;
     }

@@ -228,6 +228,8 @@ public class Player : MonoBehaviour
 
     private void OnFall()
     {
+        this._groundCheckWidth = 1f;
+        
         if(!this._isBufferedGroundStun)
             this._isBufferedGroundStun = this._rigidbody.velocity.y < -Player.VerticalSpeedLimit;
         
@@ -291,6 +293,8 @@ public class Player : MonoBehaviour
 
     private void OnAxeThrow()
     {
+        this._groundCheckWidth = 0.1f;
+        
         // Initialize rope and axe
         this._rope.CreateRope();
         this._lastRopeSegment = this._rope.GetLastRopeSegment();
@@ -315,8 +319,6 @@ public class Player : MonoBehaviour
 
     private void OnAxeStuck()
     {
-        this._groundCheckWidth = 0.1f;
-        
         if(this._rope.RopeExists)
         {
             this._lastRopeSegment = this._rope.GetLastRopeSegment();
