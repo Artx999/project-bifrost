@@ -669,7 +669,7 @@ public class Player : MonoBehaviour
         {
             this._rope.RemoveLastRopeSegment();
             this.ConnectToRope(this._rope.LastRopeSegment);
-        }
+        }   
     }
     
     private IEnumerator OnGroundStun()
