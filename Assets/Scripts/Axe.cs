@@ -56,7 +56,7 @@ public class Axe : MonoBehaviour
         if (this._gameController.isGamePaused)
             return;
         
-        this._speedX = this._rigidbody.velocity.x;
+        this._speedX = this._rigidbody.linearVelocity.x;
         this._animator.SetInteger("currentState", (int)this.currentState);
         
         if (Mathf.Abs(this._speedX) > 0.1f)
@@ -99,11 +99,11 @@ public class Axe : MonoBehaviour
         }
         
         // Check for terminal velocity
-        if (this._rigidbody.velocity.y <=
+        if (this._rigidbody.linearVelocity.y <=
             -this._gameController.terminalVelocity)
         {
-            this._rigidbody.velocity =
-                new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+            this._rigidbody.linearVelocity =
+                new Vector2(this._rigidbody.linearVelocity.x, -this._gameController.terminalVelocity);
         }
     }
     
@@ -125,7 +125,7 @@ public class Axe : MonoBehaviour
             this.currentState = AxeState.Roof;
         
         // We hit a surface successfully and can stop the axe movement
-        this._rigidbody.velocity = Vector2.zero;
+        this._rigidbody.linearVelocity = Vector2.zero;
         this._rigidbody.gravityScale = 0f;
     }
 

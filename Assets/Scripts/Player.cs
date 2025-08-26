@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
             return;
         
         var aimingVector = Vector2.zero;
-        var rigidBodyVelocity = this._rigidbody.velocity;
+        var rigidBodyVelocity = this._rigidbody.linearVelocity;
         
         this._animator.SetInteger("currentState", (int)this.currentState);
         this._animator.SetFloat("speedY", rigidBodyVelocity.y);
@@ -99,7 +99,7 @@ public class Player : MonoBehaviour
         {
             case PlayerState.Grounded:
                 this.OnGrounded();
-                this._animator.SetBool("isWalking", Mathf.Abs(this._rigidbody.velocity.x) > 0.1f);
+                this._animator.SetBool("isWalking", Mathf.Abs(this._rigidbody.linearVelocity.x) > 0.1f);
                 if (this._hasEnteredWinTrigger)
                     this.currentState = PlayerState.Finished;
                 break;
@@ -167,8 +167,8 @@ public class Player : MonoBehaviour
         {
             case PlayerState.Grounded:
                 this._directionX = Input.GetAxisRaw("Horizontal");
-                this._rigidbody.velocity = 
-                    new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.velocity.y);
+                this._rigidbody.linearVelocity = 
+                    new Vector2(this._directionX * this._gameController.playerWalkSpeed, this._rigidbody.linearVelocity.y);
                 break;
             
             case PlayerState.AxeStuck:
@@ -180,18 +180,18 @@ public class Player : MonoBehaviour
                 break;
             
             case PlayerState.WallSlide or PlayerState.WallAim:
-                var currentVelocity = this._rigidbody.velocity;
+                var currentVelocity = this._rigidbody.linearVelocity;
                 currentVelocity.y *= this._gameController.playerWallFriction;
-                this._rigidbody.velocity = currentVelocity;
+                this._rigidbody.linearVelocity = currentVelocity;
                 break;
         }
 
         // Check for terminal velocity
-        if (this._rigidbody.velocity.y <=
+        if (this._rigidbody.linearVelocity.y <=
             -this._gameController.terminalVelocity)
         {
-            this._rigidbody.velocity =
-                new Vector2(this._rigidbody.velocity.x, -this._gameController.terminalVelocity);
+            this._rigidbody.linearVelocity =
+                new Vector2(this._rigidbody.linearVelocity.x, -this._gameController.terminalVelocity);
         }
     }
 
@@ -214,14 +214,14 @@ public class Player : MonoBehaviour
         // Aim
         if (IsAiming())
         {
-            this._rigidbody.velocity = Vector2.zero;
+            this._rigidbody.linearVelocity = Vector2.zero;
             this.currentState = PlayerState.GroundedAim;
         }
         
         // Step off ledge
         if (!IsGrounded())
         {
-            this._rigidbody.velocity = Vector2.zero;
+            this._rigidbody.linearVelocity = Vector2.zero;
             this.currentState = PlayerState.Fall;
         }
     }
@@ -231,7 +231,7 @@ public class Player : MonoBehaviour
         this._groundCheckWidth = 1f;
         
         if(!this._isBufferedGroundStun)
-            this._isBufferedGroundStun = this._rigidbody.velocity.y < -Player.VerticalSpeedLimit;
+            this._isBufferedGroundStun = this._rigidbody.linearVelocity.y < -Player.VerticalSpeedLimit;
         
         // Fall --> GroundStun
         if (IsGrounded())
@@ -336,7 +336,7 @@ public class Player : MonoBehaviour
                 this._rope.DestroyRope();
                 this._axeThrow.currentState = Axe.AxeState.Player;
                 this.TogglePlayerPhysics(true);
-                this._rigidbody.velocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().velocity;
+                this._rigidbody.linearVelocity = this._lastRopeSegment.GetComponent<Rigidbody2D>().linearVelocity;
                 
                 if (IsGrounded())
                 {
@@ -398,7 +398,7 @@ public class Player : MonoBehaviour
     private void OnWallSlide()
     {
         // Wall sliding check is done in OnCollisionStay2D()
-        this._rigidbody.velocity = new Vector2(0f, this._rigidbody.velocity.y);
+        this._rigidbody.linearVelocity = new Vector2(0f, this._rigidbody.linearVelocity.y);
 
         // Slide to ground
         if (IsGrounded())
@@ -493,7 +493,7 @@ public class Player : MonoBehaviour
 
     private void OnFinished()
     {
-        this._rigidbody.velocity = Vector2.zero;
+        this._rigidbody.linearVelocity = Vector2.zero;
         
         // First, cast a ray to the right. If surface is hit we do the victory condition to the left.
         var winConditionLeft = false;
@@ -678,7 +678,7 @@ public class Player : MonoBehaviour
     
     private IEnumerator OnGroundStun()
     {
-        this._rigidbody.velocity = Vector2.zero;
+        this._rigidbody.linearVelocity = Vector2.zero;
         this._isStunCoroutineStarted = true;
         
         if (this._isBufferedGroundStun)
