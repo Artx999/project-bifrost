@@ -3,11 +3,6 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    [Header("Gameobject references")]
-    public GameObject audioManager;
-    public GameObject pauseMenu;        // VERY TEMP
-    public GameObject ratatosk;
-
     [Header("Game controller variables")]
     public bool isGamePaused;
 
@@ -29,13 +24,13 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        this.audioManager = GameObject.FindWithTag("AudioManager");
+        // this.audioManager = GameObject.FindWithTag("AudioManager");
         this._currentScene = SceneManager.GetActiveScene().buildIndex;
     }
 
     private void Start()
     {
-        this._audioManager = this.audioManager.GetComponent<AudioManager>();
+        // this._audioManager = this.audioManager.GetComponent<AudioManager>();
         this.isGamePaused = false;
     }
 
@@ -49,6 +44,9 @@ public class GameController : MonoBehaviour
             case 0:         // Menu scene
                 break;
             case 1:         // Game scene
+                OnGame();
+                break;
+            case 2:         // Rope demo scene
                 OnGame();
                 break;
             default:
@@ -77,7 +75,7 @@ public class GameController : MonoBehaviour
         {
             this.isGamePaused = true;
             this._audioManager.PauseAllAudio(true);
-            this.pauseMenu.SetActive(true);
+            // this.pauseMenu.SetActive(true);
             Time.timeScale = 0f;
             
             return;
@@ -85,30 +83,8 @@ public class GameController : MonoBehaviour
         
         this.isGamePaused = false;
         this._audioManager.PauseAllAudio(false);
-        this.pauseMenu.SetActive(false);
+        // this.pauseMenu.SetActive(false);
         Time.timeScale = 1f;
-    }
-
-    public void StartWinCondition(bool windConditionLeft, Transform playerPosition, float wallCheckRayDistance)
-    {
-        this._currentScene = -1;
-        var distanceToRatatosk = wallCheckRayDistance - 1f;
-        var ratatoskPosition = this.ratatosk.transform.position;
-        var ratatoskAnimator = this.ratatosk.GetComponent<Animator>();
-        this.ratatosk.GetComponent<SpriteRenderer>().enabled = true;
-        
-        // The player is done, only thing left is to activate Ratatosk
-        if (windConditionLeft)
-        {
-            this.ratatosk.transform.position =
-                new Vector3(playerPosition.position.x - distanceToRatatosk, ratatoskPosition.y, ratatoskPosition.z);
-            ratatoskAnimator.SetTrigger("spawnToLeft");
-            return;
-        }
-
-        this.ratatosk.transform.position =
-            new Vector3(playerPosition.position.x + distanceToRatatosk, ratatoskPosition.y, ratatoskPosition.z);
-        ratatoskAnimator.SetTrigger("spawnToRight");
     }
     
     private void OnGame()
