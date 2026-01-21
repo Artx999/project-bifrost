@@ -14,5 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RopeDemo.unity
     guid: e641f1fe98941714e9eec82a2340c6c0
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 4d46bb8750c20084d80b693c086f5c05, type: 3}
   m_UseUCBPForAssetBundles: 0

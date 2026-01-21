@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Tilemaps;
 
 public class Rope : MonoBehaviour
 {
@@ -19,24 +16,18 @@ public class Rope : MonoBehaviour
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments;
     private Camera _mainCamera;
-    private PlayerControls _playerControls;
+    private PlayerInput _playerInput;
+    
+    // INPUT ACTIONS
+    private InputAction _mousePosition;
     
     // public TilemapCollider2D test;
 
     // Setup reference to input actions
     private void Awake()
     {
-        _playerControls = new PlayerControls();
-    }
-
-    private void OnEnable()
-    {
-        _playerControls.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _playerControls.Disable();
+        _playerInput = GetComponent<PlayerInput>();
+        _mousePosition = _playerInput.actions["Cursor"];
     }
 
     private void Start()
@@ -202,7 +193,7 @@ public class Rope : MonoBehaviour
     
     private Vector2 GetMousePosition()
     {
-        var mousePosition = _playerControls.Player.Cursor.ReadValue<Vector2>();
+        var mousePosition = _mousePosition.ReadValue<Vector2>();
         
         if (_mainCamera != null)
             return _mainCamera.ScreenToWorldPoint(mousePosition);
