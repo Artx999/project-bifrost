@@ -12,7 +12,6 @@ public class Rope : MonoBehaviour
     public float ropeWidth = 0.1f;
     
     // PRIVATE
-    private GameController _gameManager;
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _ropeSegments;
     private Camera _mainCamera;
@@ -33,7 +32,6 @@ public class Rope : MonoBehaviour
     private void Start()
     {
         // Initialization
-        _gameManager = gameManager.GetComponent<GameController>();
         _lineRenderer = GetComponent<LineRenderer>();
         _ropeSegments = new List<RopeSegment>();
         _mainCamera = Camera.main;
@@ -43,7 +41,6 @@ public class Rope : MonoBehaviour
 
     private void Update()
     {
-        // TODO: Find alternate way to draw the rope when axe is not seperated
         DrawRope();
     }
 
@@ -51,24 +48,24 @@ public class Rope : MonoBehaviour
     {
         SimulateRope();
     }
+    
+    // Initializes the rope segment list
+    private void InitRopeSegments(Vector2 hookPosition)
+    {
+        var currentSegment = hookPosition;
+
+        for (var i = 0; i < segmentsCount; i++)
+        {
+            _ropeSegments.Add(new RopeSegment(currentSegment));
+        }
+    }
 
     private void SimulateRope()
     {
         // SIMULATION
         for (var i = 0; i < segmentsCount; i++)
         {
-            /*
-            RopeSegment currentSegment = _ropeSegments[i];
-             
-            Vector2 velocity = currentSegment.posNow - currentSegment.posOld;
-            currentSegment.posOld = currentSegment.posNow;
-            currentSegment.posNow += velocity;
-            currentSegment.posNow += _ropeGravity * Time.fixedDeltaTime;
-            
-            _ropeSegments[i] = currentSegment;
-            */
-            
-            // Actual Verlet Integration, but the acceleration for both of these methods is very different
+            // Verlet integration
             var currentSegment = _ropeSegments[i];
             var tempVec = currentSegment.posNow;
             var totalAcceleration = Physics2D.gravity;
@@ -77,7 +74,8 @@ public class Rope : MonoBehaviour
                 2 * currentSegment.posNow - currentSegment.posOld + Time.fixedDeltaTime * Time.fixedDeltaTime * totalAcceleration;
             currentSegment.posOld = tempVec;
             
-            // Check for collision for that point
+            // Rework this part
+            /*
             LayerMask mask = LayerMask.GetMask("Surface");
             var velocity = currentSegment.posNow - currentSegment.posOld;
             var velocityDirection = velocity.normalized;
@@ -103,6 +101,7 @@ public class Rope : MonoBehaviour
 
                 currentSegment.posOld = newOldPos + hitNormal * ropeWidth + segmentWidthMove;
             }
+            */
 
             _ropeSegments[i] = currentSegment;
         }
@@ -110,12 +109,11 @@ public class Rope : MonoBehaviour
         //CONSTRAINTS
         // Times the constraint method should execute. The larger, the better rope, but more expensive
         var constraintDepth = 100;
-        var inputVec1 = GetMousePosition();
+        var anchorPoint = GetMousePosition();
         
         for (var i = 0; i < constraintDepth; i++)
         {
-            ApplyConstraint(inputVec1);
-            AdjustCollisions();
+            ApplyConstraint(anchorPoint);
         }
     }
 
@@ -152,12 +150,6 @@ public class Rope : MonoBehaviour
         }
     }
 
-    private void AdjustCollisions()
-    {
-        // Check for collision for that point
-        
-    }
-
     // Draws rope based on the current positions of the segments, from the list
     private void DrawRope()
     {
@@ -173,38 +165,15 @@ public class Rope : MonoBehaviour
         _lineRenderer.positionCount = ropePositions.Length;
         _lineRenderer.SetPositions(ropePositions);
     }
-
-    // Initializes the rope segment list
-    private void InitRopeSegments(Vector2 hookPosition)
-    {
-        var currentSegment = hookPosition;
-
-        for (var i = 0; i < segmentsCount; i++)
-        {
-            _ropeSegments.Add(new RopeSegment(currentSegment));
-        }
-    }
-    
-    // Mostly for debugging: If we want to drag rope, we should not hide the rope
-    private bool HideRopeCondition(bool shouldHideRope)
-    {
-        return shouldHideRope;
-    }
     
     private Vector2 GetMousePosition()
     {
         var mousePosition = _mousePosition.ReadValue<Vector2>();
         
-        if (_mainCamera != null)
+        if (_mainCamera)
             return _mainCamera.ScreenToWorldPoint(mousePosition);
 
         return Vector2.zero;
-    }
-
-    // Public method that returns the last segment
-    public Vector2 GetRopeEndPosition()
-    {
-        return _ropeSegments.Count <= 0 ? Vector2.zero : _ropeSegments[segmentsCount - 1].posNow;
     }
     
     // Struct that stores the old and current position for Verlet Integration
